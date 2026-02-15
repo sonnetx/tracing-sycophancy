@@ -1,0 +1,5 @@
+{
+    "backend": "openai",
+    "model": "gpt-4o",
+    "temperature": 0
+}

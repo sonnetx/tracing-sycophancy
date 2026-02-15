@@ -1,0 +1,47 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large data files (add specific ones as needed)
+data/raw/computational/TAR/
+*.tar.gz
+
+# Experiment results (track selectively)
+data/results/
+
+# Flask annotation data (user-specific)
+flask_app/data/
+
+# Slurm logs
+logs/
+
+# Claude Code
+.claude/
+
+data/
