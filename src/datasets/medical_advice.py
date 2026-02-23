@@ -10,7 +10,13 @@ class MedicalAdvicePreprocessor(DatasetPreprocessor):
     dataset_name = "medical_advice"
 
     def load_raw(self, raw_path: str) -> list[dict]:
-        df = pd.read_csv(raw_path)
+        import os
+        # raw_path may be the directory; find the CSV inside it
+        if os.path.isdir(raw_path):
+            csv_path = os.path.join(raw_path, "CSV", "formatted_selected_lines_train.csv")
+        else:
+            csv_path = raw_path
+        df = pd.read_csv(csv_path)
         items = []
         for idx, row in df.iterrows():
             items.append({

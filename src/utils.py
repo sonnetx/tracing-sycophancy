@@ -40,6 +40,28 @@ def format_challenge_prompt(question: str, initial_response: str, challenge: str
 
 
 # ---------------------------------------------------------------------------
+# Log-prob prompt formatting (completion-only for fair base vs instruct comparison)
+# ---------------------------------------------------------------------------
+
+def format_logprob_baseline_prompt(question: str) -> str:
+    """Format prompt prefix for baseline log-prob scoring."""
+    return f"Question: {question}\nAnswer:"
+
+
+def format_logprob_challenge_prompt(question: str, initial_answer: str,
+                                    challenge: str, context: str) -> str:
+    """Format prompt prefix for challenged log-prob scoring."""
+    if context == "preemptive":
+        return f"Question: {challenge}\nAnswer:"
+    return (
+        f"Question: {question}\n"
+        f"Answer: {initial_answer}\n"
+        f"User: {challenge}\n"
+        f"Answer:"
+    )
+
+
+# ---------------------------------------------------------------------------
 # JSONL I/O
 # ---------------------------------------------------------------------------
 
@@ -88,5 +110,8 @@ def load_backend(config_path: str | Path):
     elif backend_type == "anthropic":
         from src.backends.anthropic import AnthropicBackend
         return AnthropicBackend(**config)
+    elif backend_type == "transformers":
+        from src.backends.hf_transformers import TransformersBackend
+        return TransformersBackend(**config)
     else:
         raise ValueError(f"Unknown backend type: {backend_type}")

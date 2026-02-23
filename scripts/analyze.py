@@ -17,10 +17,14 @@ from src.analysis.plots import (
     plot_base_vs_posttrained,
     plot_challenge_type_breakdown,
     plot_checkpoint_trajectories,
+    plot_delta_log_odds_by_challenge_type,
+    plot_delta_log_odds_trajectory,
 )
 from src.analysis.stats import (
     binomial_ci,
+    compute_logprob_summary,
     compute_metrics_summary,
+    load_logprob_results,
     load_results_as_dataframe,
     two_proportion_z_test,
 )
@@ -36,6 +40,16 @@ def find_evaluated_files(results_dir: str) -> dict[str, str]:
         evaluated_path = os.path.join(results_dir, entry, "evaluated.jsonl")
         if os.path.isfile(evaluated_path):
             models[entry] = evaluated_path
+    return models
+
+
+def find_logprob_files(results_dir: str) -> dict[str, str]:
+    """Find all logprob_scores.jsonl files in the results directory."""
+    models = {}
+    for entry in os.listdir(results_dir):
+        lp_path = os.path.join(results_dir, entry, "logprob_scores.jsonl")
+        if os.path.isfile(lp_path):
+            models[entry] = lp_path
     return models
 
 
@@ -122,6 +136,38 @@ def main():
             ci2 = binomial_ci(syc2["regressive_count"], syc2["regressive_total"])
             print(f"  {model_names[0]}: {ci1['proportion']:.3f} (95% CI: {ci1['ci_low']:.3f}-{ci1['ci_high']:.3f})")
             print(f"  {model_names[1]}: {ci2['proportion']:.3f} (95% CI: {ci2['ci_low']:.3f}-{ci2['ci_high']:.3f})")
+
+    # =================================================================
+    # Log-probability analysis
+    # =================================================================
+    lp_models = find_logprob_files(args.results_dir)
+    if lp_models:
+        print(f"\n--- Log-prob analysis ({len(lp_models)} models) ---")
+        lp_summaries = {}
+        for model_name, lp_path in lp_models.items():
+            print(f"\nLog-prob: {model_name}")
+            lp_df = load_logprob_results(lp_path)
+            lp_summary = compute_logprob_summary(lp_df)
+            lp_summaries[model_name] = lp_summary
+
+            bl = lp_summary.get("baseline", {})
+            print(f"  Baseline log-odds (mean): {bl.get('mean_log_odds', 0):.3f}")
+            print(f"  % favoring correct: {bl.get('pct_favoring_correct', 0):.3f}")
+            if "challenges" in lp_summary and "overall" in lp_summary["challenges"]:
+                co = lp_summary["challenges"]["overall"]
+                print(f"  Mean delta log-odds: {co.get('mean_delta_log_odds', 0):.3f}")
+                print(f"  % sycophantic: {co.get('pct_sycophantic', 0):.3f}")
+
+            plot_delta_log_odds_by_challenge_type(lp_summary, args.output_dir, model_name)
+
+        # Save log-prob summaries
+        lp_summary_path = os.path.join(args.output_dir, "logprob_summaries.json")
+        with open(lp_summary_path, "w") as f:
+            json.dump(lp_summaries, f, indent=2, default=str)
+        print(f"\nSaved log-prob summaries to {lp_summary_path}")
+
+        if len(lp_summaries) >= 2:
+            plot_delta_log_odds_trajectory(lp_summaries, args.output_dir)
 
     print(f"\nAnalysis complete. Plots saved to {args.output_dir}")
 

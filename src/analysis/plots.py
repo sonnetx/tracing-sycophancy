@@ -87,6 +87,80 @@ def plot_challenge_type_breakdown(summary: dict, output_dir: str, model_name: st
     plt.close(fig)
 
 
+def plot_delta_log_odds_trajectory(summaries: dict[str, dict], output_dir: str,
+                                   title_prefix: str = "") -> None:
+    """Plot delta-log-odds across training checkpoints."""
+    checkpoints = list(summaries.keys())
+    if len(checkpoints) < 2:
+        return
+
+    means = []
+    pct_syc = []
+    for cp in checkpoints:
+        ch = summaries[cp].get("challenges", {}).get("overall", {})
+        means.append(ch.get("mean_delta_log_odds", 0))
+        pct_syc.append(ch.get("pct_sycophantic", 0))
+
+    x = np.arange(len(checkpoints))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+
+    ax1.plot(x, means, "o-", linewidth=2, markersize=6, color="#d62728")
+    ax1.axhline(y=0, color="gray", linestyle="--", alpha=0.5)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(checkpoints, rotation=45, ha="right", fontsize=7)
+    ax1.set_ylabel("Mean Delta Log-Odds")
+    ax1.set_title("Sycophancy Signal (positive = sycophantic)")
+    ax1.grid(True, alpha=0.3)
+
+    ax2.plot(x, pct_syc, "o-", linewidth=2, markersize=6, color="#2ca02c")
+    ax2.axhline(y=0.5, color="gray", linestyle="--", alpha=0.5)
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(checkpoints, rotation=45, ha="right", fontsize=7)
+    ax2.set_ylabel("Fraction")
+    ax2.set_title("% Questions with Sycophantic Shift")
+    ax2.set_ylim(-0.05, 1.05)
+    ax2.grid(True, alpha=0.3)
+
+    prefix = f"{title_prefix} — " if title_prefix else ""
+    fig.suptitle(f"{prefix}Log-Prob Sycophancy Across Checkpoints", fontsize=14, fontweight="bold")
+    fig.tight_layout(rect=[0, 0, 1, 0.93])
+    save_fig(fig, output_dir, "logprob_checkpoint_trajectories.png")
+    plt.close(fig)
+
+
+def plot_delta_log_odds_by_challenge_type(summary: dict, output_dir: str,
+                                          model_name: str = "") -> None:
+    """Bar chart of mean delta-log-odds by challenge type."""
+    challenges = summary.get("challenges", {})
+    types = ["simple", "ethos", "justification", "citation"]
+
+    values = []
+    available = []
+    for c_type in types:
+        key = f"type_{c_type}"
+        if key in challenges:
+            available.append(c_type.capitalize())
+            values.append(challenges[key].get("mean_delta_log_odds", 0))
+
+    if not available:
+        return
+
+    x = np.arange(len(available))
+    colors = ["#d62728" if v > 0 else "#2ca02c" for v in values]
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.bar(x, values, color=colors, edgecolor="black", linewidth=0.5)
+    ax.axhline(y=0, color="gray", linestyle="--", alpha=0.5)
+    ax.set_xticks(x)
+    ax.set_xticklabels(available)
+    ax.set_ylabel("Mean Delta Log-Odds")
+    ax.grid(True, alpha=0.3, axis="y")
+    ax.set_title(f"Sycophancy by Challenge Type{' — ' + model_name if model_name else ''}",
+                 fontsize=14, fontweight="bold")
+    fig.tight_layout()
+    save_fig(fig, output_dir, f"logprob_challenge_types_{model_name or 'model'}.png")
+    plt.close(fig)
+
+
 def plot_base_vs_posttrained(base_summary: dict, pt_summary: dict, base_name: str,
                              pt_name: str, output_dir: str) -> None:
     """Plot side-by-side comparison of base vs post-trained model."""

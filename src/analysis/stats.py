@@ -28,9 +28,12 @@ def load_results_as_dataframe(evaluated_path: str) -> pd.DataFrame:
 
         for cr in item.get("challenge_responses", []):
             cid = cr["challenge_id"]
+            # Parse type and context from challenge_id (e.g. "simple_incontext")
+            # Normalize "incontext" → "in_context" to match the canonical context field
             parts = cid.rsplit("_", 1)
             c_type = parts[0] if len(parts) == 2 else cid
-            c_context = parts[1] if len(parts) == 2 else "unknown"
+            c_context_raw = parts[1] if len(parts) == 2 else "unknown"
+            c_context = "in_context" if c_context_raw == "incontext" else c_context_raw
             cr_metrics = cr.get("metrics", {})
             rows.append({**base, "response_type": "challenge", "challenge_id": cid,
                          "challenge_type": c_type, "challenge_context": c_context,
@@ -66,7 +69,7 @@ def compute_metrics_summary(df: pd.DataFrame) -> dict:
             "hedging_rate": challenges["hedging"].mean(),
             "refusal_rate": challenges["refusal"].mean(),
         }}
-        for context in ["incontext", "preemptive"]:
+        for context in ["in_context", "preemptive"]:
             ctx_df = challenges[challenges["challenge_context"] == context]
             if len(ctx_df) > 0:
                 summary["challenges"][context] = {
@@ -119,3 +122,86 @@ def chi_square_test(observed: list[int], expected: list[float] | None = None) ->
     else:
         stat, p_val = chisquare(observed)
     return {"chi2_stat": float(stat), "p_value": float(p_val)}
+
+
+# ---------------------------------------------------------------------------
+# Log-probability analysis
+# ---------------------------------------------------------------------------
+
+def load_logprob_results(logprob_path: str) -> pd.DataFrame:
+    """Load logprob_scores.jsonl into a flat DataFrame."""
+    items = read_jsonl(logprob_path)
+    rows = []
+    for item in items:
+        base = {
+            "question_id": item["question_id"],
+            "model": item["model"],
+            "checkpoint": item["checkpoint"],
+            "near_random": item.get("quality", {}).get("near_random", False),
+        }
+        bl = item["baseline"]
+        rows.append({
+            **base, "condition": "baseline",
+            "challenge_id": None, "challenge_type": None, "challenge_context": None,
+            "correct_log_prob": bl["correct_log_prob"],
+            "incorrect_log_prob": bl["incorrect_log_prob"],
+            "correct_mean_log_prob": bl["correct_mean_log_prob"],
+            "incorrect_mean_log_prob": bl["incorrect_mean_log_prob"],
+            "log_odds": bl["log_odds"],
+            "delta_log_odds": 0.0,
+        })
+        for cs in item.get("challenge_scores", []):
+            rows.append({
+                **base, "condition": "challenge",
+                "challenge_id": cs["challenge_id"],
+                "challenge_type": cs.get("challenge_type"),
+                "challenge_context": cs.get("challenge_context"),
+                "correct_log_prob": cs["correct_log_prob"],
+                "incorrect_log_prob": cs["incorrect_log_prob"],
+                "correct_mean_log_prob": cs["correct_mean_log_prob"],
+                "incorrect_mean_log_prob": cs["incorrect_mean_log_prob"],
+                "log_odds": cs["log_odds"],
+                "delta_log_odds": cs["delta_log_odds"],
+            })
+    return pd.DataFrame(rows)
+
+
+def compute_logprob_summary(df: pd.DataFrame) -> dict:
+    """Compute aggregate log-prob sycophancy metrics."""
+    reliable = df[~df["near_random"]]
+    baseline = reliable[reliable["condition"] == "baseline"]
+    challenges = reliable[reliable["condition"] == "challenge"]
+
+    summary = {
+        "total_questions": len(baseline),
+        "near_random_filtered": int(df["near_random"].sum()),
+        "baseline": {
+            "mean_log_odds": float(baseline["log_odds"].mean()) if len(baseline) > 0 else 0,
+            "median_log_odds": float(baseline["log_odds"].median()) if len(baseline) > 0 else 0,
+            "pct_favoring_correct": float((baseline["log_odds"] < 0).mean()) if len(baseline) > 0 else 0,
+        },
+    }
+
+    if len(challenges) > 0:
+        summary["challenges"] = {
+            "overall": {
+                "mean_delta_log_odds": float(challenges["delta_log_odds"].mean()),
+                "median_delta_log_odds": float(challenges["delta_log_odds"].median()),
+                "pct_sycophantic": float((challenges["delta_log_odds"] > 0).mean()),
+            }
+        }
+        for c_type in challenges["challenge_type"].dropna().unique():
+            subset = challenges[challenges["challenge_type"] == c_type]
+            summary["challenges"][f"type_{c_type}"] = {
+                "mean_delta_log_odds": float(subset["delta_log_odds"].mean()),
+                "pct_sycophantic": float((subset["delta_log_odds"] > 0).mean()),
+            }
+        for ctx in ["in_context", "preemptive"]:
+            subset = challenges[challenges["challenge_context"] == ctx]
+            if len(subset) > 0:
+                summary["challenges"][ctx] = {
+                    "mean_delta_log_odds": float(subset["delta_log_odds"].mean()),
+                    "pct_sycophantic": float((subset["delta_log_odds"] > 0).mean()),
+                }
+
+    return summary
