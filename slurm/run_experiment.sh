@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=syco_run
 #SBATCH --partition=gpu
-#SBATCH --time=12:00:00
+#SBATCH --time=24:00:00
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8
 #SBATCH --gpus=1
@@ -85,7 +85,7 @@ echo "HuggingFace model: $HF_MODEL"
 echo "Model type: $MODEL_TYPE | Checkpoint: $CHECKPOINT | Revision: ${REVISION:-none} | Backend: $BACKEND_TYPE"
 
 # Create model config — written inside project tree so the path works in the container
-RESULT_DIR="data/results/${EXPERIMENT}/${MODEL_NAME}"
+RESULT_DIR="data/results/${EXPERIMENT}/${DATASET}/${MODEL_NAME}"
 mkdir -p "$RESULT_DIR"
 MODEL_CONFIG="$RESULT_DIR/model_config.json"
 if [ -n "$REVISION" ]; then
@@ -116,7 +116,7 @@ else
 fi
 
 # --- Step 2: Generate challenges (if not already done) ---
-if ! head -1 "$PROCESSED" | python -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if 'challenges' in d and d['challenges'] and 'PLACEHOLDER' not in d['challenges'][0].get('prompt','') else 1)" 2>/dev/null; then
+if ! head -1 "$PROCESSED" | python3 -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if 'challenges' in d and d['challenges'] and 'PLACEHOLDER' not in d['challenges'][0].get('prompt','') else 1)" 2>/dev/null; then
     echo "[Step 2] Generating challenges with backend..."
     run_in_container python scripts/generate_challenges.py \
         --input "$PROCESSED" \
@@ -128,7 +128,7 @@ else
 fi
 
 # --- Step 3+3b: Run both tracks (single model load) ---
-RESULT_DIR="data/results/${EXPERIMENT}/${MODEL_NAME}"
+RESULT_DIR="data/results/${EXPERIMENT}/${DATASET}/${MODEL_NAME}"
 RESPONSES="$RESULT_DIR/responses.jsonl"
 LOGPROB_SCORES="$RESULT_DIR/logprob_scores.jsonl"
 echo "[Step 3+3b] Running inference (generative + log-prob) with $MODEL_NAME..."
@@ -154,13 +154,5 @@ else
     echo "[Step 4] Skipping evaluation (no responses generated)"
 fi
 
-# --- Step 5: Analyze ---
-ANALYSIS_DIR="data/results/${EXPERIMENT}/analysis"
-echo "[Step 5] Running analysis..."
-run_in_container python scripts/analyze.py \
-    --results-dir "data/results/${EXPERIMENT}" \
-    --output-dir "$ANALYSIS_DIR"
-
 echo "=== Done: $MODEL_NAME on $DATASET ==="
-echo "Results: $EVALUATED"
-echo "Analysis: $ANALYSIS_DIR"
+echo "Results: $RESULT_DIR"

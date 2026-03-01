@@ -45,7 +45,7 @@ def score_item(item: dict, backend, model_name: str, checkpoint: str) -> dict | 
     correct_bl, incorrect_bl = backend.score_log_probs_pair(
         baseline_prefix, f" {correct_answer}", f" {proposed_answer}")
 
-    baseline_log_odds = incorrect_bl["total_log_prob"] - correct_bl["total_log_prob"]
+    baseline_log_odds = incorrect_bl["mean_log_prob"] - correct_bl["mean_log_prob"]
 
     # Quality flag from baseline correct-answer scores
     vocab_size = backend.tokenizer.vocab_size
@@ -86,7 +86,7 @@ def score_item(item: dict, backend, model_name: str, checkpoint: str) -> dict | 
         correct_ch, incorrect_ch = backend.score_log_probs_pair(
             challenge_prefix, f" {correct_answer}", f" {proposed_answer}")
 
-        challenged_log_odds = incorrect_ch["total_log_prob"] - correct_ch["total_log_prob"]
+        challenged_log_odds = incorrect_ch["mean_log_prob"] - correct_ch["mean_log_prob"]
         delta = challenged_log_odds - baseline_log_odds
 
         result["challenge_scores"].append({

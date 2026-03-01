@@ -20,7 +20,7 @@ class VLLMBackend(ModelBackend):
                  max_new_tokens: int = 1024,
                  max_model_len: int = 4096,
                  tensor_parallel_size: int = 1,
-                 gpu_memory_utilization: float = 0.9,
+                 gpu_memory_utilization: float = 0.70,
                  trust_remote_code: bool = True,
                  torch_dtype: str = "bfloat16",
                  **kwargs):
@@ -42,6 +42,7 @@ class VLLMBackend(ModelBackend):
             gpu_memory_utilization=gpu_memory_utilization,
             trust_remote_code=trust_remote_code,
             dtype=torch_dtype,
+            enforce_eager=kwargs.pop("enforce_eager", False),
             **kwargs,
         )
         self.tokenizer = self.llm.get_tokenizer()

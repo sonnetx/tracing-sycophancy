@@ -14,11 +14,10 @@ import json
 import os
 
 from src.analysis.plots import (
-    plot_base_vs_posttrained,
     plot_challenge_type_breakdown,
-    plot_checkpoint_trajectories,
     plot_delta_log_odds_by_challenge_type,
-    plot_delta_log_odds_trajectory,
+    plot_pipeline_trajectories,
+    plot_pipeline_logprob_trajectories,
 )
 from src.analysis.stats import (
     binomial_ci,
@@ -29,12 +28,30 @@ from src.analysis.stats import (
     two_proportion_z_test,
 )
 
+# =====================================================================
+# Training pipeline definitions
+# =====================================================================
+# Each pipeline is an ordered list of (model_dir_name, display_label).
+# The base model is shared across pipelines.
+
+TRAINING_PIPELINES = {
+    "Think": [
+        ("olmo3-7b-base", "Base"),
+        ("olmo3-7b-think-sft", "SFT"),
+        ("olmo3-7b-think-dpo", "DPO"),
+        ("olmo3-7b-think", "Think"),
+    ],
+    "Instruct": [
+        ("olmo3-7b-base", "Base"),
+        ("olmo3-7b-instruct-sft", "SFT"),
+        ("olmo3-7b-instruct-dpo", "DPO"),
+        ("olmo3-7b-instruct", "Instruct"),
+    ],
+}
+
 
 def find_evaluated_files(results_dir: str) -> dict[str, str]:
-    """Find all evaluated.jsonl files in the results directory.
-
-    Returns: dict mapping model_name → file_path
-    """
+    """Find all evaluated.jsonl files in the results directory."""
     models = {}
     for entry in os.listdir(results_dir):
         evaluated_path = os.path.join(results_dir, entry, "evaluated.jsonl")
@@ -51,6 +68,28 @@ def find_logprob_files(results_dir: str) -> dict[str, str]:
         if os.path.isfile(lp_path):
             models[entry] = lp_path
     return models
+
+
+def build_pipeline_data(summaries: dict, pipelines: dict) -> dict:
+    """Build ordered pipeline data from summaries.
+
+    Returns: {pipeline_name: [(label, summary), ...]} for pipelines with >=2 models present.
+    Falls back to flat ordering if no pipeline matches.
+    """
+    pipeline_data = {}
+    for pipe_name, stages in pipelines.items():
+        ordered = []
+        for model_name, label in stages:
+            if model_name in summaries:
+                ordered.append((label, summaries[model_name]))
+        if len(ordered) >= 2:
+            pipeline_data[pipe_name] = ordered
+
+    # If no pipeline matched, fall back to flat ordering
+    if not pipeline_data and len(summaries) >= 2:
+        pipeline_data["Models"] = [(name, s) for name, s in summaries.items()]
+
+    return pipeline_data
 
 
 def main():
@@ -101,41 +140,33 @@ def main():
         json.dump(summaries, f, indent=2, default=str)
     print(f"\nSaved summaries to {summary_path}")
 
-    # Checkpoint trajectory plot (if multiple checkpoints)
-    if len(summaries) >= 2:
-        plot_checkpoint_trajectories(summaries, args.output_dir)
+    # Pipeline trajectory plots
+    pipeline_data = build_pipeline_data(summaries, TRAINING_PIPELINES)
+    if pipeline_data:
+        plot_pipeline_trajectories(pipeline_data, args.output_dir)
 
-    # Pairwise comparisons (base vs post-trained)
-    model_names = list(summaries.keys())
-    if len(model_names) == 2:
-        plot_base_vs_posttrained(
-            summaries[model_names[0]],
-            summaries[model_names[1]],
-            model_names[0],
-            model_names[1],
-            args.output_dir,
-        )
+    # Statistical tests — base vs each final model
+    base_name = "olmo3-7b-base"
+    final_models = ["olmo3-7b-think", "olmo3-7b-instruct"]
+    for final_name in final_models:
+        if base_name in summaries and final_name in summaries:
+            s_base = summaries[base_name]
+            s_final = summaries[final_name]
+            syc_b = s_base.get("sycophancy", {})
+            syc_f = s_final.get("sycophancy", {})
 
-    # Statistical tests between first two models
-    if len(model_names) >= 2:
-        s1 = summaries[model_names[0]]
-        s2 = summaries[model_names[1]]
+            if syc_b.get("regressive_total", 0) > 0 and syc_f.get("regressive_total", 0) > 0:
+                z_result = two_proportion_z_test(
+                    syc_b["regressive_count"], syc_b["regressive_total"],
+                    syc_f["regressive_count"], syc_f["regressive_total"],
+                )
+                print(f"\nZ-test: {base_name} vs {final_name} regressive sycophancy")
+                print(f"  z={z_result['z_stat']:.3f}, p={z_result['p_value']:.4f}")
 
-        syc1 = s1.get("sycophancy", {})
-        syc2 = s2.get("sycophancy", {})
-
-        if syc1.get("regressive_total", 0) > 0 and syc2.get("regressive_total", 0) > 0:
-            z_result = two_proportion_z_test(
-                syc1["regressive_count"], syc1["regressive_total"],
-                syc2["regressive_count"], syc2["regressive_total"],
-            )
-            print(f"\nZ-test: {model_names[0]} vs {model_names[1]} regressive sycophancy")
-            print(f"  z={z_result['z_stat']:.3f}, p={z_result['p_value']:.4f}")
-
-            ci1 = binomial_ci(syc1["regressive_count"], syc1["regressive_total"])
-            ci2 = binomial_ci(syc2["regressive_count"], syc2["regressive_total"])
-            print(f"  {model_names[0]}: {ci1['proportion']:.3f} (95% CI: {ci1['ci_low']:.3f}-{ci1['ci_high']:.3f})")
-            print(f"  {model_names[1]}: {ci2['proportion']:.3f} (95% CI: {ci2['ci_low']:.3f}-{ci2['ci_high']:.3f})")
+                ci_b = binomial_ci(syc_b["regressive_count"], syc_b["regressive_total"])
+                ci_f = binomial_ci(syc_f["regressive_count"], syc_f["regressive_total"])
+                print(f"  {base_name}: {ci_b['proportion']:.3f} (95% CI: {ci_b['ci_low']:.3f}-{ci_b['ci_high']:.3f})")
+                print(f"  {final_name}: {ci_f['proportion']:.3f} (95% CI: {ci_f['ci_low']:.3f}-{ci_f['ci_high']:.3f})")
 
     # =================================================================
     # Log-probability analysis
@@ -166,8 +197,10 @@ def main():
             json.dump(lp_summaries, f, indent=2, default=str)
         print(f"\nSaved log-prob summaries to {lp_summary_path}")
 
-        if len(lp_summaries) >= 2:
-            plot_delta_log_odds_trajectory(lp_summaries, args.output_dir)
+        # Pipeline log-prob trajectories
+        lp_pipeline_data = build_pipeline_data(lp_summaries, TRAINING_PIPELINES)
+        if lp_pipeline_data:
+            plot_pipeline_logprob_trajectories(lp_pipeline_data, args.output_dir)
 
     print(f"\nAnalysis complete. Plots saved to {args.output_dir}")
 
