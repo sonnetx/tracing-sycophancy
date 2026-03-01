@@ -1,37 +1,37 @@
 #!/bin/bash
 #SBATCH --job-name=syco_run
-#SBATCH --partition=roxanad
+#SBATCH --partition=gpu
 #SBATCH --time=12:00:00
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8
-#SBATCH --gres=gpu:1
+#SBATCH --gpus=1
+#SBATCH -C GPU_MEM:24GB
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 
 # Tracing Sycophancy - Run Experiment Pipeline
 #
-# Loads a HuggingFace model directly on GPU via transformers and runs
-# the full pipeline. No separate server needed.
+# Uses Apptainer container with vLLM for fast inference.
+# Run slurm/setup_container.sh first to set up the environment.
 #
 # Usage:
 #   sbatch slurm/run_experiment.sh
-#   sbatch --export=ALL,HF_MODEL=meta-llama/Llama-3.2-3B-Instruct,MODEL_NAME=llama-3.2-3b-instruct,MODEL_TYPE=chat,CHECKPOINT=instruct slurm/run_experiment.sh
-#   sbatch --export=ALL,HF_MODEL=allenai/OLMo-7B,MODEL_NAME=olmo-7b-base,MODEL_TYPE=base,CHECKPOINT=base slurm/run_experiment.sh
-
-# --- Modules ---
-ml python/3.12.1
-ml cuda/12.4.0
+#   sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-1025-7B,MODEL_NAME=olmo3-7b-base,MODEL_TYPE=base,CHECKPOINT=base slurm/run_experiment.sh
+#   sbatch --export=ALL,BACKEND_TYPE=vllm,HF_MODEL=allenai/Olmo-3-1025-7B,MODEL_NAME=olmo3-7b-base,MODEL_TYPE=base,CHECKPOINT=base slurm/run_experiment.sh
 
 # --- Paths ---
-VENV_DIR="${VENV_DIR:-/home/groups/roxanad/sonnet/tracing-sycophancy/sycophancy_env}"
 PROJECT_DIR="${PROJECT_DIR:-/home/groups/roxanad/sonnet/tracing-sycophancy}"
+SIF_STORE="/scratch/users/$USER/simg"
+SIF_IMAGE="${SIF_STORE}/vllm-v0.11.0.sif"
+VENV_DIR="/scratch/users/$USER/container_env"
 
-# --- Model (HuggingFace model ID) ---
-HF_MODEL="${HF_MODEL:-meta-llama/Llama-3.2-3B}"
-MODEL_NAME="${MODEL_NAME:-llama-3.2-3b-base}"
+# --- Model ---
+HF_MODEL="${HF_MODEL:-allenai/Olmo-3-1025-7B}"
+MODEL_NAME="${MODEL_NAME:-olmo3-7b-base}"
 MODEL_TYPE="${MODEL_TYPE:-base}"
 CHECKPOINT="${CHECKPOINT:-base}"
-REVISION="${REVISION:-}"  # HF revision (e.g. step1000-tokens4B for OLMo checkpoints)
+REVISION="${REVISION:-}"
+BACKEND_TYPE="${BACKEND_TYPE:-vllm}"
 
 # --- Dataset ---
 DATASET="${DATASET:-computational}"
@@ -41,19 +41,15 @@ EXPERIMENT="${EXPERIMENT:-exp1}"
 
 # --- Judge & Challenge Generation ---
 JUDGE_BACKEND="${JUDGE_BACKEND:-config/models/gpt4o_judge.json}"
-CHALLENGE_BACKEND="${CHALLENGE_BACKEND:-$JUDGE_BACKEND}"  # reuse judge model for challenge gen
+CHALLENGE_BACKEND="${CHALLENGE_BACKEND:-$JUDGE_BACKEND}"
 
-# --- Activate environment ---
-source "$VENV_DIR/bin/activate"
-export PYTHONPATH="$PROJECT_DIR:$PYTHONPATH"
-
-# Cache dirs — keep everything on scratch, not home
+# --- Environment ---
 export TMPDIR="/scratch/users/$USER/tmp"
 export HF_HOME="/scratch/users/$USER/huggingface"
 export HF_DATASETS_CACHE="/scratch/users/$USER/huggingface/datasets"
 export TORCH_HOME="/scratch/users/$USER/torch"
 export MODEL_DIR="/scratch/users/$USER/models"
-mkdir -p "$TMPDIR" "$HF_HOME" "$HF_DATASETS_CACHE" "$TORCH_HOME" "$MODEL_DIR"
+mkdir -p "$TMPDIR" "$HF_HOME" "$HF_DATASETS_CACHE" "$TORCH_HOME" "$MODEL_DIR" logs
 
 # Source API keys
 if [ -f ~/.secrets ]; then
@@ -61,24 +57,46 @@ if [ -f ~/.secrets ]; then
 fi
 
 cd "$PROJECT_DIR"
-mkdir -p logs
+
+TOOL=$(command -v apptainer || command -v singularity)
+
+# Helper: run a command inside the container
+run_in_container() {
+    "$TOOL" exec --nv \
+        --containall \
+        -B "$PROJECT_DIR:/workspace" \
+        -B "/scratch/users/$USER:/scratch_user" \
+        -B "/scratch/users/$USER/tmp:/tmp" \
+        --home /scratch_user \
+        --env "PYTHONNOUSERSITE=1" \
+        --env "PYTHONPATH=/workspace" \
+        --env "HF_HOME=/scratch_user/huggingface" \
+        --env "HF_DATASETS_CACHE=/scratch_user/huggingface/datasets" \
+        --env "HF_TOKEN=${HF_TOKEN:-}" \
+        --env "OPENAI_API_KEY=${OPENAI_API_KEY:-}" \
+        --env "ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}" \
+        --pwd /workspace \
+        "$SIF_IMAGE" \
+        bash -c "source /scratch_user/container_env/bin/activate && export PATH=\$VIRTUAL_ENV/bin:\$PATH && export PYTHONPATH=/workspace && $*"
+}
 
 echo "=== Experiment: $EXPERIMENT | Dataset: $DATASET | Model: $MODEL_NAME ==="
 echo "HuggingFace model: $HF_MODEL"
-echo "Model type: $MODEL_TYPE | Checkpoint: $CHECKPOINT | Revision: ${REVISION:-none}"
+echo "Model type: $MODEL_TYPE | Checkpoint: $CHECKPOINT | Revision: ${REVISION:-none} | Backend: $BACKEND_TYPE"
 
-# Create model config for the transformers backend
-MODEL_CONFIG=$(mktemp /tmp/hf_config_XXXX.json)
+# Create model config — written inside project tree so the path works in the container
+RESULT_DIR="data/results/${EXPERIMENT}/${MODEL_NAME}"
+mkdir -p "$RESULT_DIR"
+MODEL_CONFIG="$RESULT_DIR/model_config.json"
 if [ -n "$REVISION" ]; then
     cat > "$MODEL_CONFIG" <<CONF
-{"backend": "transformers", "model": "$HF_MODEL", "revision": "$REVISION", "torch_dtype": "bfloat16"}
+{"backend": "$BACKEND_TYPE", "model": "$HF_MODEL", "revision": "$REVISION", "torch_dtype": "bfloat16"}
 CONF
 else
     cat > "$MODEL_CONFIG" <<CONF
-{"backend": "transformers", "model": "$HF_MODEL", "torch_dtype": "bfloat16"}
+{"backend": "$BACKEND_TYPE", "model": "$HF_MODEL", "torch_dtype": "bfloat16"}
 CONF
 fi
-trap "rm -f $MODEL_CONFIG" EXIT
 
 # =====================================================================
 # Pipeline
@@ -88,7 +106,7 @@ trap "rm -f $MODEL_CONFIG" EXIT
 PROCESSED="data/processed/${DATASET}.jsonl"
 if [ ! -f "$PROCESSED" ]; then
     echo "[Step 1] Preprocessing $DATASET..."
-    python scripts/preprocess.py \
+    run_in_container python scripts/preprocess.py \
         --dataset "$DATASET" \
         --raw-path "$RAW_PATH" \
         --output "$PROCESSED" \
@@ -100,7 +118,7 @@ fi
 # --- Step 2: Generate challenges (if not already done) ---
 if ! head -1 "$PROCESSED" | python -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if 'challenges' in d and d['challenges'] and 'PLACEHOLDER' not in d['challenges'][0].get('prompt','') else 1)" 2>/dev/null; then
     echo "[Step 2] Generating challenges with backend..."
-    python scripts/generate_challenges.py \
+    run_in_container python scripts/generate_challenges.py \
         --input "$PROCESSED" \
         --output "$PROCESSED" \
         --backend-config "$CHALLENGE_BACKEND" \
@@ -114,7 +132,7 @@ RESULT_DIR="data/results/${EXPERIMENT}/${MODEL_NAME}"
 RESPONSES="$RESULT_DIR/responses.jsonl"
 LOGPROB_SCORES="$RESULT_DIR/logprob_scores.jsonl"
 echo "[Step 3+3b] Running inference (generative + log-prob) with $MODEL_NAME..."
-python scripts/run_inference.py \
+run_in_container python scripts/run_inference.py \
     --input "$PROCESSED" \
     --output-dir "$RESULT_DIR" \
     --backend-config "$MODEL_CONFIG" \
@@ -127,7 +145,7 @@ python scripts/run_inference.py \
 EVALUATED="$RESULT_DIR/evaluated.jsonl"
 if [ -f "$RESPONSES" ]; then
     echo "[Step 4] Evaluating responses..."
-    python scripts/evaluate.py \
+    run_in_container python scripts/evaluate.py \
         --input "$RESPONSES" \
         --questions "$PROCESSED" \
         --output "$EVALUATED" \
@@ -139,7 +157,7 @@ fi
 # --- Step 5: Analyze ---
 ANALYSIS_DIR="data/results/${EXPERIMENT}/analysis"
 echo "[Step 5] Running analysis..."
-python scripts/analyze.py \
+run_in_container python scripts/analyze.py \
     --results-dir "data/results/${EXPERIMENT}" \
     --output-dir "$ANALYSIS_DIR"
 

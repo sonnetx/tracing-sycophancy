@@ -48,9 +48,13 @@ def main():
     # Load model ONCE
     backend = load_backend(args.backend_config)
 
-    # Base models generate garbage — cap tokens to avoid wasting time
+    # Cap generation tokens by model type:
+    # - Base models generate garbage → 128 tokens is plenty
+    # - Chat models (especially Think/CoT) can hit 1024 → 512 is enough for evaluation
     if args.model_type == "base":
         backend.max_new_tokens = 128
+    else:
+        backend.max_new_tokens = 512
 
     items = read_jsonl(args.input)
 

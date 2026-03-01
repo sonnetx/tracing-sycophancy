@@ -113,5 +113,8 @@ def load_backend(config_path: str | Path):
     elif backend_type == "transformers":
         from src.backends.hf_transformers import TransformersBackend
         return TransformersBackend(**config)
+    elif backend_type == "vllm":
+        from src.backends.vllm_backend import VLLMBackend
+        return VLLMBackend(**config)
     else:
         raise ValueError(f"Unknown backend type: {backend_type}")

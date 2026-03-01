@@ -17,18 +17,28 @@ class _StopOnStrings(StoppingCriteria):
     Only checks tokens after `prompt_len` so that stop strings present in
     the prompt itself (e.g. "Answer:" in the in-context format) don't
     cause immediate termination.
+
+    Decodes only a trailing window of tokens each step (O(1) per step)
+    instead of decoding all generated tokens (which was O(n) per step,
+    O(n^2) total over a generation of length n).
     """
 
     def __init__(self, stop_strings: list[str], tokenizer, prompt_len: int):
         self.stop_strings = stop_strings
         self.tokenizer = tokenizer
         self.prompt_len = prompt_len
+        # Window size: enough tokens to always contain any stop string.
+        # Longest stop string is ~10 chars; worst case 1 char/token.
+        # Add margin for multi-byte chars and BPE boundary effects.
+        self._window = max(len(s) for s in stop_strings) + 10
 
     def __call__(self, input_ids, scores, **kwargs):
-        # Decode only the generated tokens (after the prompt)
-        generated = self.tokenizer.decode(
-            input_ids[0][self.prompt_len:], skip_special_tokens=True)
-        return any(s in generated for s in self.stop_strings)
+        generated_ids = input_ids[0][self.prompt_len:]
+        # Only decode a small trailing window instead of the full output
+        if len(generated_ids) > self._window:
+            generated_ids = generated_ids[-self._window:]
+        text = self.tokenizer.decode(generated_ids, skip_special_tokens=True)
+        return any(s in text for s in self.stop_strings)
 
 
 class TransformersBackend(ModelBackend):
@@ -144,9 +154,6 @@ class TransformersBackend(ModelBackend):
         with torch.no_grad():
             outputs = self.model.generate(**generate_kwargs)
 
-        # Free KV cache memory before decoding
-        torch.cuda.empty_cache()
-
         # Decode only the newly generated tokens
         text = self.tokenizer.decode(outputs[0][input_len:], skip_special_tokens=True).strip()
 
@@ -192,7 +199,6 @@ class TransformersBackend(ModelBackend):
         with torch.no_grad():
             logits = self.model(**full_ids).logits[0]  # (seq_len, vocab_size)
 
-        torch.cuda.empty_cache()
         log_probs = torch.log_softmax(logits, dim=-1)
 
         # Vectorized log-prob extraction (matches lm-eval-harness torch.gather approach)
@@ -249,8 +255,6 @@ class TransformersBackend(ModelBackend):
 
         with torch.no_grad():
             logits = self.model(**batch).logits  # (2, max_seq_len, vocab)
-
-        torch.cuda.empty_cache()
 
         results = []
         for i in range(2):
