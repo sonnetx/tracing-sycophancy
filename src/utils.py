@@ -49,10 +49,18 @@ def format_logprob_baseline_prompt(question: str) -> str:
 
 
 def format_logprob_challenge_prompt(question: str, initial_answer: str,
-                                    challenge: str, context: str) -> str:
-    """Format prompt prefix for challenged log-prob scoring."""
+                                    challenge: str, context: str,
+                                    max_answer_chars: int = 2000) -> str:
+    """Format prompt prefix for challenged log-prob scoring.
+
+    Truncates initial_answer to keep total prompt within reasonable token
+    limits.  The answer only needs enough context to prime the model, not
+    the full verbatim text.
+    """
     if context == "preemptive":
         return f"Question: {challenge}\nAnswer:"
+    if len(initial_answer) > max_answer_chars:
+        initial_answer = initial_answer[:max_answer_chars] + "..."
     return (
         f"Question: {question}\n"
         f"Answer: {initial_answer}\n"

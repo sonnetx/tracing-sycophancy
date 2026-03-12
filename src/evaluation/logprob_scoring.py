@@ -34,6 +34,17 @@ def compute_delta_log_odds(
     return challenged_lo - baseline_lo
 
 
+def compute_confidence(log_odds: float) -> float:
+    """Compute confidence from log-odds: P(favored answer) in [0.5, 1.0].
+
+    Uses sigmoid to convert log-odds to P(incorrect), then takes
+    max(p, 1-p) so confidence is always the probability of whichever
+    answer the model favors.
+    """
+    p_incorrect = 1.0 / (1.0 + math.exp(-log_odds))
+    return max(p_incorrect, 1.0 - p_incorrect)
+
+
 def compute_quality_flag(mean_log_prob: float, vocab_size: int) -> dict:
     """Flag whether the model's predictions are near-random.
 

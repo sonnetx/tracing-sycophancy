@@ -7,7 +7,7 @@
 # Prerequisites: run slurm/setup_container.sh first
 #
 # Usage:
-#   bash slurm/run_all_models.sh                    # all OLMo 3 models
+#   bash slurm/run_all_models.sh                    # all models
 #   bash slurm/run_all_models.sh --dataset medical_advice   # single dataset
 
 set -euo pipefail
@@ -15,6 +15,7 @@ set -euo pipefail
 # --- Parse flags ---
 EXPERIMENT="exp1"
 DATASETS=("medical_advice")
+PARTITION="${PARTITION:-roxanad}"
 for arg in "$@"; do
     case "$arg" in
         --dataset)  NEXT_IS_DATASET=true ;;
@@ -32,7 +33,7 @@ PROJECT_DIR="${PROJECT_DIR:-/home/groups/roxanad/sonnet/tracing-sycophancy}"
 SIF_STORE="/scratch/users/$USER/simg"
 SIF_IMAGE="${SIF_STORE}/vllm-v0.11.0.sif"
 
-# --- All OLMo 3 models: name|hf_model_id|model_type|checkpoint ---
+# --- All models: name|hf_model_id|model_type|checkpoint ---
 MODELS=(
     # OLMo 3 7B — base
     "olmo3-7b-base|allenai/Olmo-3-1025-7B|base|base"
@@ -44,6 +45,12 @@ MODELS=(
     "olmo3-7b-instruct-sft|allenai/Olmo-3-7B-Instruct-SFT|chat|sft"
     "olmo3-7b-instruct-dpo|allenai/Olmo-3-7B-Instruct-DPO|chat|dpo"
     "olmo3-7b-instruct|allenai/Olmo-3-7B-Instruct|chat|instruct"
+    # Llama 3.1 8B — base + instruct
+    "llama31-8b-base|meta-llama/Llama-3.1-8B|base|base"
+    "llama31-8b-instruct|meta-llama/Llama-3.1-8B-Instruct|chat|instruct"
+    # Qwen 3.5 9B — base + instruct (requires vLLM upgrade for transformers>=5.2)
+    # "qwen35-9b-base|Qwen/Qwen3.5-9B-Base|base|base"
+    # "qwen35-9b-instruct|Qwen/Qwen3.5-9B|chat|instruct"
 )
 
 cd "$PROJECT_DIR"
@@ -116,12 +123,12 @@ for DATASET in "${DATASETS[@]}"; do
 
         JOB_ID=$(sbatch --parsable \
             --job-name="syco_${MODEL_NAME}" \
-            --partition=gpu \
+            --partition="$PARTITION" \
             --time=24:00:00 \
             --mem=64G \
             --cpus-per-task=4 \
             --gpus=1 \
-            -C GPU_MEM:24GB \
+            -C GPU_MEM:80GB \
             --output="logs/${MODEL_NAME}_%j.out" \
             --error="logs/${MODEL_NAME}_%j.err" \
             --export=ALL,HF_MODEL="$HF_MODEL",MODEL_NAME="$MODEL_NAME",MODEL_TYPE="$MODEL_TYPE",CHECKPOINT="$CHECKPOINT",EXPERIMENT="$EXPERIMENT",DATASET="$DATASET" \

@@ -8,7 +8,7 @@ Our primary model family is OLMo 3 (AI2), which exposes base, SFT, DPO, instruct
 
 ### Models
 
-We use the OLMo 3 7B family (AI2), which provides checkpoints at each stage of two parallel post-training pipelines on the same base architecture:
+Our primary model family is OLMo 3 7B (AI2), which provides checkpoints at each stage of two parallel post-training pipelines on the same base architecture:
 
 | Checkpoint | HuggingFace ID | Type | Description |
 |---|---|---|---|
@@ -22,9 +22,16 @@ We use the OLMo 3 7B family (AI2), which provides checkpoints at each stage of t
 | Instruct-DPO | `allenai/Olmo-3-7B-Instruct-DPO` | chat | DPO aligned (instruct) |
 | Instruct | `allenai/Olmo-3-7B-Instruct` | chat | Final instruct model (SFT + DPO + RLVR) |
 
-This gives 7 checkpoints total: 1 shared base model and two post-training trajectories of 3 stages each (SFT → DPO → final), enabling controlled comparison of how different alignment strategies affect sycophantic behavior.
+This gives 7 OLMo checkpoints: 1 shared base model and two post-training trajectories of 3 stages each (SFT → DPO → final), enabling controlled comparison of how different alignment strategies affect sycophantic behavior.
 
-All inference runs on GPU via HuggingFace Transformers. Model configs are generated dynamically at runtime — no separate inference server is needed.
+For cross-family generalization, we also evaluate base + instruct pairs from Llama 3.1 and Qwen 3.5:
+
+| Model | HuggingFace ID | Type | Description |
+|---|---|---|---|
+| Llama 3.1 8B | `meta-llama/Llama-3.1-8B` | base | Pre-trained base model |
+| Llama 3.1 8B Instruct | `meta-llama/Llama-3.1-8B-Instruct` | chat | Instruction-tuned |
+
+All inference runs on GPU via HuggingFace Transformers or vLLM. Model configs are generated dynamically at runtime — no separate inference server is needed.
 
 ### Datasets
 
@@ -184,6 +191,12 @@ sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Instruct-SFT,MODEL_NAME=olmo3-7b-
 sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Instruct-DPO,MODEL_NAME=olmo3-7b-instruct-dpo,MODEL_TYPE=chat,CHECKPOINT=dpo \
     slurm/run_experiment.sh
 sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Instruct,MODEL_NAME=olmo3-7b-instruct,MODEL_TYPE=chat,CHECKPOINT=instruct \
+    slurm/run_experiment.sh
+
+# Llama 3.1 8B
+sbatch --export=ALL,HF_MODEL=meta-llama/Llama-3.1-8B,MODEL_NAME=llama31-8b-base,MODEL_TYPE=base,CHECKPOINT=base \
+    slurm/run_experiment.sh
+sbatch --export=ALL,HF_MODEL=meta-llama/Llama-3.1-8B-Instruct,MODEL_NAME=llama31-8b-instruct,MODEL_TYPE=chat,CHECKPOINT=instruct \
     slurm/run_experiment.sh
 ```
 

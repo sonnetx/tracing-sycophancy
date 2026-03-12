@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=test_model
-#SBATCH --partition=gpu
+#SBATCH --partition=roxanad
 #SBATCH --time=02:00:00
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=4
 #SBATCH --gpus=1
-#SBATCH -C GPU_MEM:24GB
+#SBATCH -C GPU_MEM:80GB
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 

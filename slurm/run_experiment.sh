@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=syco_run
-#SBATCH --partition=gpu
+#SBATCH --partition=roxanad
 #SBATCH --time=24:00:00
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8
 #SBATCH --gpus=1
-#SBATCH -C GPU_MEM:24GB
+#SBATCH -C GPU_MEM:80GB
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 
@@ -32,6 +32,9 @@ MODEL_TYPE="${MODEL_TYPE:-base}"
 CHECKPOINT="${CHECKPOINT:-base}"
 REVISION="${REVISION:-}"
 BACKEND_TYPE="${BACKEND_TYPE:-vllm}"
+MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
+GPU_MEM_UTIL="${GPU_MEM_UTIL:-0.80}"
+BATCH_SIZE="${BATCH_SIZE:-16}"
 
 # --- Dataset ---
 DATASET="${DATASET:-computational}"
@@ -90,11 +93,11 @@ mkdir -p "$RESULT_DIR"
 MODEL_CONFIG="$RESULT_DIR/model_config.json"
 if [ -n "$REVISION" ]; then
     cat > "$MODEL_CONFIG" <<CONF
-{"backend": "$BACKEND_TYPE", "model": "$HF_MODEL", "revision": "$REVISION", "torch_dtype": "bfloat16"}
+{"backend": "$BACKEND_TYPE", "model": "$HF_MODEL", "revision": "$REVISION", "torch_dtype": "bfloat16", "max_model_len": $MAX_MODEL_LEN, "gpu_memory_utilization": $GPU_MEM_UTIL}
 CONF
 else
     cat > "$MODEL_CONFIG" <<CONF
-{"backend": "$BACKEND_TYPE", "model": "$HF_MODEL", "torch_dtype": "bfloat16"}
+{"backend": "$BACKEND_TYPE", "model": "$HF_MODEL", "torch_dtype": "bfloat16", "max_model_len": $MAX_MODEL_LEN, "gpu_memory_utilization": $GPU_MEM_UTIL}
 CONF
 fi
 
@@ -139,19 +142,22 @@ run_in_container python scripts/run_inference.py \
     --model-type "$MODEL_TYPE" \
     --model-name "$MODEL_NAME" \
     --checkpoint "$CHECKPOINT" \
+    --batch-size "$BATCH_SIZE" \
     --resume
 
 # --- Step 4: Evaluate ---
 EVALUATED="$RESULT_DIR/evaluated.jsonl"
-if [ -f "$RESPONSES" ]; then
+if [ ! -f "$RESPONSES" ]; then
+    echo "[Step 4] Skipping evaluation (no responses generated)"
+elif [ -f "$EVALUATED" ] && [ "$(wc -l < "$RESPONSES")" -eq "$(wc -l < "$EVALUATED")" ]; then
+    echo "[Step 4] Skipping evaluation (evaluated.jsonl already complete: $(wc -l < "$EVALUATED") items)"
+else
     echo "[Step 4] Evaluating responses..."
     run_in_container python scripts/evaluate.py \
         --input "$RESPONSES" \
         --questions "$PROCESSED" \
         --output "$EVALUATED" \
         --judge-config "$JUDGE_BACKEND"
-else
-    echo "[Step 4] Skipping evaluation (no responses generated)"
 fi
 
 echo "=== Done: $MODEL_NAME on $DATASET ==="

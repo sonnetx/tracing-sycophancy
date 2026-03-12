@@ -17,6 +17,7 @@ set -euo pipefail
 BACKEND_TYPE="vllm"
 QUICK=false
 N_ITEMS=20
+PARTITION="${PARTITION:-roxanad}"
 for arg in "$@"; do
     case "$arg" in
         --transformers) BACKEND_TYPE="transformers" ;;
@@ -40,21 +41,29 @@ DATASET="medical_advice"
 EXPERIMENT="test_all_models"
 JUDGE_BACKEND="config/models/gpt4o_judge.json"
 
-# --- All OLMo 3 models: name|hf_model_id|model_type|checkpoint ---
+# --- All models: name|hf_model_id|model_type|checkpoint ---
 ALL_MODELS=(
+    # OLMo 3 7B — base
     "olmo3-7b-base|allenai/Olmo-3-1025-7B|base|base"
+    # OLMo 3 7B — Think pipeline
     "olmo3-7b-think-sft|allenai/Olmo-3-7B-Think-SFT|chat|sft"
     "olmo3-7b-think-dpo|allenai/Olmo-3-7B-Think-DPO|chat|dpo"
     "olmo3-7b-think|allenai/Olmo-3-7B-Think|chat|think"
+    # OLMo 3 7B — Instruct pipeline
     "olmo3-7b-instruct-sft|allenai/Olmo-3-7B-Instruct-SFT|chat|sft"
     "olmo3-7b-instruct-dpo|allenai/Olmo-3-7B-Instruct-DPO|chat|dpo"
     "olmo3-7b-instruct|allenai/Olmo-3-7B-Instruct|chat|instruct"
+    # Llama 3.1 8B
+    "llama31-8b-base|meta-llama/Llama-3.1-8B|base|base"
+    "llama31-8b-instruct|meta-llama/Llama-3.1-8B-Instruct|chat|instruct"
 )
 
-# --quick: just base + final instruct (enough to see if sycophancy differs)
+# --quick: one base + one instruct per family
 QUICK_MODELS=(
     "olmo3-7b-base|allenai/Olmo-3-1025-7B|base|base"
     "olmo3-7b-instruct|allenai/Olmo-3-7B-Instruct|chat|instruct"
+    "llama31-8b-base|meta-llama/Llama-3.1-8B|base|base"
+    "llama31-8b-instruct|meta-llama/Llama-3.1-8B-Instruct|chat|instruct"
 )
 
 if [ "$QUICK" = true ]; then
@@ -148,12 +157,12 @@ for MODEL_ENTRY in "${MODELS[@]}"; do
 
     JOB_ID=$(sbatch --parsable \
         --job-name="test_${MODEL_NAME}" \
-        --partition=gpu \
+        --partition="$PARTITION" \
         --time=02:00:00 \
         --mem=64G \
         --cpus-per-task=4 \
         --gpus=1 \
-        -C GPU_MEM:24GB \
+        -C GPU_MEM:80GB \
         --output="logs/test_${MODEL_NAME}_%j.out" \
         --error="logs/test_${MODEL_NAME}_%j.err" \
         --export=ALL,HF_MODEL="$HF_MODEL",MODEL_NAME="$MODEL_NAME",MODEL_TYPE="$MODEL_TYPE",CHECKPOINT="$CHECKPOINT",EXPERIMENT="$EXPERIMENT",TEST_INPUT="$TEST_INPUT",JUDGE_BACKEND="$JUDGE_BACKEND",BACKEND_TYPE="$BACKEND_TYPE" \

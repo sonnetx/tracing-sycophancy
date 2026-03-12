@@ -18,7 +18,7 @@ class VLLMBackend(ModelBackend):
 
     def __init__(self, model: str, revision: str | None = None,
                  max_new_tokens: int = 1024,
-                 max_model_len: int = 4096,
+                 max_model_len: int = 16384,
                  tensor_parallel_size: int = 1,
                  gpu_memory_utilization: float = 0.70,
                  trust_remote_code: bool = True,
@@ -46,6 +46,7 @@ class VLLMBackend(ModelBackend):
             **kwargs,
         )
         self.tokenizer = self.llm.get_tokenizer()
+        self.max_model_len = max_model_len
 
         # Set pad token if not set
         if self.tokenizer.pad_token is None:
@@ -53,28 +54,39 @@ class VLLMBackend(ModelBackend):
 
         print(f"[VLLMBackend] {label} loaded")
 
+    def _apply_chat_template(self, messages: list[dict]) -> str:
+        """Convert chat messages to a prompt string."""
+        if hasattr(self.tokenizer, "chat_template") and self.tokenizer.chat_template:
+            return self.tokenizer.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True)
+        parts = []
+        for msg in messages:
+            role, content = msg["role"], msg["content"]
+            if role == "user":
+                parts.append(f"User: {content}")
+            elif role == "assistant":
+                parts.append(f"Assistant: {content}")
+            elif role == "system":
+                parts.append(f"System: {content}")
+        parts.append("Assistant:")
+        return "\n".join(parts)
+
     def chat(self, messages: list[dict], **kwargs) -> str:
         max_tokens = kwargs.pop("max_new_tokens", self.max_new_tokens)
-
-        if hasattr(self.tokenizer, "chat_template") and self.tokenizer.chat_template:
-            prompt = self.tokenizer.apply_chat_template(
-                messages, tokenize=False, add_generation_prompt=True)
-        else:
-            parts = []
-            for msg in messages:
-                role, content = msg["role"], msg["content"]
-                if role == "user":
-                    parts.append(f"User: {content}")
-                elif role == "assistant":
-                    parts.append(f"Assistant: {content}")
-                elif role == "system":
-                    parts.append(f"System: {content}")
-            parts.append("Assistant:")
-            prompt = "\n".join(parts)
-
+        prompt = self._apply_chat_template(messages)
         params = SamplingParams(max_tokens=max_tokens, temperature=0)
         outputs = self.llm.generate([prompt], params)
         return outputs[0].outputs[0].text.strip()
+
+    def chat_batch(self, messages_list: list[list[dict]], **kwargs) -> list[str]:
+        """Generate responses for multiple conversations in a single batched call."""
+        if not messages_list:
+            return []
+        max_tokens = kwargs.pop("max_new_tokens", self.max_new_tokens)
+        prompts = [self._apply_chat_template(msgs) for msgs in messages_list]
+        params = SamplingParams(max_tokens=max_tokens, temperature=0)
+        outputs = self.llm.generate(prompts, params)
+        return [out.outputs[0].text.strip() for out in outputs]
 
     def complete(self, prompt: str, **kwargs) -> str:
         max_tokens = kwargs.pop("max_new_tokens", self.max_new_tokens)
@@ -85,6 +97,19 @@ class VLLMBackend(ModelBackend):
         )
         outputs = self.llm.generate([prompt], params)
         return outputs[0].outputs[0].text.strip()
+
+    def complete_batch(self, prompts: list[str], **kwargs) -> list[str]:
+        """Generate completions for multiple prompts in a single batched call."""
+        if not prompts:
+            return []
+        max_tokens = kwargs.pop("max_new_tokens", self.max_new_tokens)
+        params = SamplingParams(
+            max_tokens=max_tokens, temperature=0,
+            stop=self.COMPLETION_STOP_STRINGS,
+            repetition_penalty=1.1,
+        )
+        outputs = self.llm.generate(prompts, params)
+        return [out.outputs[0].text.strip() for out in outputs]
 
     def _bpe_boundary_fix(self, prompt_prefix: str, answer_text: str):
         """Move trailing spaces from prefix to answer to avoid BPE merge issues."""
@@ -154,6 +179,60 @@ class VLLMBackend(ModelBackend):
 
         return (self._extract_answer_logprobs(outputs[0], prefix_len),
                 self._extract_answer_logprobs(outputs[1], prefix_len))
+
+    def score_log_probs_pair_batch(
+        self, items: list[tuple[str, str, str]]
+    ) -> list[tuple[dict, dict]]:
+        """Score multiple (prefix, answer_a, answer_b) triples in one batched call."""
+        if not items:
+            return []
+
+        all_texts = []
+        prefix_lens = []
+        skipped = set()
+        for item_idx, (prefix, answer_a, answer_b) in enumerate(items):
+            n_spaces = len(prefix) - len(prefix.rstrip())
+            if n_spaces > 0:
+                trailing = prefix[-n_spaces:]
+                prefix = prefix[:-n_spaces]
+                answer_a = trailing + answer_a
+                answer_b = trailing + answer_b
+
+            text_a = prefix + answer_a
+            text_b = prefix + answer_b
+            max_len = max(
+                len(self.tokenizer(text_a)["input_ids"]),
+                len(self.tokenizer(text_b)["input_ids"]),
+            )
+
+            if max_len > self.max_model_len:
+                skipped.add(item_idx)
+                continue
+
+            plen = len(self.tokenizer(prefix)["input_ids"])
+            all_texts.extend([text_a, text_b])
+            prefix_lens.extend([plen, plen])
+
+        if skipped:
+            print(f"[VLLMBackend] Skipped {len(skipped)}/{len(items)} items "
+                  f"exceeding max_model_len={self.max_model_len}")
+
+        params = SamplingParams(max_tokens=1, prompt_logprobs=0, temperature=0)
+        outputs = self.llm.generate(all_texts, params) if all_texts else []
+
+        empty = {"total_log_prob": 0.0, "mean_log_prob": 0.0, "num_tokens": 0}
+        results = []
+        out_idx = 0
+        for item_idx in range(len(items)):
+            if item_idx in skipped:
+                results.append((dict(empty), dict(empty)))
+            else:
+                results.append((
+                    self._extract_answer_logprobs(outputs[out_idx], prefix_lens[out_idx]),
+                    self._extract_answer_logprobs(outputs[out_idx + 1], prefix_lens[out_idx + 1]),
+                ))
+                out_idx += 2
+        return results
 
     @property
     def supports_chat(self) -> bool:

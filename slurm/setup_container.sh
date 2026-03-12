@@ -1,8 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=syco_setup
-#SBATCH --partition=gpu
-#SBATCH --gpus=1
-#SBATCH -C GPU_MEM:24GB
+#SBATCH --partition=normal
 #SBATCH --time=01:00:00
 #SBATCH --mem=32G
 #SBATCH --cpus-per-task=4
@@ -46,7 +44,7 @@ fi
 # --- Create venv inside container with project deps ---
 echo "INFO: Setting up virtual environment inside container..."
 
-"$TOOL" exec --nv \
+"$TOOL" exec \
     --containall \
     -B "$PROJECT_DIR:/workspace" \
     -B "/scratch/users/$USER:/scratch_user" \
@@ -100,6 +98,10 @@ echo "INFO: Setting up virtual environment inside container..."
         'tqdm>=4.60.0' \
         'Flask>=3.0.0'
 
+    # Pin transformers to version compatible with vLLM 0.11.0
+    # (Qwen 3.5 requires transformers>=5.2 which is incompatible with vLLM 0.11.0)
+    pip3 install --no-cache-dir 'transformers==4.57.1'
+
     # Verify
     echo ''
     echo '=========================================='
@@ -109,8 +111,6 @@ echo "INFO: Setting up virtual environment inside container..."
 import torch
 print(f'PyTorch: {torch.__version__}')
 print(f'CUDA available: {torch.cuda.is_available()}')
-if torch.cuda.is_available():
-    print(f'GPU: {torch.cuda.get_device_name(0)}')
 
 import vllm
 print(f'vLLM: {vllm.__version__}')

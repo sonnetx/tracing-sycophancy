@@ -38,6 +38,24 @@ class ModelBackend(ABC):
         return (self.score_log_probs(prompt_prefix, answer_a),
                 self.score_log_probs(prompt_prefix, answer_b))
 
+    # ------------------------------------------------------------------
+    # Batch methods (default: sequential fallback; override for speed)
+    # ------------------------------------------------------------------
+
+    def chat_batch(self, messages_list: list[list[dict]], **kwargs) -> list[str]:
+        """Generate responses for multiple conversations. Override for batching."""
+        return [self.chat(msgs, **kwargs) for msgs in messages_list]
+
+    def complete_batch(self, prompts: list[str], **kwargs) -> list[str]:
+        """Generate completions for multiple prompts. Override for batching."""
+        return [self.complete(p, **kwargs) for p in prompts]
+
+    def score_log_probs_pair_batch(
+        self, items: list[tuple[str, str, str]]
+    ) -> list[tuple[dict, dict]]:
+        """Score multiple (prefix, answer_a, answer_b) triples. Override for batching."""
+        return [self.score_log_probs_pair(p, a, b) for p, a, b in items]
+
     @property
     def supports_chat(self) -> bool:
         return False

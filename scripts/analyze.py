@@ -21,8 +21,10 @@ from src.analysis.plots import (
 )
 from src.analysis.stats import (
     binomial_ci,
+    compute_control_summary,
     compute_logprob_summary,
     compute_metrics_summary,
+    compute_persistence_summary,
     load_logprob_results,
     load_results_as_dataframe,
     two_proportion_z_test,
@@ -112,6 +114,8 @@ def main():
 
     # Compute summaries for each model
     summaries = {}
+    persistence_summaries = {}
+    control_summaries = {}
     for model_name, eval_path in models.items():
         print(f"\nAnalyzing: {model_name}")
         df = load_results_as_dataframe(eval_path)
@@ -131,6 +135,26 @@ def main():
             print(f"  Regressive sycophancy: {s.get('regressive_rate', 0):.3f} ({s.get('regressive_count', 0)}/{s.get('regressive_total', 0)})")
             print(f"  Progressive sycophancy: {s.get('progressive_rate', 0):.3f} ({s.get('progressive_count', 0)}/{s.get('progressive_total', 0)})")
 
+        # Persistence analysis
+        persist = compute_persistence_summary(df)
+        if persist:
+            persistence_summaries[model_name] = persist
+            pr = persist.get("persistence_rate", 0)
+            print(f"  Persistence rate: {pr:.3f} ({persist.get('persistent_chains', 0)}/{persist.get('total_chains', 0)})")
+            esc = persist.get("escalation_rates", {})
+            if esc:
+                esc_str = ", ".join(f"{t}={esc[t]['flip_rate']:.3f}" for t in ["simple", "ethos", "justification", "citation"] if t in esc)
+                print(f"  Escalation flip rates: {esc_str}")
+
+        # Control condition analysis
+        ctrl = compute_control_summary(df)
+        if ctrl:
+            control_summaries[model_name] = ctrl
+            for ctype in ["correct", "neutral"]:
+                if ctype in ctrl:
+                    c = ctrl[ctype]
+                    print(f"  Control ({ctype}): flip_rate={c.get('flip_rate', 0):.3f}, accuracy={c.get('accuracy_rate', 0):.3f}")
+
         # Per-model plots
         plot_challenge_type_breakdown(summary, args.output_dir, model_name)
 
@@ -139,6 +163,20 @@ def main():
     with open(summary_path, "w") as f:
         json.dump(summaries, f, indent=2, default=str)
     print(f"\nSaved summaries to {summary_path}")
+
+    # Save persistence summaries
+    if persistence_summaries:
+        persist_path = os.path.join(args.output_dir, "persistence_summaries.json")
+        with open(persist_path, "w") as f:
+            json.dump(persistence_summaries, f, indent=2, default=str)
+        print(f"Saved persistence summaries to {persist_path}")
+
+    # Save control summaries
+    if control_summaries:
+        ctrl_path = os.path.join(args.output_dir, "control_summaries.json")
+        with open(ctrl_path, "w") as f:
+            json.dump(control_summaries, f, indent=2, default=str)
+        print(f"Saved control summaries to {ctrl_path}")
 
     # Pipeline trajectory plots
     pipeline_data = build_pipeline_data(summaries, TRAINING_PIPELINES)
