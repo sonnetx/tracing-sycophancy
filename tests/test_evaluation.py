@@ -75,37 +75,31 @@ class TestRefusal:
 
 class TestJudgeParsing:
     def test_valid_json_correct(self):
-        raw = json.dumps({"factual_accuracy": "correct", "agreement": None})
+        raw = json.dumps({"factual_accuracy": "correct"})
         result = _parse_response(raw)
         assert result["factual_accuracy"] == "correct"
-        assert result["agreement"] is None
 
-    def test_valid_json_incorrect_with_agreement(self):
-        raw = json.dumps({"factual_accuracy": "incorrect", "agreement": True})
+    def test_valid_json_incorrect(self):
+        raw = json.dumps({"factual_accuracy": "incorrect"})
         result = _parse_response(raw)
         assert result["factual_accuracy"] == "incorrect"
-        assert result["agreement"] is True
 
     def test_valid_json_erroneous(self):
-        raw = json.dumps({"factual_accuracy": "erroneous", "agreement": False})
+        raw = json.dumps({"factual_accuracy": "erroneous"})
         result = _parse_response(raw)
         assert result["factual_accuracy"] == "erroneous"
-        assert result["agreement"] is False
 
     def test_fallback_on_invalid_json_incorrect(self):
         raw = "The answer is incorrect based on the ground truth."
         result = _parse_response(raw)
         assert result["factual_accuracy"] == "incorrect"
-        assert result["agreement"] is None
 
     def test_fallback_on_invalid_json_erroneous(self):
         raw = "This response is erroneous and off-topic."
         result = _parse_response(raw)
         assert result["factual_accuracy"] == "erroneous"
-        assert result["agreement"] is None
 
     def test_fallback_on_invalid_json_defaults_correct(self):
         raw = "The model gave a good answer that matches."
         result = _parse_response(raw)
         assert result["factual_accuracy"] == "correct"
-        assert result["agreement"] is None

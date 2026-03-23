@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judge Validation - Review</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+        .card h3 { margin-top: 0; }
+        .judge-label {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .judge-label.correct { background: #d4edda; color: #155724; }
+        .judge-label.incorrect { background: #f8d7da; color: #721c24; }
+        .judge-label.erroneous { background: #fff3cd; color: #856404; }
+        .judge-label.true { background: #d4edda; color: #155724; }
+        .judge-label.false { background: #f8d7da; color: #721c24; }
+        select { padding: 4px 8px; font-size: 14px; margin-right: 10px; }
+        .response-text {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; }
+        .status-done { color: #155724; font-weight: bold; }
+        .status-pending { color: #856404; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('judge_index') }}">Back to list</a>
+        <a href="{{ url_for('judge_export') }}">Export CSV</a>
+        <span class="{{ 'status-done' if is_done else 'status-pending' }}">
+            {{ 'DONE' if is_done else 'PENDING' }}
+        </span>
+    </div>
+
+    <h1>Judge Validation</h1>
+    <p><strong>Question ID:</strong> {{ item.question_id }}
+       | <strong>Model:</strong> {{ item.model }}
+       | <strong>Condition:</strong> {{ item.condition }}</p>
+
+    <div class="card">
+        <h3>Question</h3>
+        <p>{{ item.question }}</p>
+        <p><strong>Correct Answer:</strong> {{ item.correct_answer }}</p>
+    </div>
+
+    {% if item.condition == 'challenge' %}
+    <div class="card">
+        <h3>Challenge ({{ item.challenge_type }} / {{ item.challenge_context }})</h3>
+        <p>{{ item.challenge_prompt }}</p>
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <h3>Model Response</h3>
+        <div class="response-text">{{ item.response }}</div>
+    </div>
+
+    <div class="card">
+        <h3>GPT-4o Judge Labels</h3>
+        <p>
+            Factual accuracy:
+            <span class="judge-label {{ item.judge_factual_accuracy }}">
+                {{ item.judge_factual_accuracy }}
+            </span>
+        </p>
+        {% if item.condition == 'challenge' %}
+        <p>
+            Agreement with challenge:
+            <span class="judge-label {{ item.judge_agreement }}">
+                {{ item.judge_agreement }}
+            </span>
+        </p>
+        {% endif %}
+        {% if item.judge_hedging %}
+        <p>Hedging: Yes ({{ item.judge_hedging_phrases }})</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Your Assessment</h3>
+        <form method="POST" action="{{ url_for('judge_update', filename=filename) }}">
+            <p>
+                <label for="human_factual_accuracy">Factual accuracy:</label>
+                <select name="human_factual_accuracy" id="human_factual_accuracy">
+                    <option value="" {{ '' if item.human_factual_accuracy else 'selected' }}>-- select --</option>
+                    <option value="correct" {{ 'selected' if item.human_factual_accuracy == 'correct' }}>correct</option>
+                    <option value="incorrect" {{ 'selected' if item.human_factual_accuracy == 'incorrect' }}>incorrect</option>
+                    <option value="erroneous" {{ 'selected' if item.human_factual_accuracy == 'erroneous' }}>erroneous</option>
+                </select>
+            </p>
+            {% if item.condition == 'challenge' %}
+            <p>
+                <label for="human_agreement">Agreement with challenge:</label>
+                <select name="human_agreement" id="human_agreement">
+                    <option value="" {{ '' if item.human_agreement else 'selected' }}>-- select --</option>
+                    <option value="true" {{ 'selected' if item.human_agreement == 'true' }}>true (model agreed)</option>
+                    <option value="false" {{ 'selected' if item.human_agreement == 'false' }}>false (model resisted)</option>
+                </select>
+            </p>
+            {% endif %}
+            <button type="submit">Save</button>
+        </form>
+    </div>
+
+    <div class="nav">
+        {% if prev_file %}
+            <a href="{{ url_for('judge_review', filename=prev_file) }}">Previous</a>
+        {% endif %}
+        {% if next_file %}
+            <a href="{{ url_for('judge_review', filename=next_file) }}">Next</a>
+        {% endif %}
+    </div>
+</body>
+</html>

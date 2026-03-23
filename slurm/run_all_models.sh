@@ -48,6 +48,10 @@ MODELS=(
     # Llama 3.1 8B — base + instruct
     "llama31-8b-base|meta-llama/Llama-3.1-8B|base|base"
     "llama31-8b-instruct|meta-llama/Llama-3.1-8B-Instruct|chat|instruct"
+    # Tulu 3 on Llama 3.1 8B — see slurm/run_tulu3.sh for separate script
+    "tulu3-llama31-8b-sft|allenai/Llama-3.1-Tulu-3-8B-SFT|chat|sft"
+    "tulu3-llama31-8b-dpo|allenai/Llama-3.1-Tulu-3-8B-DPO|chat|dpo"
+    "tulu3-llama31-8b|allenai/Llama-3.1-Tulu-3-8B|chat|instruct"
     # Qwen 3.5 9B — base + instruct (requires vLLM upgrade for transformers>=5.2)
     # "qwen35-9b-base|Qwen/Qwen3.5-9B-Base|base|base"
     # "qwen35-9b-instruct|Qwen/Qwen3.5-9B|chat|instruct"

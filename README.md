@@ -24,12 +24,19 @@ Our primary model family is OLMo 3 7B (AI2), which provides checkpoints at each 
 
 This gives 7 OLMo checkpoints: 1 shared base model and two post-training trajectories of 3 stages each (SFT → DPO → final), enabling controlled comparison of how different alignment strategies affect sycophantic behavior.
 
-For cross-family generalization, we also evaluate base + instruct pairs from Llama 3.1 and Qwen 3.5:
+For cross-family generalization, we evaluate Llama 3.1 8B with two independent alignment pipelines on the same base weights, enabling direct comparison of how different alignment recipes affect sycophancy:
 
-| Model | HuggingFace ID | Type | Description |
+| Checkpoint | HuggingFace ID | Type | Description |
 |---|---|---|---|
-| Llama 3.1 8B | `meta-llama/Llama-3.1-8B` | base | Pre-trained base model |
-| Llama 3.1 8B Instruct | `meta-llama/Llama-3.1-8B-Instruct` | chat | Instruction-tuned |
+| Llama 3.1 8B | `meta-llama/Llama-3.1-8B` | base | Shared pre-trained base model |
+| **Meta alignment** | | | |
+| Llama 3.1 8B Instruct | `meta-llama/Llama-3.1-8B-Instruct` | chat | Meta's instruction-tuned (opaque pipeline) |
+| **Tulu 3 alignment (AI2)** | | | |
+| Tulu 3 SFT | `allenai/Llama-3.1-Tulu-3-8B-SFT` | chat | Supervised fine-tuned |
+| Tulu 3 DPO | `allenai/Llama-3.1-Tulu-3-8B-DPO` | chat | DPO aligned |
+| Tulu 3 | `allenai/Llama-3.1-Tulu-3-8B` | chat | Final model (SFT + DPO + RLVR) |
+
+This gives a controlled comparison: OLMo traces sycophancy across stages of its own alignment, while Tulu 3 applies the same recipe (SFT+DPO+RLVR) to the Llama base — testing whether the pattern generalizes across base models. The Meta Instruct endpoint provides a contrast with a different (opaque) alignment pipeline on the same weights.
 
 All inference runs on GPU via HuggingFace Transformers or vLLM. Model configs are generated dynamically at runtime — no separate inference server is needed.
 

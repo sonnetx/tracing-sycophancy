@@ -3,11 +3,17 @@
 Adapted from FLASK/app.py to work with the new JSONL-based schema.
 Questions and responses are loaded from evaluated JSONL files, converted
 to individual JSON files for annotation.
+
+Includes a **judge validation** mode: sample items from evaluated.jsonl,
+display GPT-4o labels alongside the response, and let a human annotator
+confirm or override each label via dropdown selects.
 """
 
 from flask import Flask, render_template, request, redirect, url_for, session
+import csv
 import json
 import os
+import random
 import shutil
 
 import pandas as pd
@@ -20,6 +26,7 @@ DATA_DIR = os.environ.get("FLASK_DATA_DIR", "flask_app/data")
 USER_DIR = os.path.join(DATA_DIR, "users")
 RESULTS_DIR = os.path.join(DATA_DIR, "results")
 JSON_DIR = os.path.join(DATA_DIR, "json_files")
+JUDGE_DIR = os.path.join(DATA_DIR, "judge_validation")
 
 
 def load_json_file(filepath):
@@ -256,6 +263,191 @@ def update_status():
     return redirect(url_for("review_final", filename=filename))
 
 
+# =====================================================================
+# Judge validation routes
+# =====================================================================
+
+def import_judge_validation(jsonl_path: str, n: int = 50, seed: int = 42):
+    """Sample items from evaluated.jsonl and create JSON files for judge validation."""
+    os.makedirs(JUDGE_DIR, exist_ok=True)
+
+    with open(jsonl_path, "r") as f:
+        items = [json.loads(line.strip()) for line in f if line.strip()]
+
+    # Flatten into individual review items (initial + challenges)
+    rows = []
+    for item in items:
+        qid = item["question_id"]
+        initial = item["initial"]
+        i_metrics = initial.get("metrics", {})
+
+        base = {
+            "question_id": qid,
+            "model": item.get("model", ""),
+            "question": item.get("question", ""),
+            "correct_answer": item.get("correct_answer", ""),
+        }
+
+        rows.append({
+            **base,
+            "condition": "initial",
+            "challenge_id": "",
+            "challenge_type": "",
+            "challenge_context": "",
+            "challenge_prompt": "",
+            "response": initial.get("response", ""),
+            "judge_factual_accuracy": i_metrics.get("factual_accuracy", ""),
+            "judge_agreement": "",
+            "judge_hedging": i_metrics.get("hedging", False),
+            "judge_hedging_phrases": str(i_metrics.get("hedging_phrases", "")),
+            "human_factual_accuracy": "",
+            "human_agreement": "",
+        })
+
+        for cr in item.get("challenge_responses", []):
+            cr_metrics = cr.get("metrics", {})
+            if cr_metrics.get("skipped"):
+                continue
+            rows.append({
+                **base,
+                "condition": "challenge",
+                "challenge_id": cr.get("challenge_id", ""),
+                "challenge_type": cr.get("challenge_type", ""),
+                "challenge_context": cr.get("challenge_context", ""),
+                "challenge_prompt": cr.get("challenge_prompt", ""),
+                "response": cr.get("response", ""),
+                "judge_factual_accuracy": cr_metrics.get("factual_accuracy", ""),
+                "judge_agreement": str(cr_metrics.get("agreement", "")),
+                "judge_hedging": cr_metrics.get("hedging", False),
+                "judge_hedging_phrases": str(cr_metrics.get("hedging_phrases", "")),
+                "human_factual_accuracy": "",
+                "human_agreement": "",
+            })
+
+    random.seed(seed)
+    sampled = random.sample(rows, min(n, len(rows)))
+
+    for i, row in enumerate(sampled):
+        filename = f"jv_{i:04d}_{row['question_id']}_{row['condition']}.json"
+        save_json_file(os.path.join(JUDGE_DIR, filename), row)
+
+    print(f"Imported {len(sampled)} items for judge validation into {JUDGE_DIR}")
+    print(f"Run the Flask app and navigate to /judge to start annotating.")
+
+
+def _get_judge_files() -> list[str]:
+    """Return sorted list of judge validation JSON files."""
+    if not os.path.exists(JUDGE_DIR):
+        return []
+    return sorted(f for f in os.listdir(JUDGE_DIR) if f.endswith(".json"))
+
+
+def _judge_item_is_done(data: dict) -> bool:
+    return bool(data.get("human_factual_accuracy", "").strip())
+
+
+@app.route("/judge")
+def judge_index():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    files = _get_judge_files()
+    to_do, done = [], []
+    for f in files:
+        data = load_json_file(os.path.join(JUDGE_DIR, f))
+        if _judge_item_is_done(data):
+            done.append(f)
+        else:
+            to_do.append(f)
+
+    return render_template("judge_index.html", to_do=to_do, done=done)
+
+
+@app.route("/judge/<filename>")
+def judge_review(filename):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    file_path = os.path.join(JUDGE_DIR, filename)
+    item = load_json_file(file_path)
+    is_done = _judge_item_is_done(item)
+
+    # Prev/next navigation
+    files = _get_judge_files()
+    idx = files.index(filename) if filename in files else -1
+    prev_file = files[idx - 1] if idx > 0 else None
+    next_file = files[idx + 1] if idx < len(files) - 1 else None
+
+    return render_template(
+        "review_judge.html",
+        item=item,
+        filename=filename,
+        is_done=is_done,
+        prev_file=prev_file,
+        next_file=next_file,
+    )
+
+
+@app.route("/judge/<filename>", methods=["POST"])
+def judge_update(filename):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    file_path = os.path.join(JUDGE_DIR, filename)
+    item = load_json_file(file_path)
+
+    item["human_factual_accuracy"] = request.form.get("human_factual_accuracy", "").strip()
+    item["human_agreement"] = request.form.get("human_agreement", "").strip()
+
+    save_json_file(file_path, item)
+
+    # Auto-advance to next un-annotated item
+    files = _get_judge_files()
+    idx = files.index(filename) if filename in files else -1
+    for f in files[idx + 1:]:
+        data = load_json_file(os.path.join(JUDGE_DIR, f))
+        if not _judge_item_is_done(data):
+            return redirect(url_for("judge_review", filename=f))
+
+    return redirect(url_for("judge_index"))
+
+
+@app.route("/judge/export")
+def judge_export():
+    """Export judge validation annotations as CSV (compatible with validate_judge.py compute)."""
+    files = _get_judge_files()
+    rows = []
+    for f in files:
+        data = load_json_file(os.path.join(JUDGE_DIR, f))
+        rows.append({
+            "question_id": data.get("question_id", ""),
+            "condition": data.get("condition", ""),
+            "challenge_id": data.get("challenge_id", ""),
+            "question": data.get("question", ""),
+            "correct_answer": data.get("correct_answer", ""),
+            "model_response": data.get("response", "")[:500],
+            "judge_factual_accuracy": data.get("judge_factual_accuracy", ""),
+            "judge_agreement": data.get("judge_agreement", ""),
+            "human_factual_accuracy": data.get("human_factual_accuracy", ""),
+            "human_agreement": data.get("human_agreement", ""),
+        })
+
+    out_path = os.path.join(RESULTS_DIR, "judge_validation.csv")
+    os.makedirs(RESULTS_DIR, exist_ok=True)
+    if rows:
+        with open(out_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=rows[0].keys())
+            writer.writeheader()
+            writer.writerows(rows)
+
+    annotated = sum(1 for r in rows if r["human_factual_accuracy"].strip())
+    return (
+        f"Exported {annotated}/{len(rows)} annotated items to {out_path}<br>"
+        f"<a href='{url_for('judge_index')}'>Back to judge validation</a><br>"
+        f"Run: <code>python scripts/validate_judge.py compute --input {out_path}</code>"
+    )
+
+
 # --- CLI for importing data ---
 
 if __name__ == "__main__":
@@ -264,6 +456,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--import-jsonl", help="Import evaluated JSONL for annotation")
     parser.add_argument("--questions", help="Questions JSONL (for correct answers)")
+    parser.add_argument("--import-judge-validation",
+                        help="Import evaluated JSONL for judge validation (samples N items)")
+    parser.add_argument("--n", type=int, default=50,
+                        help="Number of items to sample for judge validation")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--run", action="store_true", help="Run the Flask dev server")
     parser.add_argument("--port", type=int, default=5000)
     args = parser.parse_args()
@@ -271,5 +468,8 @@ if __name__ == "__main__":
     if args.import_jsonl:
         import_from_jsonl(args.import_jsonl, args.questions)
 
-    if args.run or not args.import_jsonl:
+    if args.import_judge_validation:
+        import_judge_validation(args.import_judge_validation, args.n, args.seed)
+
+    if args.run or not (args.import_jsonl or args.import_judge_validation):
         app.run(debug=True, port=args.port)

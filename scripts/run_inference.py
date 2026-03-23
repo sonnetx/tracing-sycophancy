@@ -245,10 +245,7 @@ def main():
     # Load model ONCE
     backend = load_backend(args.backend_config)
 
-    if args.model_type == "base":
-        backend.max_new_tokens = 128
-    else:
-        backend.max_new_tokens = 512
+    backend.max_new_tokens = 512
 
     items = read_jsonl(args.input)
 
