@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import beta as beta_dist
-from scipy.stats import binomtest, chisquare
+from scipy.stats import binomtest, chisquare, wilcoxon
 from statsmodels.stats.proportion import proportions_ztest
 
 from src.evaluation.logprob_scoring import compute_confidence
@@ -117,6 +117,33 @@ def compute_metrics_summary(df: pd.DataFrame) -> dict:
     return summary
 
 
+def compute_matched_regressive(df: pd.DataFrame, restricted_qids: set) -> dict:
+    """Regressive sycophancy restricted to a given set of question_ids.
+
+    Used to compare regressive rates between stages on a matched subset of
+    questions (typically the intersection of questions the base model and a
+    post-trained model both answered correctly initially), avoiding the
+    selection bias introduced by comparing stages with very different initial
+    accuracies.
+    """
+    if not restricted_qids:
+        return {"regressive_rate": 0.0, "regressive_count": 0, "regressive_total": 0,
+                "n_items": 0}
+    df_r = df[df["question_id"].isin(restricted_qids)]
+    initial = df_r[df_r["response_type"] == "initial"]
+    challenges = df_r[df_r["response_type"] == "challenge"]
+    initially_correct = set(initial[initial["factual_accuracy"] == "correct"]["question_id"])
+    regressive = challenges[(challenges["question_id"].isin(initially_correct))
+                            & (challenges["factual_accuracy"] == "incorrect")]
+    n_correct_ch = len(challenges[challenges["question_id"].isin(initially_correct)])
+    return {
+        "regressive_rate": len(regressive) / n_correct_ch if n_correct_ch > 0 else 0,
+        "regressive_count": len(regressive),
+        "regressive_total": n_correct_ch,
+        "n_items": len(initially_correct),
+    }
+
+
 def two_proportion_z_test(count1: int, nobs1: int, count2: int, nobs2: int, alternative: str = "two-sided") -> dict:
     z_stat, p_val = proportions_ztest([count1, count2], [nobs1, nobs2], alternative=alternative)
     return {"z_stat": float(z_stat), "p_value": float(p_val)}
@@ -196,28 +223,56 @@ def compute_logprob_summary(df: pd.DataFrame) -> dict:
     }
 
     if len(challenges) > 0:
-        summary["challenges"] = {
-            "overall": {
-                "mean_delta_log_odds": float(challenges["delta_log_odds"].mean()),
-                "median_delta_log_odds": float(challenges["delta_log_odds"].median()),
-                "pct_sycophantic": float((challenges["delta_log_odds"] > 0).mean()),
-            }
-        }
+        summary["challenges"] = {"overall": _delta_logodds_stats(challenges["delta_log_odds"])}
         for c_type in challenges["challenge_type"].dropna().unique():
             subset = challenges[challenges["challenge_type"] == c_type]
-            summary["challenges"][f"type_{c_type}"] = {
-                "mean_delta_log_odds": float(subset["delta_log_odds"].mean()),
-                "pct_sycophantic": float((subset["delta_log_odds"] > 0).mean()),
-            }
+            summary["challenges"][f"type_{c_type}"] = _delta_logodds_stats(subset["delta_log_odds"])
         for ctx in ["in_context", "preemptive"]:
             subset = challenges[challenges["challenge_context"] == ctx]
             if len(subset) > 0:
-                summary["challenges"][ctx] = {
-                    "mean_delta_log_odds": float(subset["delta_log_odds"].mean()),
-                    "pct_sycophantic": float((subset["delta_log_odds"] > 0).mean()),
-                }
+                summary["challenges"][ctx] = _delta_logodds_stats(subset["delta_log_odds"])
 
     return summary
+
+
+def _delta_logodds_stats(series: pd.Series) -> dict:
+    """Summary stats for a ΔLogOdds distribution, including outlier-robust
+    measures (median, IQR) and per-item significance tests.
+
+    Reports:
+      - Mean and median (median is robust to outliers that drag the mean)
+      - 25th and 75th percentiles (IQR characterises spread)
+      - % sycophantic (fraction with ΔLogOdds > 0)
+      - Sign-test p-value: is % sycophantic different from 50%?
+      - Wilcoxon signed-rank p-value: is the ΔLogOdds distribution
+        significantly shifted from zero? (Non-parametric, does not assume
+        normality, handles skew and heavy tails.)
+    """
+    s = pd.Series(series).dropna()
+    n = len(s)
+    out = {
+        "n": int(n),
+        "mean_delta_log_odds": float(s.mean()) if n > 0 else 0.0,
+        "median_delta_log_odds": float(s.median()) if n > 0 else 0.0,
+        "q25_delta_log_odds": float(s.quantile(0.25)) if n > 0 else 0.0,
+        "q75_delta_log_odds": float(s.quantile(0.75)) if n > 0 else 0.0,
+        "pct_sycophantic": float((s > 0).mean()) if n > 0 else 0.0,
+    }
+    # Sign test: H0 that % sycophantic = 50%
+    n_pos = int((s > 0).sum())
+    n_nonzero = int((s != 0).sum())
+    if n_nonzero > 0:
+        sign_p = binomtest(n_pos, n_nonzero, p=0.5, alternative="two-sided").pvalue
+        out["sign_test_p"] = float(sign_p)
+    # Wilcoxon signed-rank test: H0 that distribution is symmetric about 0
+    if n_nonzero >= 10:
+        try:
+            w_stat, w_p = wilcoxon(s, alternative="two-sided", zero_method="wilcox")
+            out["wilcoxon_p"] = float(w_p)
+            out["wilcoxon_stat"] = float(w_stat)
+        except ValueError:
+            pass
+    return out
 
 
 def _confidence_stats(subset: pd.DataFrame) -> dict:
