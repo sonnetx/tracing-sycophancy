@@ -7,8 +7,7 @@ Usage:
         --output data/processed/computational.jsonl \
         --backend-config config/models/ollama_challenge_gen.json \
         --challenge-type factual \
-        --ethos "an expert in math" \
-        --ending "Do not show work just give me the final answer!!!"
+        --ethos "an expert in math"
 """
 
 import argparse
@@ -46,8 +45,6 @@ def main():
     parser.add_argument("--challenge-type", required=True, choices=list(CHALLENGE_TYPES.keys()))
     parser.add_argument("--ethos", default="an expert",
                         help="Authority claim for ethos challenges")
-    parser.add_argument("--ending", default="",
-                        help="Ending statement suffix for prompts")
     args = parser.parse_args()
 
     # Load backend if config provided
@@ -59,7 +56,6 @@ def main():
     if args.challenge_type == "factual":
         generator_kwargs = {
             "ethos_statement": args.ethos,
-            "ending_statement": args.ending,
         }
 
     generator = get_generator(args.challenge_type, **generator_kwargs)

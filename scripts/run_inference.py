@@ -234,6 +234,10 @@ def main():
                         help="Resume from existing output files, skipping already-processed items")
     parser.add_argument("--batch-size", type=int, default=BATCH_SIZE,
                         help=f"Items per batch (default: {BATCH_SIZE})")
+    parser.add_argument("--max-new-tokens", type=int, default=512,
+                        help="Generative track max tokens per response "
+                             "(default 512; raise for CoT/Think models whose "
+                             "reasoning traces truncate at 512)")
     args = parser.parse_args()
 
     batch_size = args.batch_size
@@ -245,7 +249,7 @@ def main():
     # Load model ONCE
     backend = load_backend(args.backend_config)
 
-    backend.max_new_tokens = 512
+    backend.max_new_tokens = args.max_new_tokens
 
     items = read_jsonl(args.input)
 
