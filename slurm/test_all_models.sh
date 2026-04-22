@@ -56,6 +56,10 @@ ALL_MODELS=(
     # Llama 3.1 8B
     "llama31-8b-base|meta-llama/Llama-3.1-8B|base|base"
     "llama31-8b-instruct|meta-llama/Llama-3.1-8B-Instruct|chat|instruct"
+    # Tulu 3 on Llama 3.1 8B — SFT → DPO → Final (same base as above, AI2 alignment)
+    "tulu3-llama31-8b-sft|allenai/Llama-3.1-Tulu-3-8B-SFT|chat|sft"
+    "tulu3-llama31-8b-dpo|allenai/Llama-3.1-Tulu-3-8B-DPO|chat|dpo"
+    "tulu3-llama31-8b|allenai/Llama-3.1-Tulu-3-8B|chat|instruct"
 )
 
 # --quick: one base + one instruct per family
@@ -64,6 +68,8 @@ QUICK_MODELS=(
     "olmo3-7b-instruct|allenai/Olmo-3-7B-Instruct|chat|instruct"
     "llama31-8b-base|meta-llama/Llama-3.1-8B|base|base"
     "llama31-8b-instruct|meta-llama/Llama-3.1-8B-Instruct|chat|instruct"
+    "tulu3-llama31-8b-sft|allenai/Llama-3.1-Tulu-3-8B-SFT|chat|sft"
+    "tulu3-llama31-8b|allenai/Llama-3.1-Tulu-3-8B|chat|instruct"
 )
 
 if [ "$QUICK" = true ]; then

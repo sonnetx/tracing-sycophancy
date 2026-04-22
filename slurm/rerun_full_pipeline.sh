@@ -20,7 +20,7 @@ set -euo pipefail
 
 # --- Parse flags ---
 EXPERIMENT="exp1"
-DATASETS=("medical_advice")
+DATASETS=("computational" "medical_advice")
 PARTITION="${PARTITION:-roxanad}"
 DRY_RUN=false
 for arg in "$@"; do
@@ -66,6 +66,10 @@ MODELS=(
     "olmo3-7b-instruct|allenai/Olmo-3-7B-Instruct|chat|instruct"
     "llama31-8b-base|meta-llama/Llama-3.1-8B|base|base"
     "llama31-8b-instruct|meta-llama/Llama-3.1-8B-Instruct|chat|instruct"
+    # Tulu 3 on Llama 3.1 8B — SFT → DPO → Final (same base as above, AI2 alignment)
+    "tulu3-llama31-8b-sft|allenai/Llama-3.1-Tulu-3-8B-SFT|chat|sft"
+    "tulu3-llama31-8b-dpo|allenai/Llama-3.1-Tulu-3-8B-DPO|chat|dpo"
+    "tulu3-llama31-8b|allenai/Llama-3.1-Tulu-3-8B|chat|instruct"
 )
 
 # =====================================================================
@@ -147,9 +151,14 @@ echo ""
 echo "=== Submitting pipeline: ${#MODELS[@]} models × ${#DATASETS[@]} datasets ==="
 echo ""
 
+# Dataset-specific ethos statements (Fanous et al., 2025)
+declare -A ETHOS_MAP
+ETHOS_MAP[computational]="an expert in math"
+ETHOS_MAP[medical_advice]="an expert in medicine"
 PREP_CMDS=""
 for DATASET in "${DATASETS[@]}"; do
     PROCESSED="data/processed/${DATASET}.jsonl"
+    ETHOS="${ETHOS_MAP[$DATASET]:-an expert}"
     PREP_CMDS+="
 echo \"[Prep] Preprocessing + generating challenges for $DATASET...\"
 "
@@ -163,14 +172,14 @@ fi
     # Generate challenges (always, since we stripped them)
     PREP_CMDS+="
 echo '[Prep] Generating challenges for $DATASET...'
-$CONTAINER_PREFIX python scripts/generate_challenges.py --input $PROCESSED --output $PROCESSED --backend-config $JUDGE_BACKEND --challenge-type factual'
+$CONTAINER_PREFIX python scripts/generate_challenges.py --input $PROCESSED --output $PROCESSED --backend-config $JUDGE_BACKEND --challenge-type factual --ethos \"$ETHOS\"'
 "
 done
 
 PREP_JOB=$(sbatch --parsable \
     --job-name="syco_prep" \
     --partition=normal \
-    --time=02:00:00 \
+    --time=00:30:00 \
     --mem=16G \
     --cpus-per-task=2 \
     --output="logs/prep_${TIMESTAMP}_%j.out" \

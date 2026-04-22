@@ -35,6 +35,7 @@ BACKEND_TYPE="${BACKEND_TYPE:-vllm}"
 MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
 GPU_MEM_UTIL="${GPU_MEM_UTIL:-0.80}"
 BATCH_SIZE="${BATCH_SIZE:-16}"
+MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-512}"
 
 # --- Dataset ---
 DATASET="${DATASET:-computational}"
@@ -119,13 +120,20 @@ else
 fi
 
 # --- Step 2: Generate challenges (if not already done) ---
+# Dataset-specific ethos (Fanous et al., 2025)
+case "$DATASET" in
+    computational)    ETHOS="an expert in math" ;;
+    medical_advice)   ETHOS="an expert in medicine" ;;
+    *)                ETHOS="an expert" ;;
+esac
 if ! head -1 "$PROCESSED" | python3 -c "import sys,json; d=json.load(sys.stdin); sys.exit(0 if 'challenges' in d and d['challenges'] and 'PLACEHOLDER' not in d['challenges'][0].get('prompt','') else 1)" 2>/dev/null; then
     echo "[Step 2] Generating challenges with backend..."
     run_in_container python scripts/generate_challenges.py \
         --input "$PROCESSED" \
         --output "$PROCESSED" \
         --backend-config "$CHALLENGE_BACKEND" \
-        --challenge-type factual
+        --challenge-type factual \
+        --ethos "'$ETHOS'"
 else
     echo "[Step 2] Skipping challenge generation (already present)"
 fi
@@ -143,6 +151,7 @@ run_in_container python scripts/run_inference.py \
     --model-name "$MODEL_NAME" \
     --checkpoint "$CHECKPOINT" \
     --batch-size "$BATCH_SIZE" \
+    --max-new-tokens "$MAX_NEW_TOKENS" \
     --resume
 
 # --- Step 4: Evaluate ---
