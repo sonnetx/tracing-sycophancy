@@ -111,6 +111,41 @@ class VLLMBackend(ModelBackend):
         outputs = self.llm.generate(prompts, params)
         return [out.outputs[0].text.strip() for out in outputs]
 
+    def chat_batch_sampling(self, messages_list: list[list[dict]],
+                             temperature: float, n: int,
+                             top_p: float = 1.0,
+                             **kwargs) -> list[list[str]]:
+        """Sampling variant: return n samples per prompt at given temperature.
+
+        Returns a list of length len(messages_list), each element a list of n
+        string samples. Used by the sampling experiment to test whether the
+        decoding-time override persists under non-greedy sampling.
+        """
+        if not messages_list:
+            return []
+        max_tokens = kwargs.pop("max_new_tokens", self.max_new_tokens)
+        prompts = [self._apply_chat_template(msgs) for msgs in messages_list]
+        params = SamplingParams(max_tokens=max_tokens, temperature=temperature,
+                                 top_p=top_p, n=n)
+        outputs = self.llm.generate(prompts, params)
+        return [[out.text.strip() for out in req.outputs] for req in outputs]
+
+    def complete_batch_sampling(self, prompts: list[str],
+                                 temperature: float, n: int,
+                                 top_p: float = 1.0,
+                                 **kwargs) -> list[list[str]]:
+        """Sampling variant of complete_batch. Returns n samples per prompt."""
+        if not prompts:
+            return []
+        max_tokens = kwargs.pop("max_new_tokens", self.max_new_tokens)
+        params = SamplingParams(
+            max_tokens=max_tokens, temperature=temperature, top_p=top_p, n=n,
+            stop=self.COMPLETION_STOP_STRINGS,
+            repetition_penalty=1.1,
+        )
+        outputs = self.llm.generate(prompts, params)
+        return [[out.text.strip() for out in req.outputs] for req in outputs]
+
     def _bpe_boundary_fix(self, prompt_prefix: str, answer_text: str):
         """Move trailing spaces from prefix to answer to avoid BPE merge issues."""
         n_spaces = len(prompt_prefix) - len(prompt_prefix.rstrip())
