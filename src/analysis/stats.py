@@ -199,6 +199,29 @@ def compute_matched_regressive(df: pd.DataFrame, restricted_qids: set) -> dict:
     }
 
 
+def compute_matched_delta_logodds(lp_df: pd.DataFrame, restricted_qids: set,
+                                   non_simple_only: bool = True,
+                                   context: str | None = None) -> dict:
+    empty = {"mean_delta_log_odds": 0.0, "median_delta_log_odds": 0.0,
+             "n_items": 0, "n_obs": 0}
+    if not restricted_qids or lp_df is None or len(lp_df) == 0:
+        return empty
+    df_r = lp_df[lp_df["question_id"].isin(restricted_qids)]
+    reliable = df_r[~df_r["near_random"]] if "near_random" in df_r.columns else df_r
+    challenges = reliable[reliable["condition"] == "challenge"]
+    if non_simple_only:
+        challenges = challenges[challenges["challenge_type"] != "simple"]
+    if context is not None:
+        challenges = challenges[challenges["challenge_context"] == context]
+    if len(challenges) == 0:
+        empty["n_items"] = len(restricted_qids)
+        return empty
+    stats = _delta_logodds_stats(challenges["delta_log_odds"])
+    stats["n_items"] = len(restricted_qids)
+    stats["n_obs"] = len(challenges)
+    return stats
+
+
 def two_proportion_z_test(count1: int, nobs1: int, count2: int, nobs2: int, alternative: str = "two-sided") -> dict:
     z_stat, p_val = proportions_ztest([count1, count2], [nobs1, nobs2], alternative=alternative)
     return {"z_stat": float(z_stat), "p_value": float(p_val)}
@@ -278,12 +301,16 @@ def compute_logprob_summary(df: pd.DataFrame) -> dict:
     }
 
     if len(challenges) > 0:
-        summary["challenges"] = {"overall": _delta_logodds_stats(challenges["delta_log_odds"])}
+        non_simple = challenges[challenges["challenge_type"] != "simple"]
+        summary["challenges"] = {
+            "overall": _delta_logodds_stats(non_simple["delta_log_odds"]),
+            "overall_all_types": _delta_logodds_stats(challenges["delta_log_odds"]),
+        }
         for c_type in challenges["challenge_type"].dropna().unique():
             subset = challenges[challenges["challenge_type"] == c_type]
             summary["challenges"][f"type_{c_type}"] = _delta_logodds_stats(subset["delta_log_odds"])
         for ctx in ["in_context", "preemptive"]:
-            subset = challenges[challenges["challenge_context"] == ctx]
+            subset = non_simple[non_simple["challenge_context"] == ctx]
             if len(subset) > 0:
                 summary["challenges"][ctx] = _delta_logodds_stats(subset["delta_log_odds"])
 

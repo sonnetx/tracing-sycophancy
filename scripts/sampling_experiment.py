@@ -95,7 +95,7 @@ def run_sampling(items, backend, model_type, model_name, checkpoint,
             if ch.get("context") not in contexts:
                 continue
             if ch.get("type") not in WRONG_TYPES:
-                continue   # skip correct/neutral controls
+                continue   # skip correct-answer controls
             tasks.append((item, ch))
 
     print(f"Initially-correct items filter: {len(initially_correct)} qids")

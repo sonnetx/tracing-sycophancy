@@ -25,9 +25,15 @@ from src.analysis.plots import (
     plot_challenge_type_heatmap,
     plot_control_comparison,
     plot_control_vs_sycophancy_scatter,
+    plot_challenge_type_trajectories,
     plot_cross_pipeline_bar,
     plot_delta_log_odds_by_challenge_type,
+    plot_delta_log_odds_distribution,
+    plot_delta_log_odds_distribution_by_context,
     plot_domain_comparison,
+    plot_matched_subset,
+    plot_net_sycophancy_trajectories,
+    plot_ic_pe_trajectories,
     plot_pipeline_logprob_trajectories,
     plot_pipeline_trajectories,
     plot_progressive_vs_regressive,
@@ -36,6 +42,8 @@ from src.analysis.stats import (
     binomial_ci,
     compute_control_summary,
     compute_logprob_summary,
+    compute_matched_delta_logodds,
+    compute_matched_regressive,
     compute_metrics_summary,
     compute_persistence_summary,
     load_logprob_results,
@@ -118,10 +126,12 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
     summaries = {}
     persistence_summaries = {}
     control_summaries = {}
+    dataframes = {}
 
     for model_name, eval_path in models.items():
         print(f"\nAnalyzing: {model_name}")
         df = load_results_as_dataframe(eval_path)
+        dataframes[model_name] = df
         summary = compute_metrics_summary(df)
         summaries[model_name] = summary
 
@@ -172,10 +182,58 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
         per_model_dir = os.path.join(output_dir, "per_model")
         plot_challenge_type_breakdown(summary, per_model_dir, model_name)
 
+    matched_summaries = {}
+    for pipe_name, stages in TRAINING_PIPELINES.items():
+        if not stages:
+            continue
+        base_model_name, _ = stages[0]
+        if base_model_name not in dataframes:
+            continue
+        base_df = dataframes[base_model_name]
+        base_initial = base_df[base_df["response_type"] == "initial"]
+        base_correct = set(base_initial[base_initial["factual_accuracy"] == "correct"]["question_id"])
+        pipe_records = []
+        for model_name, stage_label in stages:
+            if model_name not in dataframes:
+                continue
+            stage_df = dataframes[model_name]
+            stage_initial = stage_df[stage_df["response_type"] == "initial"]
+            stage_correct = set(stage_initial[stage_initial["factual_accuracy"] == "correct"]["question_id"])
+            intersection = base_correct & stage_correct
+            base_on_inter = compute_matched_regressive(base_df, intersection)
+            stage_on_inter = compute_matched_regressive(stage_df, intersection)
+            record = {
+                "stage": stage_label,
+                "model": model_name,
+                "n_intersection": len(intersection),
+                "base_regressive_on_intersection": base_on_inter,
+                "stage_regressive_on_intersection": stage_on_inter,
+            }
+            if (base_on_inter["regressive_total"] > 0
+                    and stage_on_inter["regressive_total"] > 0):
+                z = two_proportion_z_test(
+                    base_on_inter["regressive_count"], base_on_inter["regressive_total"],
+                    stage_on_inter["regressive_count"], stage_on_inter["regressive_total"],
+                )
+                record["base_vs_stage_z_test"] = z
+            pipe_records.append(record)
+        matched_summaries[pipe_name] = pipe_records
+        print(f"\nMatched-subset regressive sycophancy: {pipe_name}")
+        for rec in pipe_records:
+            b = rec["base_regressive_on_intersection"]
+            s = rec["stage_regressive_on_intersection"]
+            print(f"  {rec['stage']:>8s}  n={rec['n_intersection']:3d}  "
+                  f"base={b['regressive_rate']:.3f} ({b['regressive_count']}/{b['regressive_total']})  "
+                  f"stage={s['regressive_rate']:.3f} ({s['regressive_count']}/{s['regressive_total']})"
+                  + (f"  z={rec['base_vs_stage_z_test']['z_stat']:.2f} "
+                     f"p={rec['base_vs_stage_z_test']['p_value']:.4f}"
+                     if "base_vs_stage_z_test" in rec else ""))
+
     # Save JSON summaries
     for name, data in [("summaries", summaries),
                        ("persistence_summaries", persistence_summaries),
-                       ("control_summaries", control_summaries)]:
+                       ("control_summaries", control_summaries),
+                       ("matched_summaries", matched_summaries)]:
         if data:
             path = os.path.join(output_dir, f"{name}.json")
             with open(path, "w") as f:
@@ -209,6 +267,7 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
 
     # Log-probability analysis
     lp_summaries = {}
+    lp_dataframes = {}
     lp_pipeline_data = {}
     lp_models = find_logprob_files(results_dir)
     if lp_models:
@@ -216,6 +275,7 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
         for model_name, lp_path in lp_models.items():
             print(f"\nLog-prob: {model_name}")
             lp_df = load_logprob_results(lp_path)
+            lp_dataframes[model_name] = lp_df
             lp_summary = compute_logprob_summary(lp_df)
             lp_summaries[model_name] = lp_summary
 
@@ -224,8 +284,15 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
             print(f"  % favoring correct: {bl.get('pct_favoring_correct', 0):.3f}")
             if "challenges" in lp_summary and "overall" in lp_summary["challenges"]:
                 co = lp_summary["challenges"]["overall"]
-                print(f"  Mean delta log-odds: {co.get('mean_delta_log_odds', 0):.3f}")
-                print(f"  % sycophantic: {co.get('pct_sycophantic', 0):.3f}")
+                wp = co.get("wilcoxon_p")
+                sp = co.get("sign_test_p")
+                print(f"  Mean delta log-odds:   {co.get('mean_delta_log_odds', 0):+.3f}")
+                print(f"  Median delta log-odds: {co.get('median_delta_log_odds', 0):+.3f}  "
+                      f"[IQR {co.get('q25_delta_log_odds', 0):+.3f}, "
+                      f"{co.get('q75_delta_log_odds', 0):+.3f}]")
+                print(f"  % sycophantic: {co.get('pct_sycophantic', 0):.3f}"
+                      + (f"  sign-test p={sp:.2e}" if sp is not None else "")
+                      + (f"  Wilcoxon p={wp:.2e}" if wp is not None else ""))
 
             per_model_dir = os.path.join(output_dir, "per_model")
             plot_delta_log_odds_by_challenge_type(lp_summary, per_model_dir, model_name)
@@ -238,10 +305,72 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
         lp_pipeline_data = build_pipeline_data(lp_summaries, TRAINING_PIPELINES)
         if lp_pipeline_data:
             plot_pipeline_logprob_trajectories(lp_pipeline_data, output_dir)
+            plot_ic_pe_trajectories(lp_pipeline_data, output_dir)
+
+        if lp_dataframes:
+            plot_delta_log_odds_distribution(lp_dataframes, TRAINING_PIPELINES, output_dir)
+            plot_delta_log_odds_distribution_by_context(lp_dataframes, TRAINING_PIPELINES, output_dir)
+
+    matched_lp_summaries = {}
+    if lp_dataframes:
+        for pipe_name, stages in TRAINING_PIPELINES.items():
+            if not stages:
+                continue
+            base_model_name, _ = stages[0]
+            if base_model_name not in dataframes or base_model_name not in lp_dataframes:
+                continue
+            base_df = dataframes[base_model_name]
+            base_initial = base_df[base_df["response_type"] == "initial"]
+            base_correct = set(
+                base_initial[base_initial["factual_accuracy"] == "correct"]["question_id"]
+            )
+            base_lp_df = lp_dataframes[base_model_name]
+            recs = []
+            for model_name, stage_label in stages:
+                if model_name not in dataframes or model_name not in lp_dataframes:
+                    continue
+                stage_df = dataframes[model_name]
+                stage_initial = stage_df[stage_df["response_type"] == "initial"]
+                stage_correct = set(
+                    stage_initial[stage_initial["factual_accuracy"] == "correct"]["question_id"]
+                )
+                intersection = base_correct & stage_correct
+                # PE-only matched ΔLO for fig:dissociation — F3 claim is about
+                # preemptive ΔLO specifically, not IC/PE average.
+                base_dlo = compute_matched_delta_logodds(
+                    base_lp_df, intersection, context="preemptive")
+                stage_dlo = compute_matched_delta_logodds(
+                    lp_dataframes[model_name], intersection, context="preemptive")
+                recs.append({
+                    "stage": stage_label,
+                    "model": model_name,
+                    "n_intersection": len(intersection),
+                    "n_obs": stage_dlo.get("n_obs", 0),
+                    "base_dlo_on_intersection": base_dlo.get("mean_delta_log_odds", 0),
+                    "stage_dlo_on_intersection": stage_dlo.get("mean_delta_log_odds", 0),
+                })
+            matched_lp_summaries[pipe_name] = recs
+        if matched_lp_summaries:
+            path = os.path.join(output_dir, "matched_lp_summaries.json")
+            with open(path, "w") as f:
+                json.dump(matched_lp_summaries, f, indent=2, default=str)
+            print(f"\nSaved matched_lp_summaries to {path}")
 
     # Cross-pipeline comparison plots
     if pipeline_data and lp_pipeline_data:
-        plot_behavioral_vs_representational(pipeline_data, lp_pipeline_data, output_dir)
+        plot_behavioral_vs_representational(pipeline_data, lp_pipeline_data, output_dir,
+                                            metric="regressive")
+        plot_behavioral_vs_representational(pipeline_data, lp_pipeline_data, output_dir,
+                                            metric="net")
+        if matched_summaries:
+            plot_behavioral_vs_representational(pipeline_data, lp_pipeline_data, output_dir,
+                                                metric="matched",
+                                                matched_summaries=matched_summaries,
+                                                matched_lp_summaries=matched_lp_summaries)
+    if pipeline_data:
+        plot_net_sycophancy_trajectories(pipeline_data, output_dir)
+    if matched_summaries:
+        plot_matched_subset(matched_summaries, output_dir)
 
     if pipeline_data:
         plot_control_comparison(pipeline_data, control_summaries, output_dir,
@@ -252,6 +381,7 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
 
     if summaries:
         plot_challenge_type_heatmap(summaries, output_dir)
+        plot_challenge_type_trajectories(summaries, output_dir)
         plot_control_vs_sycophancy_scatter(summaries, output_dir)
         plot_progressive_vs_regressive(summaries, output_dir)
 

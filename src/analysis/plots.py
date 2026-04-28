@@ -145,6 +145,44 @@ def plot_pipeline_logprob_trajectories(pipeline_data: dict, output_dir: str) -> 
     plt.close(fig)
 
 
+def plot_ic_pe_trajectories(pipeline_data: dict, output_dir: str) -> None:
+    fig, (ax_ic, ax_pe) = plt.subplots(1, 2, figsize=(14, 5))
+
+    for pipe_name, stages in pipeline_data.items():
+        if pipe_name not in TRAJECTORY_PIPELINES:
+            continue
+        labels = [label for label, _ in stages]
+        ic_vals = []
+        pe_vals = []
+        for _, summary in stages:
+            ch = summary.get("challenges", {})
+            ic_vals.append(ch.get("in_context", {}).get("mean_delta_log_odds", 0))
+            pe_vals.append(ch.get("preemptive", {}).get("mean_delta_log_odds", 0))
+        x = np.arange(len(labels))
+        color = PIPELINE_COLORS.get(pipe_name, "gray")
+        marker = PIPELINE_MARKERS.get(pipe_name, "o")
+        ls = PIPELINE_LINESTYLES.get(pipe_name, "-")
+        ax_ic.plot(x, ic_vals, marker=marker, linestyle=ls, linewidth=2,
+                   markersize=8, color=color, label=pipe_name)
+        ax_pe.plot(x, pe_vals, marker=marker, linestyle=ls, linewidth=2,
+                   markersize=8, color=color, label=pipe_name)
+        ax_ic.set_xticks(x); ax_ic.set_xticklabels(labels, rotation=45, ha="right")
+        ax_pe.set_xticks(x); ax_pe.set_xticklabels(labels, rotation=45, ha="right")
+
+    for ax, title in [(ax_ic, "In-context"), (ax_pe, "Preemptive")]:
+        ax.axhline(y=0, color="gray", linestyle="--", alpha=0.5)
+        ax.set_ylabel(r"$\Delta$LogOdds (non-simple avg.)")
+        ax.set_title(title, fontsize=12, fontweight="bold")
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+
+    fig.suptitle("IC vs PE $\\Delta$LogOdds across training (ethos/justification/citation avg.)",
+                 fontsize=13, fontweight="bold")
+    fig.tight_layout(rect=[0, 0, 1, 0.93])
+    save_fig(fig, output_dir, "ic_pe_trajectories.png")
+    plt.close(fig)
+
+
 def plot_delta_log_odds_distribution(lp_dataframes: dict, pipelines: dict,
                                       output_dir: str) -> None:
     """Per-checkpoint distribution of per-item ΔLogOdds.
@@ -230,15 +268,6 @@ def plot_delta_log_odds_distribution(lp_dataframes: dict, pipelines: dict,
 def plot_delta_log_odds_distribution_by_context(lp_dataframes: dict,
                                                  pipelines: dict,
                                                  output_dir: str) -> None:
-    """Distribution of per-item ΔLogOdds per checkpoint, split by challenge context.
-
-    For each checkpoint, draws two side-by-side box plots: one for in-context
-    challenges (challenge arrives after a commitment) and one for preemptive
-    challenges (challenge precedes the question). The tail story from the
-    outlier analysis (78-100% of the highest |ΔLogOdds| items come from the
-    preemptive context) should be visible as a fatter right tail on the
-    preemptive boxes.
-    """
     # Build flat ordered list, deduping shared base checkpoints
     entries = []
     seen = set()
@@ -358,13 +387,18 @@ def _behavioral_rate(summary: dict, metric: str) -> float:
     raise ValueError(f"Unknown metric: {metric}")
 
 
-def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: dict,
-                                         output_dir: str, metric: str = "regressive") -> None:
-    """Plot the surface-predictive dissociation: behavioral vs delta log-odds.
+def _matched_rate_for_stage(matched_records: list, stage_label: str) -> float:
+    for rec in matched_records:
+        if rec.get("stage") == stage_label:
+            return rec.get("stage_regressive_on_intersection", {}).get("regressive_rate")
+    return None
 
-    metric: "regressive" (raw regressive rate) or "net" (Regr - Ctrl).
-    Filename is suffixed with _net when metric="net" to avoid overwriting.
-    """
+
+def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: dict,
+                                         output_dir: str, metric: str = "regressive",
+                                         matched_summaries: dict = None,
+                                         matched_lp_summaries: dict = None) -> None:
+    
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
     for pipe_name in TRAJECTORY_PIPELINES:
@@ -380,14 +414,42 @@ def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: d
 
         ls = PIPELINE_LINESTYLES.get(pipe_name, "-")
 
-        beh = [_behavioral_rate(s, metric) for _, s in gen_stages]
+        if metric == "matched" and matched_summaries and pipe_name in matched_summaries:
+            matched_recs = matched_summaries[pipe_name]
+            beh = []
+            for label, s in gen_stages:
+                if label == "Base":
+                    beh.append(s.get("sycophancy", {}).get("regressive_rate", 0.0))
+                else:
+                    r = _matched_rate_for_stage(matched_recs, label)
+                    beh.append(r if r is not None
+                               else s.get("sycophancy", {}).get("regressive_rate", 0.0))
+        else:
+            beh = [_behavioral_rate(s, metric) for _, s in gen_stages]
         ax1.plot(x, beh, marker=marker, linestyle=ls, linewidth=2,
                  markersize=8, color=color, label=pipe_name)
         ax1.set_xticks(x)
         ax1.set_xticklabels(labels, rotation=45, ha="right")
 
-        dlo = [s.get("challenges", {}).get("overall", {}).get("mean_delta_log_odds", 0)
-               for _, s in lp_stages]
+        if (metric == "matched" and matched_lp_summaries
+                and pipe_name in matched_lp_summaries):
+            matched_lp = matched_lp_summaries[pipe_name]
+            dlo = []
+            for label, s in lp_stages:
+                if label == "Base":
+                    dlo.append(s.get("challenges", {}).get("overall", {})
+                               .get("mean_delta_log_odds", 0))
+                else:
+                    rec = next((r for r in matched_lp if r.get("stage") == label), None)
+                    if rec and rec.get("n_obs", 0) > 0:
+                        dlo.append(rec.get("stage_dlo_on_intersection",
+                                           rec.get("mean", 0)))
+                    else:
+                        dlo.append(s.get("challenges", {}).get("overall", {})
+                                   .get("mean_delta_log_odds", 0))
+        else:
+            dlo = [s.get("challenges", {}).get("overall", {}).get("mean_delta_log_odds", 0)
+                   for _, s in lp_stages]
         ax2.plot(x, dlo, marker=marker, linestyle=ls, linewidth=2,
                  markersize=8, color=color, label=pipe_name)
         ax2.set_xticks(x)
@@ -397,6 +459,10 @@ def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: d
         ax1.axhline(y=0, color="gray", linestyle="--", alpha=0.5)
         ax1.set_ylabel("Net Sycophancy (Regr. $-$ Ctrl.)")
         ax1.set_title("Behavioral: Net (control-adjusted)",
+                      fontsize=12, fontweight="bold")
+    elif metric == "matched":
+        ax1.set_ylabel(r"Matched Regr.\ (stage on base$\cap$stage items)")
+        ax1.set_title("Behavioral: matched-subset regressive rate",
                       fontsize=12, fontweight="bold")
     else:
         ax1.set_ylabel("Regressive Sycophancy Rate")
@@ -411,23 +477,21 @@ def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: d
     ax2.grid(True, alpha=0.3)
     ax2.legend()
 
-    title_suffix = " (Net)" if metric == "net" else ""
+    title_suffix = {"net": " (Net)", "matched": " (Matched)"}.get(metric, "")
     fig.suptitle(f"Behavioral vs. Representational Sycophancy Across Training{title_suffix}",
                  fontsize=14, fontweight="bold")
     fig.tight_layout(rect=[0, 0, 1, 0.93])
-    filename = "behavioral_vs_representational_net.png" if metric == "net" else "behavioral_vs_representational.png"
+    filename_by_metric = {
+        "net": "behavioral_vs_representational_net.png",
+        "matched": "behavioral_vs_representational_matched.png",
+    }
+    filename = filename_by_metric.get(metric, "behavioral_vs_representational.png")
     save_fig(fig, output_dir, filename)
     plt.close(fig)
 
 
 def plot_net_sycophancy_trajectories(pipeline_data: dict, output_dir: str) -> None:
-    """Net sycophancy (Regr - Ctrl) across training stages.
 
-    Net = regressive rate under wrong-answer challenge minus correct-answer
-    control flip rate. Positive = content-specific sycophancy beyond the
-    pressure-format distractibility; 0 = behavioral flips are entirely
-    explained by pressure-sensitivity, not content.
-    """
     fig, ax = plt.subplots(figsize=(8, 5))
 
     for pipe_name in TRAJECTORY_PIPELINES:
@@ -457,13 +521,7 @@ def plot_net_sycophancy_trajectories(pipeline_data: dict, output_dir: str) -> No
 
 
 def plot_matched_subset(matched_summaries: dict, output_dir: str) -> None:
-    """Grouped bar chart: base-on-intersection vs stage-on-intersection regressive rate.
 
-    Each pipeline contributes one group of bar pairs (one pair per post-trained stage).
-    For each stage we show (a) the base model's regressive rate restricted to items
-    both base and stage answered correctly initially, and (b) the stage's rate on
-    the same items. A significance star is drawn above each pair where p < 0.05.
-    """
     # Collect stage records across pipelines, in pipeline-then-stage order
     records = []
     for pipe_name, pipe_records in matched_summaries.items():
@@ -575,15 +633,15 @@ def plot_control_comparison(pipeline_data: dict, control_summaries: dict,
             ls = PIPELINE_LINESTYLES.get(pipe_name, "-")
 
             labels = [label for label, _ in stages]
-            # Wrong-answer challenges: average across simple/ethos/justification/citation
+            # Wrong-answer challenges: average across ethos/justification/citation
+            # (excluding simple per Finding 1 --- simple produces no log-prob shift)
             wrong_dlo = []
             ctrl_dlo = []
             for _, s in stages:
                 ch = s.get("challenges", {})
-                # Average wrong-answer types
                 wrong_vals = [
                     ch.get(f"type_{t}", {}).get("mean_delta_log_odds", 0)
-                    for t in ["simple", "ethos", "justification", "citation"]
+                    for t in ["ethos", "justification", "citation"]
                     if f"type_{t}" in ch
                 ]
                 wrong_dlo.append(np.mean(wrong_vals) if wrong_vals else 0)
@@ -662,10 +720,6 @@ def plot_cross_pipeline_bar(summaries: dict, lp_summaries: dict,
                      color="#E69F00", alpha=0.8)
     bars2 = ax1.bar(x + width/2, ctrl_rates, width, label="Correct-Answer Ctrl. Flip",
                      color="#56B4E9", alpha=0.8)
-    # Use markers only (no connecting line): these are four independent final
-    # models, not a sequence, so a line would imply a trend that does not exist.
-    # Plot both mean and median ΔLogOdds — medians are robust to the heavy-tailed
-    # per-item distribution documented in Appendix B.
     ax2.plot(x, dlo_mean_values, marker="D", linestyle="None", color="#0072B2",
              markersize=14, markeredgecolor="black", markeredgewidth=1.0,
              label="Mean $\\overline{\\Delta}$LogOdds", zorder=5)
@@ -673,8 +727,6 @@ def plot_cross_pipeline_bar(summaries: dict, lp_summaries: dict,
              markerfacecolor="white", markeredgecolor="#0072B2", markeredgewidth=1.6,
              markersize=12, label="Median $\\Delta$LogOdds", zorder=5)
 
-    # Annotate each mean-ΔLogOdds marker with its value for readability
-    # (secondary axis is easy to misread, especially when values span zero).
     for xi, dv in zip(x, dlo_mean_values):
         ax2.annotate(f"{dv:+.3f}", xy=(xi, dv),
                      xytext=(0, 10), textcoords="offset points",
@@ -683,8 +735,6 @@ def plot_cross_pipeline_bar(summaries: dict, lp_summaries: dict,
     # Reference line at 0 on the secondary axis so negative vs positive is clear
     ax2.axhline(y=0, color="#0072B2", linestyle=":", alpha=0.4, linewidth=1)
 
-    # Ensure enough headroom above the topmost mean marker so the value label
-    # and marker don't get clipped by the top of the axis.
     if dlo_mean_values:
         dlo_max = max(dlo_mean_values)
         dlo_min = min(dlo_mean_values + dlo_median_values + [0])
