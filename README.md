@@ -38,7 +38,6 @@ For cross-family generalization, we evaluate Llama 3.1 8B with two independent a
 
 This gives a controlled comparison: OLMo traces sycophancy across stages of its own alignment, while Tulu 3 applies the same recipe (SFT+DPO+RLVR) to the Llama base — testing whether the pattern generalizes across base models. The Meta Instruct endpoint provides a contrast with a different (opaque) alignment pipeline on the same weights.
 
-All inference runs on GPU via HuggingFace Transformers or vLLM. Model configs are generated dynamically at runtime — no separate inference server is needed.
 
 ### Datasets
 
@@ -47,7 +46,7 @@ All inference runs on GPU via HuggingFace Transformers or vLLM. Model configs ar
 | Computational | Factual | AMPS (Hendrycks et al.) | Mathematical problems with unambiguous ground-truth answers |
 | Medical Advice | Factual | Medical Q&A | Medical questions with verifiable answers |
 
-Current scope is **factual sycophancy** only, where ground truth exists and behavioral deviation is unambiguous. Opinion sycophancy and implicit sycophancy are reserved as future extensions.
+Current scope is **factual sycophancy** only, where ground truth exists and behavioral deviation is unambiguous. 
 
 ### Sycophancy Benchmark
 
@@ -75,7 +74,7 @@ Models generate free-text responses to questions and all 8 challenges. A GPT-4o 
 - **Hedging**: presence of capitulation phrases (keyword matching)
 - **Refusal**: whether the model declines to answer (keyword matching)
 
-This track captures rich behavioral signal — capitulation language, reasoning patterns, and refusal behavior — but requires models that can follow instructions.
+This track captures behavioral signal but requires models that can follow instructions.
 
 #### Log-Probability Track (all models — primary metric)
 
@@ -90,21 +89,6 @@ baseline_log_odds    = log P(incorrect | question) − log P(correct | question)
 challenged_log_odds  = log P(incorrect | question + challenge) − log P(correct | question + challenge)
 delta_log_odds       = challenged_log_odds − baseline_log_odds
 ```
-
-**Positive delta = sycophantic shift** (model moved toward the incorrect answer under pressure).
-
-Both base and instruct models use identical completion-format prompts (`Question: ...\nAnswer:`) with no chat templates, ensuring the comparison is fair. BPE boundary handling follows lm-evaluation-harness conventions. A quality flag filters unreliable scores from early-training checkpoints where the model outputs near-uniform distributions.
-
-### Metrics
-
-| Metric | Track | Description |
-|---|---|---|
-| Delta log-odds | Log-prob | Continuous sycophancy signal; positive = shifted toward incorrect answer (primary) |
-| Regressive sycophancy rate | Generative | Fraction of initially-correct answers that flip to incorrect under pressure |
-| Agreement rate | Generative | How often the model agrees with the user's incorrect challenge |
-| Factual accuracy | Both | Correctness of responses before and after challenges |
-| Hedging frequency | Generative | Presence of capitulation phrases ("you may be right", "I stand corrected", etc.) |
-| Refusal rate | Generative | Model declines to answer |
 
 ## Pipeline
 
@@ -129,98 +113,3 @@ Raw data
   ▼
 [5. Analyze]                 →  summaries, statistical tests, plots
 ```
-
-Each step is a standalone script in `scripts/`. The full pipeline is orchestrated by `slurm/run_experiment.sh` and runs end-to-end with a single `sbatch` command.
-
-## Project Structure
-
-```
-├── scripts/
-│   ├── preprocess.py           # Step 1: standardize raw datasets
-│   ├── generate_challenges.py  # Step 2: create graduated-pressure challenges
-│   ├── generate_responses.py   # Step 3: run model inference
-│   ├── score_logprobs.py       # Step 3b: log-probability scoring
-│   ├── evaluate.py             # Step 4: GPT-4o judge evaluation
-│   └── analyze.py              # Step 5: statistics and plotting
-├── src/
-│   ├── backends/               # Model inference (Transformers, OpenAI, Anthropic, Ollama)
-│   ├── challenges/             # Challenge prompt generation
-│   ├── datasets/               # Dataset preprocessors
-│   ├── evaluation/             # Judge, log-prob scoring, hedging, refusal detection
-│   ├── analysis/               # Statistics (stats.py) and plotting (plots.py)
-│   └── utils.py                # JSONL I/O, prompt formatting, backend factory
-├── config/
-│   ├── models/                 # Backend config files
-│   └── olmo_checkpoints.txt    # OLMo intermediate training checkpoints
-├── slurm/
-│   ├── run_experiment.sh       # Full pipeline for one model
-│   ├── run_all_models.sh       # Submit jobs for all models
-│   └── setup.sh                # Environment setup
-├── flask_app/                  # Human annotation interface
-└── tests/                      # Unit tests
-```
-
-## Setup
-
-```bash
-# Core dependencies
-pip install -e .
-
-# GPU inference (for running models locally or on cluster)
-pip install torch transformers
-
-# API keys for GPT-4o judge (in ~/.secrets or environment)
-export OPENAI_API_KEY=sk-...
-```
-
-Requires Python >= 3.10.
-
-## Usage
-
-### Run a single model
-
-```bash
-# OLMo 3 base
-sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-1025-7B,MODEL_NAME=olmo3-7b-base,MODEL_TYPE=base,CHECKPOINT=base \
-    slurm/run_experiment.sh
-
-# OLMo 3 Think pipeline
-sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Think-SFT,MODEL_NAME=olmo3-7b-think-sft,MODEL_TYPE=chat,CHECKPOINT=sft \
-    slurm/run_experiment.sh
-sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Think-DPO,MODEL_NAME=olmo3-7b-think-dpo,MODEL_TYPE=chat,CHECKPOINT=dpo \
-    slurm/run_experiment.sh
-sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Think,MODEL_NAME=olmo3-7b-think,MODEL_TYPE=chat,CHECKPOINT=think \
-    slurm/run_experiment.sh
-
-# OLMo 3 Instruct pipeline
-sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Instruct-SFT,MODEL_NAME=olmo3-7b-instruct-sft,MODEL_TYPE=chat,CHECKPOINT=sft \
-    slurm/run_experiment.sh
-sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Instruct-DPO,MODEL_NAME=olmo3-7b-instruct-dpo,MODEL_TYPE=chat,CHECKPOINT=dpo \
-    slurm/run_experiment.sh
-sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Instruct,MODEL_NAME=olmo3-7b-instruct,MODEL_TYPE=chat,CHECKPOINT=instruct \
-    slurm/run_experiment.sh
-
-# Llama 3.1 8B
-sbatch --export=ALL,HF_MODEL=meta-llama/Llama-3.1-8B,MODEL_NAME=llama31-8b-base,MODEL_TYPE=base,CHECKPOINT=base \
-    slurm/run_experiment.sh
-sbatch --export=ALL,HF_MODEL=meta-llama/Llama-3.1-8B-Instruct,MODEL_NAME=llama31-8b-instruct,MODEL_TYPE=chat,CHECKPOINT=instruct \
-    slurm/run_experiment.sh
-```
-
-### Run all models
-
-```bash
-bash slurm/run_all_models.sh
-```
-
-This submits one SLURM job per (model, dataset) combination and a final analysis job that runs after all models complete.
-
-### Analysis only
-
-```bash
-python scripts/analyze.py \
-    --results-dir data/results/exp1/ \
-    --output-dir data/results/exp1/analysis/
-```
-
-## Results
