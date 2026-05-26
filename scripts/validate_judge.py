@@ -21,12 +21,47 @@ Follows the beta-distribution validation approach from Fanous et al. (2025) — 
 
 import argparse
 import csv
+import hashlib
 import json
 import random
 import sys
+from collections import Counter
 
 from src.analysis.stats import beta_distribution_ci
 from src.utils import read_jsonl
+
+
+# Columns an annotator is allowed to see. Judge labels and model identity are
+# withheld so the human label isn't anchored to the judge or biased by which
+# checkpoint produced the response.
+BLIND_FIELDS = [
+    "row_id", "question", "correct_answer", "model_response",
+    "human_factual_accuracy", "human_agreement",
+]
+
+FACTUAL_LABELS = ["correct", "incorrect", "erroneous"]
+AGREEMENT_LABELS = ["true", "false", "null"]
+
+
+def _row_id(r: dict) -> str:
+    """Stable id for a (model, question, condition, challenge) row, so two
+    annotators' sheets and the master can be merged regardless of order."""
+    key = f"{r.get('model','')}|{r['question_id']}|{r['condition']}|{r['challenge_id']}"
+    return hashlib.sha1(key.encode("utf-8")).hexdigest()[:10]
+
+
+def _cohens_kappa(pairs: list[tuple[str, str]], labels: list[str]):
+    """pairs: list of (label_a, label_b). Returns dict with n, agreement, kappa."""
+    n = len(pairs)
+    if n == 0:
+        return {"n": 0, "agreement": 0.0, "kappa": 0.0, "p_e": 0.0}
+    matches = sum(1 for a, b in pairs if a == b)
+    po = matches / n
+    c_a = Counter(a for a, _ in pairs)
+    c_b = Counter(b for _, b in pairs)
+    pe = sum((c_a.get(l, 0) / n) * (c_b.get(l, 0) / n) for l in labels)
+    kappa = (po - pe) / (1 - pe) if (1 - pe) > 0 else 0.0
+    return {"n": n, "agreement": po, "kappa": kappa, "p_e": pe}
 
 
 def _collect_rows(item: dict, model_name: str = "",
@@ -134,15 +169,36 @@ def sample_for_annotation(input_path: str, output_path: str, n: int,
     else:
         sampled = random.sample(rows, min(n, len(rows)))
 
+    for r in sampled:
+        r["row_id"] = _row_id(r)
+
+    # Master sheet (internal): full metadata + judge labels + row_id.
+    master_fields = ["row_id"] + [k for k in sampled[0].keys() if k != "row_id"]
     with open(output_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=sampled[0].keys())
+        writer = csv.DictWriter(f, fieldnames=master_fields)
         writer.writeheader()
         writer.writerows(sampled)
 
-    print(f"\nWrote {len(sampled)} items to {output_path}")
-    print("Fill in 'human_factual_accuracy' (correct/incorrect/erroneous)")
-    print("and 'human_agreement' (true/false/null) columns, then run:")
-    print(f"  python scripts/validate_judge.py compute --input {output_path}")
+    # Blinded sheet (for annotators): no judge labels, no model identity.
+    blind_path = output_path[:-4] + "_blind.csv" if output_path.endswith(".csv") \
+        else output_path + "_blind.csv"
+    with open(blind_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=BLIND_FIELDS, extrasaction="ignore")
+        writer.writeheader()
+        for r in sampled:
+            writer.writerow({k: r.get(k, "") for k in BLIND_FIELDS})
+
+    print(f"\nWrote master sheet ({len(sampled)} rows) to {output_path}")
+    print(f"Wrote blinded annotator sheet to {blind_path}")
+    print("\nSend the BLINDED sheet to each annotator. They fill:")
+    print("  human_factual_accuracy : correct / incorrect / erroneous")
+    print("  human_agreement        : true / false / null")
+    print("\nThen compute inter-annotator reliability + judge agreement:")
+    print(f"  python scripts/validate_judge.py compute-irr \\")
+    print(f"      --annotator-a annotatorA.csv --annotator-b annotatorB.csv \\")
+    print(f"      --master {output_path}")
+    print("\n(For a single annotator, the original judge-vs-human path still works:")
+    print(f"  python scripts/validate_judge.py compute --input <filled_sheet>.csv )")
 
 
 def compute_validation(input_path: str):
@@ -246,6 +302,98 @@ def compute_validation(input_path: str):
     print(f"\nSaved validation results to {out_path}")
 
 
+def _load_human_labels(path: str) -> dict:
+    """{row_id: {"factual": ..., "agreement": ...}} from a filled annotator sheet."""
+    out = {}
+    with open(path, "r", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            rid = r.get("row_id", "").strip()
+            if not rid:
+                continue
+            out[rid] = {
+                "factual": r.get("human_factual_accuracy", "").strip().lower(),
+                "agreement": r.get("human_agreement", "").strip().lower(),
+            }
+    return out
+
+
+def _load_judge_labels(master_path: str) -> dict:
+    out = {}
+    with open(master_path, "r", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            rid = r.get("row_id", "").strip()
+            if not rid:
+                continue
+            out[rid] = {
+                "factual": r.get("judge_factual_accuracy", "").strip().lower(),
+                "agreement": r.get("judge_agreement", "").strip().lower(),
+            }
+    return out
+
+
+def compute_irr(annotator_a: str, annotator_b: str, master: str | None = None):
+    """Inter-annotator reliability between two filled blinded sheets, plus
+    (optionally) judge-vs-human and judge-vs-consensus by merging the master."""
+    a = _load_human_labels(annotator_a)
+    b = _load_human_labels(annotator_b)
+    shared = sorted(set(a) & set(b))
+    both = [rid for rid in shared if a[rid]["factual"] and b[rid]["factual"]]
+    if not both:
+        print("No row_id labeled by BOTH annotators — check the sheets share a row_id column.")
+        return
+
+    print(f"\n=== Inter-Annotator Reliability ({len(both)} rows labeled by both) ===\n")
+    fa = _cohens_kappa([(a[r]["factual"], b[r]["factual"]) for r in both], FACTUAL_LABELS)
+    print("Factual accuracy (annotator A vs B):")
+    print(f"  agreement: {fa['agreement']:.1%}   Cohen's kappa: {fa['kappa']:.3f}")
+
+    results = {"n_both_labeled": len(both), "factual_irr": fa}
+
+    ag_both = [r for r in both
+               if a[r]["agreement"] and b[r]["agreement"]
+               and a[r]["agreement"] not in ("null", "none", "na")
+               and b[r]["agreement"] not in ("null", "none", "na")]
+    if ag_both:
+        ag = _cohens_kappa([(a[r]["agreement"], b[r]["agreement"]) for r in ag_both],
+                           AGREEMENT_LABELS)
+        print(f"\nAgreement label (annotator A vs B, {ag['n']} rows):")
+        print(f"  agreement: {ag['agreement']:.1%}   Cohen's kappa: {ag['kappa']:.3f}")
+        results["agreement_irr"] = ag
+
+    if master:
+        judge = _load_judge_labels(master)
+        for name, ann in (("A", a), ("B", b)):
+            pairs = [(judge[r]["factual"], ann[r]["factual"])
+                     for r in both if r in judge and judge[r]["factual"]]
+            jk = _cohens_kappa(pairs, FACTUAL_LABELS)
+            bstats = beta_distribution_ci(
+                sum(1 for x, y in pairs if x == y),
+                sum(1 for x, y in pairs if x != y))
+            print(f"\nJudge vs annotator {name} (factual, {jk['n']} rows):")
+            print(f"  agreement: {jk['agreement']:.1%}   kappa: {jk['kappa']:.3f}"
+                  f"   beta-CI: [{bstats['ci_low']:.3f}, {bstats['ci_high']:.3f}]")
+            results[f"judge_vs_{name}"] = {**jk, "beta": bstats}
+
+        cons_pairs = [(judge[r]["factual"], a[r]["factual"])
+                      for r in both
+                      if a[r]["factual"] == b[r]["factual"]
+                      and r in judge and judge[r]["factual"]]
+        ck = _cohens_kappa(cons_pairs, FACTUAL_LABELS)
+        cstats = beta_distribution_ci(
+            sum(1 for x, y in cons_pairs if x == y),
+            sum(1 for x, y in cons_pairs if x != y))
+        print(f"\nJudge vs human consensus (rows where A==B, {ck['n']} rows):")
+        print(f"  agreement: {ck['agreement']:.1%}   kappa: {ck['kappa']:.3f}"
+              f"   beta-CI: [{cstats['ci_low']:.3f}, {cstats['ci_high']:.3f}]")
+        results["judge_vs_consensus"] = {**ck, "beta": cstats}
+
+    out_path = annotator_a[:-4] + "_irr_results.json" if annotator_a.endswith(".csv") \
+        else annotator_a + "_irr_results.json"
+    with open(out_path, "w") as f:
+        json.dump(results, f, indent=2)
+    print(f"\nSaved IRR results to {out_path}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Validate LLM-as-a-Judge accuracy")
     sub = parser.add_subparsers(dest="command")
@@ -264,8 +412,16 @@ def main():
                                  "Required to populate question and correct_answer "
                                  "columns, since evaluated.jsonl does not store them."))
 
-    sp_compute = sub.add_parser("compute", help="Compute agreement from annotated CSV")
+    sp_compute = sub.add_parser("compute", help="Single-annotator judge-vs-human agreement")
     sp_compute.add_argument("--input", required=True, help="Path to annotated CSV")
+
+    sp_irr = sub.add_parser("compute-irr",
+                            help="Two-annotator inter-rater reliability + judge agreement")
+    sp_irr.add_argument("--annotator-a", required=True, help="Annotator A's filled blinded sheet")
+    sp_irr.add_argument("--annotator-b", required=True, help="Annotator B's filled blinded sheet")
+    sp_irr.add_argument("--master", default=None,
+                        help="Master sheet (with judge labels + row_id) to also report "
+                             "judge-vs-human and judge-vs-consensus")
 
     args = parser.parse_args()
 
@@ -277,6 +433,8 @@ def main():
                               processed=args.processed)
     elif args.command == "compute":
         compute_validation(args.input)
+    elif args.command == "compute-irr":
+        compute_irr(args.annotator_a, args.annotator_b, args.master)
     else:
         parser.print_help()
 
