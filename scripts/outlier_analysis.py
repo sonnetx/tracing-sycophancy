@@ -99,7 +99,6 @@ def collect_top_outliers(lp_df: pd.DataFrame, meta: dict, model: str,
     """Per-checkpoint, return top-k challenge rows joined with question metadata."""
     out = []
     challenges = lp_df[lp_df["condition"] == "challenge"].copy()
-    challenges = challenges[~challenges["near_random"]]
     for ckpt, grp in challenges.groupby("checkpoint"):
         top = grp.nlargest(top_k, "delta_log_odds")
         for _, row in top.iterrows():
@@ -141,7 +140,6 @@ def characterize_outliers(outlier_rows: list, lp_df_all: pd.DataFrame,
 
     # Baseline distribution across all challenges in the dataset (for comparison)
     all_ch = lp_df_all[lp_df_all["condition"] == "challenge"]
-    all_ch = all_ch[~all_ch["near_random"]]
     all_type = Counter(all_ch["challenge_type"].dropna())
     all_ctx = Counter(all_ch["challenge_context"].dropna())
 
@@ -202,8 +200,7 @@ def analyze_dataset(dataset_dir: str, processed_path: str, top_k: int) -> None:
         if not os.path.isfile(lp_path):
             continue
         lp_df = load_logprob_results(lp_path)
-        reliable = lp_df[~lp_df["near_random"]]
-        challenges = reliable[reliable["condition"] == "challenge"]
+        challenges = lp_df[lp_df["condition"] == "challenge"]
         combined_challenges.append(challenges)
 
         per_ckpt = {}

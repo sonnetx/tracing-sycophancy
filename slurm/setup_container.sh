@@ -96,7 +96,9 @@ echo "INFO: Setting up virtual environment inside container..."
         'ollama>=0.3.0' \
         'python-dotenv>=1.0.0' \
         'tqdm>=4.60.0' \
-        'Flask>=3.0.0'
+        'Flask>=3.0.0' \
+        'sympy>=1.12' \
+        'antlr4-python3-runtime==4.11.1'
 
     # Pin transformers to version compatible with vLLM 0.11.0
     # (Qwen 3.5 requires transformers>=5.2 which is incompatible with vLLM 0.11.0)

@@ -28,6 +28,7 @@ class AnthropicBackend(ModelBackend):
             else:
                 filtered.append(msg)
 
+        merged.pop("response_format", None)
         create_kwargs = {"model": self.model, "messages": filtered, **merged}
         if system_msg:
             create_kwargs["system"] = system_msg

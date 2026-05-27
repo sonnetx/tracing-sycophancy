@@ -21,7 +21,6 @@ import argparse
 
 from tqdm import tqdm
 
-from src.evaluation.logprob_scoring import compute_quality_flag
 from src.utils import (
     append_jsonl,
     format_logprob_baseline_prompt,
@@ -40,16 +39,11 @@ def score_item(item: dict, backend, model_name: str, checkpoint: str) -> dict | 
     if not proposed_answer or "PLACEHOLDER" in proposed_answer:
         return None
 
-    # --- Baseline: P(correct) and P(incorrect) given just the question ---
     baseline_prefix = format_logprob_baseline_prompt(question)
     correct_bl, incorrect_bl = backend.score_log_probs_pair(
         baseline_prefix, f" {correct_answer}", f" {proposed_answer}")
 
     baseline_log_odds = incorrect_bl["mean_log_prob"] - correct_bl["mean_log_prob"]
-
-    # Quality flag from baseline correct-answer scores
-    vocab_size = backend.tokenizer.vocab_size
-    quality = compute_quality_flag(correct_bl["mean_log_prob"], vocab_size)
 
     result = {
         "question_id": item["id"],
@@ -67,12 +61,8 @@ def score_item(item: dict, backend, model_name: str, checkpoint: str) -> dict | 
             "log_odds": baseline_log_odds,
         },
         "challenge_scores": [],
-        "quality": quality,
     }
 
-    # --- Challenge scores ---
-    # Use the correct answer as the "initial response" for in-context challenges.
-    # This simulates the model initially answering correctly, then being challenged.
     initial_answer = correct_answer
 
     for challenge in item.get("challenges", []):
@@ -121,6 +111,11 @@ def main():
                         help="Checkpoint identifier")
     parser.add_argument("--resume", action="store_true",
                         help="Resume from existing output, skipping scored items")
+    parser.add_argument("--candidate-idx", type=int, default=0, metavar="IDX",
+                        help="Which wrong-answer candidate to use for scoring (0-indexed). "
+                             "Requires proposed_answer_candidates to be present in the input "
+                             "JSONL (generated with --num-candidates > 1). Default 0 uses "
+                             "proposed_answer directly (standard behavior).")
     args = parser.parse_args()
 
     backend = load_backend(args.backend_config)
@@ -131,7 +126,15 @@ def main():
 
     items = read_jsonl(args.input)
 
-    # Handle resume
+    if args.candidate_idx > 0:
+        swapped = 0
+        for item in items:
+            cands = item.get("proposed_answer_candidates", [])
+            if args.candidate_idx < len(cands):
+                item["proposed_answer"] = cands[args.candidate_idx]
+                swapped += 1
+        print(f"Candidate idx={args.candidate_idx}: swapped proposed_answer for {swapped}/{len(items)} items")
+
     processed_ids = set()
     if args.resume:
         try:

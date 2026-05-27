@@ -26,12 +26,7 @@ PIPELINE_LINESTYLES = {
     "Llama 3.1": ":",
 }
 
-# Pipelines to include in trajectory plots. Llama 3.1 is excluded because
-# it has only 2 public checkpoints (Base, Instruct) with no intermediate
-# SFT/DPO. Plotting it on the shared x-axis would place its Instruct point
-# at the SFT position of the other pipelines, which misrepresents the data.
-# Llama 3.1 still appears in Tables 1-4, Table 7, and the final-stage bar
-# chart (plot_cross_pipeline_bar), where each model occupies its own column.
+# Llama 3.1 excluded: only 2 checkpoints (Base, Instruct), no intermediate SFT/DPO.
 TRAJECTORY_PIPELINES = {"Think", "Instruct", "Tulu 3"}
 
 
@@ -83,13 +78,6 @@ def plot_pipeline_trajectories(pipeline_data: dict, output_dir: str) -> None:
 
 
 def plot_pipeline_logprob_trajectories(pipeline_data: dict, output_dir: str) -> None:
-    """Plot log-prob sycophancy metrics across training stages.
-
-    Left panel overlays mean ΔLogOdds (solid) and median ΔLogOdds (open marker,
-    dotted) per pipeline. The gap between the two lines characterises the
-    heavy-tailed distribution: a large gap implies a minority of items are
-    driving the mean far from the typical item.
-    """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
     for pipe_name, stages in pipeline_data.items():
@@ -185,25 +173,7 @@ def plot_ic_pe_trajectories(pipeline_data: dict, output_dir: str) -> None:
 
 def plot_delta_log_odds_distribution(lp_dataframes: dict, pipelines: dict,
                                       output_dir: str) -> None:
-    """Per-checkpoint distribution of per-item ΔLogOdds.
-
-    Shows a box plot (Q1/median/Q3, whiskers to 1.5×IQR) per checkpoint ordered
-    by pipeline, with outliers drawn as individual points. The filled diamond
-    marks the mean; outliers that sit far above the whiskers make the heavy
-    right tail visible and identify the items that drag the mean above the
-    median.
-
-    Parameters
-    ----------
-    lp_dataframes : dict
-        {model_key: DataFrame with 'condition', 'near_random', 'delta_log_odds'}.
-        DataFrames produced by load_logprob_results.
-    pipelines : dict
-        TRAINING_PIPELINES-shaped mapping {pipe_name: [(model_key, stage_label), ...]}.
-    """
-    # Build flat ordered list of (pipe_name, stage_label, model_key, series).
-    # Dedupe shared base checkpoints (e.g., llama31-8b-base appears in both
-    # Llama 3.1 and Tulu 3); keep the first pipeline it appears in.
+    # Dedupe shared base checkpoints (e.g., llama31-8b-base in both Llama 3.1 and Tulu 3).
     entries = []
     seen = set()
     for pipe_name, stages in pipelines.items():
@@ -213,8 +183,7 @@ def plot_delta_log_odds_distribution(lp_dataframes: dict, pipelines: dict,
             df = lp_dataframes.get(model_key)
             if df is None:
                 continue
-            reliable = df[~df["near_random"]]
-            challenges = reliable[reliable["condition"] == "challenge"]
+            challenges = df[df["condition"] == "challenge"]
             s = challenges["delta_log_odds"].dropna().values
             if len(s) == 0:
                 continue
@@ -245,7 +214,6 @@ def plot_delta_log_odds_distribution(lp_dataframes: dict, pipelines: dict,
     for flier, color in zip(bp["fliers"], colors):
         flier.set_markerfacecolor(color)
 
-    # Mean marker per checkpoint
     means = [float(np.mean(s)) for s in series]
     ax.scatter(positions, means, marker="D", s=42, color="black", zorder=5,
                label="Mean")
@@ -268,7 +236,6 @@ def plot_delta_log_odds_distribution(lp_dataframes: dict, pipelines: dict,
 def plot_delta_log_odds_distribution_by_context(lp_dataframes: dict,
                                                  pipelines: dict,
                                                  output_dir: str) -> None:
-    # Build flat ordered list, deduping shared base checkpoints
     entries = []
     seen = set()
     for pipe_name, stages in pipelines.items():
@@ -278,8 +245,7 @@ def plot_delta_log_odds_distribution_by_context(lp_dataframes: dict,
             df = lp_dataframes.get(model_key)
             if df is None:
                 continue
-            reliable = df[~df["near_random"]]
-            challenges = reliable[reliable["condition"] == "challenge"]
+            challenges = df[df["condition"] == "challenge"]
             if len(challenges) == 0:
                 continue
             in_ctx = challenges[challenges["challenge_context"] == "in_context"][
@@ -338,7 +304,6 @@ def plot_delta_log_odds_distribution_by_context(lp_dataframes: dict,
         flier.set_markerfacecolor(color)
         flier.set_alpha(0.75)
 
-    # Mean markers
     means_in = [float(np.mean(s)) if len(s) else np.nan for s in in_ctx_series]
     means_pre = [float(np.mean(s)) if len(s) else np.nan for s in preempt_series]
     ax.scatter(positions_in, means_in, marker="D", s=28, color="black",
@@ -372,12 +337,7 @@ def plot_delta_log_odds_distribution_by_context(lp_dataframes: dict,
 
 
 def _behavioral_rate(summary: dict, metric: str) -> float:
-    """Extract the behavioral y-axis value from a single-stage summary.
-
-    metric="regressive" -> raw regressive sycophancy rate
-    metric="net"        -> regressive rate minus correct-answer control flip rate
-                           (content-specific sycophancy, isolating distractibility)
-    """
+    """Behavioral rate from summary: 'regressive' or 'net' (regressive minus control)."""
     regr = summary.get("sycophancy", {}).get("regressive_rate", 0.0)
     if metric == "regressive":
         return regr
@@ -522,7 +482,6 @@ def plot_net_sycophancy_trajectories(pipeline_data: dict, output_dir: str) -> No
 
 def plot_matched_subset(matched_summaries: dict, output_dir: str) -> None:
 
-    # Collect stage records across pipelines, in pipeline-then-stage order
     records = []
     for pipe_name, pipe_records in matched_summaries.items():
         for rec in pipe_records:
@@ -547,7 +506,6 @@ def plot_matched_subset(matched_summaries: dict, output_dir: str) -> None:
     ax.bar(x + width / 2, stage_vals, width, label="Post-trained stage",
            color=colors_stage, edgecolor="black", linewidth=0.5)
 
-    # Significance stars for p < 0.05 contrasts
     max_bar = max(max(base_vals, default=0), max(stage_vals, default=0))
     star_pad = 0.02
     for i, (_, rec) in enumerate(records):
@@ -559,8 +517,6 @@ def plot_matched_subset(matched_summaries: dict, output_dir: str) -> None:
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=9)
     ax.set_ylabel("Matched-subset regressive rate")
-    # Give enough headroom above the tallest bar so stars are not clipped
-    # (especially tall bars like Llama 3.1 Instruct base-on-intersection).
     ax.set_ylim(0, max_bar + star_pad + 0.04)
     ax.set_title("Matched-subset regressive sycophancy: base vs.\\ post-trained stage on identical items",
                  fontsize=11, fontweight="bold")
@@ -620,7 +576,6 @@ def plot_control_comparison(pipeline_data: dict, control_summaries: dict,
     ax_gen.grid(True, alpha=0.3)
     ax_gen.legend(fontsize=7)
 
-    # Log-prob panel: wrong-answer vs correct-answer control delta log-odds
     if has_lp:
         ax_lp = axes[1]
         for pipe_name in TRAJECTORY_PIPELINES:
@@ -633,8 +588,6 @@ def plot_control_comparison(pipeline_data: dict, control_summaries: dict,
             ls = PIPELINE_LINESTYLES.get(pipe_name, "-")
 
             labels = [label for label, _ in stages]
-            # Wrong-answer challenges: average across ethos/justification/citation
-            # (excluding simple per Finding 1 --- simple produces no log-prob shift)
             wrong_dlo = []
             ctrl_dlo = []
             for _, s in stages:
@@ -732,7 +685,6 @@ def plot_cross_pipeline_bar(summaries: dict, lp_summaries: dict,
                      xytext=(0, 10), textcoords="offset points",
                      ha="center", fontsize=9, color="#0072B2", fontweight="bold")
 
-    # Reference line at 0 on the secondary axis so negative vs positive is clear
     ax2.axhline(y=0, color="#0072B2", linestyle=":", alpha=0.4, linewidth=1)
 
     if dlo_mean_values:
@@ -749,7 +701,6 @@ def plot_cross_pipeline_bar(summaries: dict, lp_summaries: dict,
     ax1.set_xticklabels(model_names)
     ax1.grid(True, alpha=0.3, axis="y")
 
-    # Combine legends
     handles1, labels1 = ax1.get_legend_handles_labels()
     handles2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(handles1 + handles2, labels1 + labels2, loc="upper left", fontsize=9)
@@ -829,10 +780,6 @@ def plot_delta_log_odds_by_challenge_type(summary: dict, output_dir: str,
     plt.close(fig)
 
 
-# -----------------------------------------------------------------------
-# Cross-dataset and cross-model comparison plots
-# -----------------------------------------------------------------------
-
 def plot_domain_comparison(comp_lp_pipeline_data: dict, med_lp_pipeline_data: dict,
                            output_dir: str) -> None:
     """Side-by-side delta log-odds trajectories for computational vs medical."""
@@ -882,14 +829,6 @@ def plot_domain_comparison(comp_lp_pipeline_data: dict, med_lp_pipeline_data: di
 
 
 def plot_challenge_type_trajectories(summaries: dict, output_dir: str) -> None:
-    """Regressive flip rate by challenge type across training stages, per pipeline.
-
-    Replaces the older model x challenge-type heatmap, which collapsed the
-    training-stage dimension and so could not show how each challenge type's
-    effectiveness evolves through SFT / DPO / final. One panel per pipeline;
-    four lines per panel, one per challenge type. Colours run yellow-to-red
-    to mirror the pressure-escalation ordering.
-    """
     CHALLENGE_TYPES = ["simple", "ethos", "justification", "citation"]
     TYPE_COLORS = {
         "simple":        "#FDB863",
@@ -986,7 +925,6 @@ def plot_challenge_type_trajectories(summaries: dict, output_dir: str) -> None:
 def plot_challenge_type_heatmap(summaries: dict, output_dir: str) -> None:
     """Heatmap of regressive flip rate by model x challenge type."""
     types = ["simple", "ethos", "justification", "citation"]
-    # Order: base models first, then pipelines in training order
     model_order = [
         ("OLMo Base", "olmo3-7b-base"),
         ("OLMo Think SFT", "olmo3-7b-think-sft"),
@@ -1029,7 +967,6 @@ def plot_challenge_type_heatmap(summaries: dict, output_dir: str) -> None:
     ax.set_yticks(np.arange(len(model_labels)))
     ax.set_yticklabels(model_labels)
 
-    # Annotate cells
     for i in range(len(model_labels)):
         for j in range(len(types)):
             val = data[i, j]
@@ -1047,7 +984,6 @@ def plot_challenge_type_heatmap(summaries: dict, output_dir: str) -> None:
 
 def plot_control_vs_sycophancy_scatter(summaries: dict, output_dir: str) -> None:
     """Scatter: correct-answer control flip rate vs regressive sycophancy rate."""
-    # Color by pipeline family
     model_to_pipeline = {
         "olmo3-7b-base": "Think",  # shared base
         "olmo3-7b-think-sft": "Think",
@@ -1084,12 +1020,10 @@ def plot_control_vs_sycophancy_scatter(summaries: dict, output_dir: str) -> None
         ax.scatter(ctrl_rate, regr_rate, c=color, marker=marker, s=80,
                    label=label, edgecolors="black", linewidth=0.5, zorder=3)
 
-        # Label the point
         short = model_key.replace("olmo3-7b-", "").replace("llama31-8b-", "").replace("tulu3-llama31-8b", "tulu3")
         ax.annotate(short, (ctrl_rate, regr_rate), fontsize=7,
                     xytext=(4, 4), textcoords="offset points", alpha=0.7)
 
-    # Diagonal line: if ctrl == regr, no sycophancy-specific effect
     lim = max(ax.get_xlim()[1], ax.get_ylim()[1])
     ax.plot([0, lim], [0, lim], "k--", alpha=0.3, label="ctrl = regressive")
 

@@ -18,6 +18,8 @@ analysis, and generates cross-dataset comparison plots.
 import argparse
 import json
 import os
+import subprocess
+import sys
 
 from src.analysis.plots import (
     plot_behavioral_vs_representational,
@@ -40,14 +42,18 @@ from src.analysis.plots import (
 )
 from src.analysis.stats import (
     binomial_ci,
+    bootstrap_cluster_ci,
     compute_control_summary,
     compute_logprob_summary,
     compute_matched_delta_logodds,
     compute_matched_regressive,
     compute_metrics_summary,
+    compute_paired_delta_logodds,
     compute_persistence_summary,
     load_logprob_results,
     load_results_as_dataframe,
+    compute_paired_regressive,
+    fisher_exact_2x2,
     two_proportion_z_test,
 )
 
@@ -122,7 +128,6 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
 
     print(f"Found {len(models)} models: {list(models.keys())}")
 
-    # Compute summaries
     summaries = {}
     persistence_summaries = {}
     control_summaries = {}
@@ -145,8 +150,16 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
             print(f"  Refusal rate: {co.get('refusal_rate', 0):.3f}")
         if "sycophancy" in summary:
             s = summary["sycophancy"]
+            regr_binom_w = s.get("regressive_ci_high", 0) - s.get("regressive_ci_low", 0)
+            regr_clust_w = s.get("regressive_ci_cluster_width", None)
+            cluster_note = ""
+            if regr_clust_w is not None and regr_binom_w > 0:
+                ratio = regr_clust_w / regr_binom_w
+                cluster_note = f"  cluster-CI [{s['regressive_ci_cluster_low']:.3f},{s['regressive_ci_cluster_high']:.3f}] (×{ratio:.2f} binomial)"
             print(f"  Regressive sycophancy: {s.get('regressive_rate', 0):.3f} "
-                  f"({s.get('regressive_count', 0)}/{s.get('regressive_total', 0)})")
+                  f"({s.get('regressive_count', 0)}/{s.get('regressive_total', 0)})"
+                  f"  binomial-CI [{s.get('regressive_ci_low', 0):.3f},{s.get('regressive_ci_high', 0):.3f}]"
+                  + cluster_note)
             print(f"  Progressive sycophancy: {s.get('progressive_rate', 0):.3f} "
                   f"({s.get('progressive_count', 0)}/{s.get('progressive_total', 0)})")
 
@@ -209,27 +222,27 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
                 "base_regressive_on_intersection": base_on_inter,
                 "stage_regressive_on_intersection": stage_on_inter,
             }
-            if (base_on_inter["regressive_total"] > 0
-                    and stage_on_inter["regressive_total"] > 0):
-                z = two_proportion_z_test(
-                    base_on_inter["regressive_count"], base_on_inter["regressive_total"],
-                    stage_on_inter["regressive_count"], stage_on_inter["regressive_total"],
-                )
-                record["base_vs_stage_z_test"] = z
+            paired = compute_paired_regressive(base_df, stage_df, intersection)
+            record["base_vs_stage_paired"] = paired
             pipe_records.append(record)
         matched_summaries[pipe_name] = pipe_records
         print(f"\nMatched-subset regressive sycophancy: {pipe_name}")
         for rec in pipe_records:
             b = rec["base_regressive_on_intersection"]
             s = rec["stage_regressive_on_intersection"]
+            pr = rec.get("base_vs_stage_paired", {})
+            paired_str = ""
+            if pr.get("mcnemar_p") is not None:
+                paired_str = (f"  McNemar_p={pr['mcnemar_p']:.4e}"
+                              f"  boot_p={pr['bootstrap_p']:.4e}"
+                              f"  mean_d={pr['mean_d']:.3f}"
+                              f" [{pr['bootstrap_ci_low']:.3f},{pr['bootstrap_ci_high']:.3f}]"
+                              f"  disc({pr['n_base_only']}/{pr['n_stage_only']})")
             print(f"  {rec['stage']:>8s}  n={rec['n_intersection']:3d}  "
                   f"base={b['regressive_rate']:.3f} ({b['regressive_count']}/{b['regressive_total']})  "
                   f"stage={s['regressive_rate']:.3f} ({s['regressive_count']}/{s['regressive_total']})"
-                  + (f"  z={rec['base_vs_stage_z_test']['z_stat']:.2f} "
-                     f"p={rec['base_vs_stage_z_test']['p_value']:.4f}"
-                     if "base_vs_stage_z_test" in rec else ""))
+                  + paired_str)
 
-    # Save JSON summaries
     for name, data in [("summaries", summaries),
                        ("persistence_summaries", persistence_summaries),
                        ("control_summaries", control_summaries),
@@ -240,12 +253,10 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
                 json.dump(data, f, indent=2, default=str)
             print(f"\nSaved {name} to {path}")
 
-    # Pipeline trajectory plots
     pipeline_data = build_pipeline_data(summaries, TRAINING_PIPELINES)
     if pipeline_data:
         plot_pipeline_trajectories(pipeline_data, output_dir)
 
-    # Statistical tests
     base_name = "olmo3-7b-base"
     for final_name in ["olmo3-7b-think", "olmo3-7b-instruct"]:
         if base_name in summaries and final_name in summaries:
@@ -265,7 +276,6 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
                 print(f"  {final_name}: {ci_f['proportion']:.3f} "
                       f"(95% CI: {ci_f['ci_low']:.3f}-{ci_f['ci_high']:.3f})")
 
-    # Log-probability analysis
     lp_summaries = {}
     lp_dataframes = {}
     lp_pipeline_data = {}
@@ -325,6 +335,8 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
                 base_initial[base_initial["factual_accuracy"] == "correct"]["question_id"]
             )
             base_lp_df = lp_dataframes[base_model_name]
+            print(f"\nMatched PE ΔLogOdds + paired Wilcoxon: {pipe_name}"
+                  "  (base → stage, ΔΔL [95% CI], one-sided Wilcoxon p)")
             recs = []
             for model_name, stage_label in stages:
                 if model_name not in dataframes or model_name not in lp_dataframes:
@@ -335,12 +347,13 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
                     stage_initial[stage_initial["factual_accuracy"] == "correct"]["question_id"]
                 )
                 intersection = base_correct & stage_correct
-                # PE-only matched ΔLO for fig:dissociation — F3 claim is about
-                # preemptive ΔLO specifically, not IC/PE average.
+                stage_lp_df = lp_dataframes[model_name]
                 base_dlo = compute_matched_delta_logodds(
                     base_lp_df, intersection, context="preemptive")
                 stage_dlo = compute_matched_delta_logodds(
-                    lp_dataframes[model_name], intersection, context="preemptive")
+                    stage_lp_df, intersection, context="preemptive")
+                paired = compute_paired_delta_logodds(
+                    base_lp_df, stage_lp_df, intersection, context="preemptive")
                 recs.append({
                     "stage": stage_label,
                     "model": model_name,
@@ -348,7 +361,22 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
                     "n_obs": stage_dlo.get("n_obs", 0),
                     "base_dlo_on_intersection": base_dlo.get("mean_delta_log_odds", 0),
                     "stage_dlo_on_intersection": stage_dlo.get("mean_delta_log_odds", 0),
+                    "base_dlo_stats": base_dlo,
+                    "stage_dlo_stats": stage_dlo,
+                    "paired": paired,
                 })
+                wp = paired.get("wilcoxon_p")
+                ci_lo = paired.get("bootstrap_ci_low")
+                ci_hi = paired.get("bootstrap_ci_high")
+                print(
+                    f"  {stage_label:>8s}  n={len(intersection):3d}  "
+                    f"base={base_dlo.get('mean_delta_log_odds', 0):+.3f}  "
+                    f"stage={stage_dlo.get('mean_delta_log_odds', 0):+.3f}  "
+                    f"ΔΔL={paired.get('mean_delta_delta_L', 0):+.3f}"
+                    + (f" [{ci_lo:.3f},{ci_hi:.3f}]"
+                       if ci_lo is not None and ci_hi is not None else "")
+                    + (f"  Wilcoxon(greater) p={wp:.2e}" if wp is not None else "")
+                )
             matched_lp_summaries[pipe_name] = recs
         if matched_lp_summaries:
             path = os.path.join(output_dir, "matched_lp_summaries.json")
@@ -356,7 +384,6 @@ def analyze_dataset(results_dir: str, output_dir: str) -> dict:
                 json.dump(matched_lp_summaries, f, indent=2, default=str)
             print(f"\nSaved matched_lp_summaries to {path}")
 
-    # Cross-pipeline comparison plots
     if pipeline_data and lp_pipeline_data:
         plot_behavioral_vs_representational(pipeline_data, lp_pipeline_data, output_dir,
                                             metric="regressive")
@@ -407,6 +434,9 @@ def main():
     parser.add_argument("--output-dir",
                         help="Output directory (required with --results-dir, "
                              "auto-created with --experiment-dir)")
+    parser.add_argument("--ablation", action="store_true",
+                        help="Also run citation-ablation analysis "
+                             "(expects data/results/exp_citation_ablation/ to exist)")
     args = parser.parse_args()
 
     if args.results_dir:
@@ -434,7 +464,6 @@ def main():
 
     print(f"Discovered datasets: {datasets}")
 
-    # Per-dataset analysis
     all_results = {}
     for dataset in datasets:
         results_dir = os.path.join(exp_dir, dataset)
@@ -444,7 +473,6 @@ def main():
         print(f"{'='*60}")
         all_results[dataset] = analyze_dataset(results_dir, output_dir)
 
-    # Cross-dataset comparison plots
     if len(all_results) >= 2:
         cross_dir = os.path.join(exp_dir, "cross_dataset")
         os.makedirs(cross_dir, exist_ok=True)
@@ -452,7 +480,6 @@ def main():
         print(f"Cross-dataset comparison")
         print(f"{'='*60}")
 
-        # Domain comparison: logprob trajectories side by side
         lp_pipelines = {
             ds: res.get("lp_pipeline_data", {})
             for ds, res in all_results.items()
@@ -466,14 +493,12 @@ def main():
                 cross_dir,
             )
 
-        # Cross-dataset heatmaps and scatter for each dataset
         for dataset, res in all_results.items():
             summaries = res.get("summaries", {})
             if summaries:
                 plot_challenge_type_heatmap(
                     summaries, cross_dir,
                 )
-                # Rename to include dataset
                 src = os.path.join(cross_dir, "challenge_type_heatmap.png")
                 dst = os.path.join(cross_dir, f"challenge_type_heatmap_{dataset}.png")
                 if os.path.exists(src):
@@ -486,6 +511,21 @@ def main():
                     os.rename(src, dst)
 
         print(f"\nCross-dataset plots saved to {cross_dir}")
+
+    if args.ablation:
+        ablation_dir = os.path.join(os.path.dirname(exp_dir), "exp_citation_ablation")
+        if os.path.isdir(ablation_dir):
+            print(f"\n{'='*60}")
+            print("Citation ablation decomposition")
+            print(f"{'='*60}")
+            subprocess.run(
+                [sys.executable, "scripts/analyze_citation_ablation.py",
+                 "--experiment-dir", ablation_dir],
+                check=False,
+            )
+        else:
+            print(f"\n[--ablation] Skipped: {ablation_dir} not found. "
+                  "Run slurm/run_citation_ablation.sh first.")
 
     print("\nAll analysis complete.")
 

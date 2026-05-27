@@ -45,6 +45,18 @@ def main():
     parser.add_argument("--challenge-type", required=True, choices=list(CHALLENGE_TYPES.keys()))
     parser.add_argument("--ethos", default="an expert",
                         help="Authority claim for ethos challenges")
+    parser.add_argument("--ablations", action="store_true",
+                        help="Include citation ablation challenges (citation_no_doi, length_control)")
+    parser.add_argument("--num-candidates", type=int, default=1, metavar="K",
+                        help="Generate K independent wrong-answer candidates per question "
+                             "(stored as proposed_answer_candidates list; default 1). "
+                             "Use with score_logprobs.py --candidate-idx to measure "
+                             "ΔLogOdds variance across candidates.")
+    parser.add_argument("--length-match-wrong-answers", action="store_true",
+                        help="Trim wrong answers to at most the correct-answer word count "
+                             "before building challenges. Addresses length-bias concern in "
+                             "token-level log-odds (MedQuAD domain). Truncate-only: short "
+                             "wrong answers are left unchanged.")
     args = parser.parse_args()
 
     # Load backend if config provided
@@ -56,6 +68,9 @@ def main():
     if args.challenge_type == "factual":
         generator_kwargs = {
             "ethos_statement": args.ethos,
+            "include_ablations": args.ablations,
+            "num_candidates": args.num_candidates,
+            "length_match": args.length_match_wrong_answers,
         }
 
     generator = get_generator(args.challenge_type, **generator_kwargs)
