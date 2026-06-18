@@ -41,6 +41,10 @@ flask_app/data/
 # Slurm logs
 logs/
 
+# LaTeX build artifacts
+*.log
+texput.log
+
 # Claude Code
 .claude/
 
