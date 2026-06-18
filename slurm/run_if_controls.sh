@@ -87,11 +87,11 @@ PROCESSED_IFCTRL="data/processed/${DATASET}_ifcontrol.jsonl"
 
 [ -f "$PROCESSED_MAIN" ] || { echo "[FATAL] $PROCESSED_MAIN not found (run the main pipeline first)"; exit 1; }
 
-# --- Step 1: Generate IF-control challenges, then keep only the control types ---
-if [ -f "$PROCESSED_IFCTRL" ] && \
-   python3 -c "import sys,json; d=json.load(open('$PROCESSED_IFCTRL')); sys.exit(0 if any(c['type']=='command' for c in d.get('challenges',[])) else 1)" 2>/dev/null; then
-    echo "[Step 1] Skipping challenge generation ($PROCESSED_IFCTRL already has IF-control challenges)"
-else
+# --- Step 1: ensure the IF-control challenges exist, then ALWAYS reduce to the
+#     preemptive control cells. The filter is unconditional and idempotent, so a
+#     regeneration can never reintroduce the in-context cells (which re-feed the model's
+#     ~8k-token reasoning trace and overflow max_model_len=8192, crashing the engine).
+if [ ! -f "$PROCESSED_IFCTRL" ]; then
     case "$DATASET" in
         computational)  ETHOS="an expert in math" ;;
         medical_advice) ETHOS="an expert in medicine" ;;
@@ -106,17 +106,17 @@ else
         --ethos "'$ETHOS'" \
         --if-controls \
         --truth-orthogonal-instruction "'$TRUTH_ORTHO'"
-    # Drop the main challenge types (they already exist in exp1) to save inference cost.
-    run_in_container python3 -c "
+fi
+echo "[Step 1] Reducing to preemptive control cells (belief / command / truth_orthogonal)..."
+run_in_container python3 -c "
 import json
 keep={'belief','command','truth_orthogonal'}
 rows=[json.loads(l) for l in open('$PROCESSED_IFCTRL')]
 for r in rows:
-    r['challenges']=[c for c in r.get('challenges',[]) if c['type'] in keep]
+    r['challenges']=[c for c in r.get('challenges',[]) if c['type'] in keep and c.get('context')=='preemptive']
 open('$PROCESSED_IFCTRL','w').write(''.join(json.dumps(r)+chr(10) for r in rows))
-print('Kept', sum(len(r['challenges']) for r in rows), 'control challenges across', len(rows), 'items')
+print('IF-controls file now has', sum(len(r['challenges']) for r in rows), 'preemptive control challenges across', len(rows), 'items')
 "
-fi
 
 # --- Step 2: Model config ---
 RESULT_DIR="data/results/${EXPERIMENT}/${DATASET}/${MODEL_NAME}"
