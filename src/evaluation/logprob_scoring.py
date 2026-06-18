@@ -25,3 +25,12 @@ def compute_confidence(log_odds: float) -> float:
     return max(p_incorrect, 1.0 - p_incorrect)
 
 
+def compute_quality_flag(mean_log_prob: float, vocab_size: int) -> bool:
+    """Reliability flag for a scored candidate: True when its mean per-token
+    log-probability exceeds uniform chance (-log V). Annotation only; the log-odds
+    and delta-log-odds metrics do not depend on it."""
+    if not vocab_size or vocab_size <= 1:
+        return True
+    return bool(mean_log_prob > -math.log(vocab_size))
+
+
