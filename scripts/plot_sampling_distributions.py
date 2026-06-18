@@ -17,6 +17,8 @@ import json
 import os
 from collections import Counter, defaultdict
 
+import matplotlib
+matplotlib.use("Agg")  # headless-safe: cluster login/compute nodes have no display
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -118,8 +120,11 @@ def main():
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
+    # Filename stems must match the \includegraphics references in the paper
+    # (paper/neurips_2025.tex, app:sampling): comp_* and med_*.
+    short_names = {"computational": "comp", "medical_advice": "med"}
     for dkey, dlabel in DOMAINS:
-        short = dkey[:3]
+        short = short_names.get(dkey, dkey[:4])
         out = os.path.join(args.output_dir, f"{short}_sampling_distributions.png")
         plot_one_domain(args.sampling_dir, dkey, out,
                          temperature=args.temperature, context=args.context)
