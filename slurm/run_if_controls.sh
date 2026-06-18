@@ -39,7 +39,7 @@ BACKEND_TYPE="${BACKEND_TYPE:-vllm}"
 MAX_MODEL_LEN="${MAX_MODEL_LEN:-8192}"
 GPU_MEM_UTIL="${GPU_MEM_UTIL:-0.80}"
 BATCH_SIZE="${BATCH_SIZE:-16}"
-MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-512}"
+MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-8192}"   # reasoning models (Think) need a long budget or the CoT is truncated and judged wrong; non-reasoning models can override lower
 
 # --- Dataset / experiment ---
 DATASET="${DATASET:-computational}"          # computational | medical_advice
