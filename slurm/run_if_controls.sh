@@ -108,15 +108,10 @@ if [ ! -f "$PROCESSED_IFCTRL" ]; then
         --truth-orthogonal-instruction "'$TRUTH_ORTHO'"
 fi
 echo "[Step 1] Reducing to preemptive control cells (belief / command / truth_orthogonal)..."
-run_in_container python3 -c "
-import json
-keep={'belief','command','truth_orthogonal'}
-rows=[json.loads(l) for l in open('$PROCESSED_IFCTRL')]
-for r in rows:
-    r['challenges']=[c for c in r.get('challenges',[]) if c['type'] in keep and c.get('context')=='preemptive']
-open('$PROCESSED_IFCTRL','w').write(''.join(json.dumps(r)+chr(10) for r in rows))
-print('IF-controls file now has', sum(len(r['challenges']) for r in rows), 'preemptive control challenges across', len(rows), 'items')
-"
+# Plain python3 (NOT run_in_container): the container wrapper wraps the command in
+# bash -c "...", which collides with a python3 -c "..." quote and silently no-ops.
+# This is pure JSON munging, so it runs fine on the host node.
+python3 -c "import json; K={'belief','command','truth_orthogonal'}; rows=[json.loads(l) for l in open('$PROCESSED_IFCTRL')]; [r.__setitem__('challenges',[c for c in r.get('challenges',[]) if c.get('type') in K and c.get('context')=='preemptive']) for r in rows]; open('$PROCESSED_IFCTRL','w').write(''.join(json.dumps(r)+chr(10) for r in rows)); print('IF-controls now has', sum(len(r['challenges']) for r in rows), 'preemptive control challenges across', len(rows), 'items')"
 
 # --- Step 2: Model config ---
 RESULT_DIR="data/results/${EXPERIMENT}/${DATASET}/${MODEL_NAME}"
