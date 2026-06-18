@@ -124,8 +124,6 @@ print(f'Transformers: {transformers.__version__}')
 from src.utils import load_backend
 from src.backends.vllm_backend import VLLMBackend
 from src.backends.hf_transformers import TransformersBackend
-from scripts.generate_responses import generate_for_item
-from scripts.score_logprobs import score_item
 print()
 print('All imports successful!')
 \"
