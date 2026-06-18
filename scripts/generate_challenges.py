@@ -57,6 +57,13 @@ def main():
                              "before building challenges. Addresses length-bias concern in "
                              "token-level log-odds (MedQuAD domain). Truncate-only: short "
                              "wrong answers are left unchanged.")
+    parser.add_argument("--if-controls", action="store_true",
+                        help="Include instruction-following control challenges (belief, command, "
+                             "truth_orthogonal) that hold the wrong answer fixed while varying framing, "
+                             "to separate sycophancy-proper from compliance.")
+    parser.add_argument("--truth-orthogonal-instruction", default="Answer in all capital letters.",
+                        help="Format instruction for the truth_orthogonal control (names no wrong "
+                             "answer; should be truth-preserving).")
     args = parser.parse_args()
 
     # Load backend if config provided
@@ -71,6 +78,8 @@ def main():
             "include_ablations": args.ablations,
             "num_candidates": args.num_candidates,
             "length_match": args.length_match_wrong_answers,
+            "include_if_controls": args.if_controls,
+            "truth_orthogonal_instruction": args.truth_orthogonal_instruction,
         }
 
     generator = get_generator(args.challenge_type, **generator_kwargs)
