@@ -1,8 +1,6 @@
 # Behaving Better, Thinking Worse: Sycophancy Across Post-Training Stages
 
-Code, data, and evaluation framework for the paper *Behaving Better, Thinking Worse: Sycophancy Across Post-Training Stages* by Sonnet Xu, Kritika Singh, Sheharbano Jafry, Roxana Daneshjou, and Sanmi Koyejo. Paper on arXiv (link forthcoming).
-
-We trace factual sycophancy across post-training checkpoints of open model pipelines (OLMo 3 7B Think and Instruct, Llama 3.1 8B Instruct, and Tulu 3), asking how the tendency to abandon a correct answer under user pressure changes from base models through SFT, DPO, and RL stages. We measure it two ways at once. A generative track has a GPT-4o judge score whether a model flips its answer after a challenge that asserts a wrong answer, and a log-probability track computes the shift in log P(wrong) minus log P(correct) under that pressure, a continuous measure that works even for base models whose free-form generations are degenerate.
+We trace factual sycophancy across post-training checkpoints of open model pipelines (OLMo 3 7B Think and Instruct, Llama 3.1 8B Instruct, and Tulu 3), asking how the tendency to abandon a correct answer under user pressure changes from base models through SFT, DPO, and RL stages. We measure it two ways: a generative track has a GPT-4o judge score whether a model flips its answer after a challenge that asserts a wrong answer, and a log-probability track computes the shift in log P(wrong) minus log P(correct) under that pressure, a continuous measure that works even for base models whose free-form generations are degenerate.
 
 Our main result is a behavior-probability dissociation. Across post-training, models flip their stated answer less often, yet the log-probability shift toward the wrong answer on those same items grows. Post-training changes what a model says under pressure more than what it internally prefers, so behavioral metrics alone overstate the progress. Instruction-following controls, framing a wrong answer as a belief versus a bare command, further show that much of the behavioral shift is response selection rather than a change in preference. The reasoning pipeline (OLMo Think) is the strongest behavioral de-sycophantizer on verifiable math yet the one that fails on open-ended medical advice.
 
@@ -137,14 +135,3 @@ sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Instruct,MODEL_NAME=olmo3-7b-inst
 ```
 
 Analysis, statistics, and figures come from `scripts/analyze.py` and the `plot_*.py` scripts. To run outside SLURM, adapt the in-container `python scripts/...` commands inside `slurm/run_experiment.sh`.
-
-## Citation
-
-```bibtex
-@misc{xu2026sycophancy,
-  title  = {Behaving Better, Thinking Worse: Sycophancy Across Post-Training Stages},
-  author = {Xu, Sonnet and Singh, Kritika and Jafry, Sheharbano and Daneshjou, Roxana and Koyejo, Sanmi},
-  year   = {2026},
-  note   = {arXiv preprint, link forthcoming}
-}
-```
