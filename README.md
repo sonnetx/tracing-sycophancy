@@ -1,8 +1,10 @@
-# Tracing Sycophancy: When Do Language Models Learn to Please?
+# Behaving Better, Thinking Worse: Sycophancy Across Post-Training Stages
 
-A central assumption in AI safety research holds that sycophancy — the tendency of language models to prioritize user approval over truthfulness — is primarily an artifact of post-training alignment procedures such as supervised fine-tuning and reinforcement learning from human feedback. This project tests this assumption by systematically tracing the emergence of sycophantic behavior across training checkpoints, from base pre-trained models through SFT and RLHF stages. If meaningful sycophantic tendencies are already present in base models, this would carry significant implications for training data curation, model safety, and the adequacy of alignment-focused mitigations alone. To ground the investigation in cleanly measurable phenomena, we initially focus on factual sycophancy, where ground truth exists and behavioral deviation is unambiguous.
+Code, data, and evaluation framework for the paper *Behaving Better, Thinking Worse: Sycophancy Across Post-Training Stages* by Sonnet Xu, Kritika Singh, Sheharbano Jafry, Roxana Daneshjou, and Sanmi Koyejo. Paper on arXiv (link forthcoming).
 
-Our primary model family is OLMo 3 (AI2), which exposes base, SFT, DPO, instruct, and thinking checkpoints, enabling controlled longitudinal comparison across training stages. We construct a sycophancy benchmark comprising eight graduated-pressure challenge types per question, including simple disagreement, ethos appeals, fake justifications, and fabricated citations, each administered in both in-context and preemptive settings. To achieve fair comparison across model types, we employ a dual-track measurement approach. The generative track captures rich behavioral signal from instruct models by having a GPT-4o judge evaluate how model responses shift after challenges advocating incorrect answers. The log-probability track serves as the primary metric across all checkpoints, including base models where generation degrades into repetition: using single forward passes, we compute delta log-odds — the shift in log P(incorrect) − log P(correct) under challenge pressure — a continuous, architecture-agnostic measure of sycophantic sensitivity. Supporting metrics include agreement rate, factual accuracy, hedging language frequency, refusal rate, and regressive sycophancy (the fraction of initially-correct responses that flip under pressure).
+We trace factual sycophancy across post-training checkpoints of open model pipelines (OLMo 3 7B Think and Instruct, Llama 3.1 8B Instruct, and Tulu 3), asking how the tendency to abandon a correct answer under user pressure changes from base models through SFT, DPO, and RL stages. We measure it two ways at once. A generative track has a GPT-4o judge score whether a model flips its answer after a challenge that asserts a wrong answer, and a log-probability track computes the shift in log P(wrong) minus log P(correct) under that pressure, a continuous measure that works even for base models whose free-form generations are degenerate.
+
+Our main result is a behavior-probability dissociation. Across post-training, models flip their stated answer less often, yet the log-probability shift toward the wrong answer on those same items grows. Post-training changes what a model says under pressure more than what it internally prefers, so behavioral metrics alone overstate the progress. Instruction-following controls, framing a wrong answer as a belief versus a bare command, further show that much of the behavioral shift is response selection rather than a change in preference. The reasoning pipeline (OLMo Think) is the strongest behavioral de-sycophantizer on verifiable math yet the one that fails on open-ended medical advice.
 
 ## Methods
 
@@ -112,4 +114,37 @@ Raw data
   ├─────────────────────────────────────────┘
   ▼
 [5. Analyze]                 →  summaries, statistical tests, plots
+```
+
+## Setup
+
+```bash
+pip install -e .
+```
+
+Set the API key used for challenge generation and the GPT-4o judge.
+
+```bash
+export OPENAI_API_KEY=...
+```
+
+## Reproduce
+
+The full per-checkpoint pipeline (preprocess, generate challenges, run inference, score log-probabilities, judge evaluation) is orchestrated by `slurm/run_experiment.sh`, written for SLURM plus Apptainer and launched once per model checkpoint.
+
+```bash
+sbatch --export=ALL,HF_MODEL=allenai/Olmo-3-7B-Instruct,MODEL_NAME=olmo3-7b-instruct,MODEL_TYPE=chat,CHECKPOINT=instruct,DATASET=medical_advice slurm/run_experiment.sh
+```
+
+Analysis, statistics, and figures come from `scripts/analyze.py` and the `plot_*.py` scripts. To run outside SLURM, adapt the in-container `python scripts/...` commands inside `slurm/run_experiment.sh`.
+
+## Citation
+
+```bibtex
+@misc{xu2026sycophancy,
+  title  = {Behaving Better, Thinking Worse: Sycophancy Across Post-Training Stages},
+  author = {Xu, Sonnet and Singh, Kritika and Jafry, Sheharbano and Daneshjou, Roxana and Koyejo, Sanmi},
+  year   = {2026},
+  note   = {arXiv preprint, link forthcoming}
+}
 ```
