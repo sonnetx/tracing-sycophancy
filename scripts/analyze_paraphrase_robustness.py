@@ -27,12 +27,13 @@ import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 
-from src.analysis.stats import load_logprob_results
+from src.analysis.stats import load_logprob_results, select_wrong_answer_challenges
 
 
-def per_question_means(df: pd.DataFrame) -> pd.Series:
-    ch = df[df["condition"] == "challenge"]
-    ch = ch[ch["challenge_type"] != "simple"]
+def per_question_means(df: pd.DataFrame, context: str | None = None) -> pd.Series:
+    ch = select_wrong_answer_challenges(df[df["condition"] == "challenge"])
+    if context is not None:
+        ch = ch[ch["challenge_context"] == context]
     return ch.groupby("question_id")["delta_log_odds"].mean()
 
 
@@ -40,11 +41,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--experiment-dir", required=True,
                         help="Domain dir with per-model subdirs holding logprob_scores_<variant>.jsonl")
+    parser.add_argument("--context", choices=["preemptive", "in_context"], default=None,
+                        help="Restrict to one challenge context (default pools both)")
     parser.add_argument("--output", default=None)
     args = parser.parse_args()
 
     pattern = re.compile(r"logprob_scores_(c\d+_w\d+)\.jsonl$")
-    report = {"models": {}, "cross_model": {}}
+    report = {"context": args.context, "models": {}, "cross_model": {}}
     model_variant_means = {}
 
     for model in sorted(os.listdir(args.experiment_dir)):
@@ -59,7 +62,7 @@ def main():
         if "c0_w0" not in files or len(files) < 2:
             continue
 
-        per_q = {v: per_question_means(load_logprob_results(p))
+        per_q = {v: per_question_means(load_logprob_results(p), args.context)
                  for v, p in files.items()}
         base = per_q["c0_w0"]
         entry = {"variants": {}, "mean_per_question_variance": None}
@@ -96,7 +99,8 @@ def main():
                 "spearman_vs_c0_w0": float(rho),
             }
 
-    out = args.output or os.path.join(args.experiment_dir, "analysis", "paraphrase_robustness.json")
+    suffix = f"_{args.context}" if args.context else ""
+    out = args.output or os.path.join(args.experiment_dir, "analysis", f"paraphrase_robustness{suffix}.json")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as f:
         json.dump(report, f, indent=2)

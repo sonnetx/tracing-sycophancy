@@ -31,20 +31,21 @@ import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 
-from src.analysis.stats import load_logprob_results
+from src.analysis.stats import load_logprob_results, select_wrong_answer_challenges
 
 
-def per_checkpoint_mean_dlo(lp_df: pd.DataFrame, non_simple_only: bool = True) -> float:
+def per_checkpoint_mean_dlo(lp_df: pd.DataFrame, non_simple_only: bool = True,
+                            context: str | None = None) -> float:
     """Mean ΔLogOdds across all questions for one logprob score file."""
-    ch = lp_df[lp_df["condition"] == "challenge"]
-    if non_simple_only:
-        ch = ch[ch["challenge_type"] != "simple"]
+    ch = select_wrong_answer_challenges(lp_df[lp_df["condition"] == "challenge"], non_simple_only)
+    if context is not None:
+        ch = ch[ch["challenge_context"] == context]
     if len(ch) == 0:
         return float("nan")
     return float(ch.groupby("question_id")["delta_log_odds"].mean().mean())
 
 
-def analyze_candidates(files: list[str], label: str = "") -> dict:
+def analyze_candidates(files: list[str], label: str = "", context: str | None = None) -> dict:
     """Compare ΔLogOdds variance and rank stability across 3 candidate files."""
     if len(files) < 2:
         raise ValueError("Need at least 2 candidate files to compare")
@@ -55,8 +56,9 @@ def analyze_candidates(files: list[str], label: str = "") -> dict:
     # Per-question mean ΔLogOdds for each candidate (non-simple challenges only)
     per_q_means = []
     for df in dfs:
-        ch = df[df["condition"] == "challenge"]
-        ch = ch[ch["challenge_type"] != "simple"]
+        ch = select_wrong_answer_challenges(df[df["condition"] == "challenge"])
+        if context is not None:
+            ch = ch[ch["challenge_context"] == context]
         per_q = ch.groupby("question_id")["delta_log_odds"].mean()
         per_q_means.append(per_q)
 
@@ -81,10 +83,11 @@ def analyze_candidates(files: list[str], label: str = "") -> dict:
         pair_rhos.append({"pair": f"c{i}-c{j}", "rho": float(rho), "p": float(p)})
 
     # Checkpoint-level mean ΔLogOdds (one scalar per candidate)
-    checkpoint_means = [per_checkpoint_mean_dlo(df) for df in dfs]
+    checkpoint_means = [per_checkpoint_mean_dlo(df, context=context) for df in dfs]
 
     result = {
         "label": label,
+        "context": context,
         "n_questions": int(len(common_qids)),
         "n_candidates": n,
         "mean_per_question_variance": float(np.mean(q_variances)),
@@ -97,7 +100,7 @@ def analyze_candidates(files: list[str], label: str = "") -> dict:
     return result
 
 
-def analyze_experiment_dir(exp_dir: str) -> dict:
+def analyze_experiment_dir(exp_dir: str, context: str | None = None) -> dict:
     """Walk exp_dir/{dataset}/{model}/logprob_scores_c{0,1,2}.jsonl and aggregate."""
     all_results = {}
     for dataset in sorted(os.listdir(exp_dir)):
@@ -117,7 +120,7 @@ def analyze_experiment_dir(exp_dir: str) -> dict:
             if len(files) < 2:
                 continue
             try:
-                result = analyze_candidates(files, label=model)
+                result = analyze_candidates(files, label=model, context=context)
                 model_results[model] = result
             except Exception as e:
                 print(f"  Error for {dataset}/{model}: {e}")
@@ -160,15 +163,17 @@ def main():
     mode.add_argument("--experiment-dir", metavar="DIR",
                       help="Experiment root with {dataset}/{model}/logprob_scores_c*.jsonl layout")
     parser.add_argument("--dataset", default="", help="Label for --files mode")
+    parser.add_argument("--context", choices=["preemptive", "in_context"], default=None,
+                        help="Restrict to one challenge context (default pools both)")
     parser.add_argument("--output", default=None, help="Path to save JSON report")
     args = parser.parse_args()
 
     if args.files:
-        result = analyze_candidates(args.files, label=args.dataset)
+        result = analyze_candidates(args.files, label=args.dataset, context=args.context)
         results = {args.dataset or "dataset": {"model": result}}
         print_report(results)
     else:
-        results = analyze_experiment_dir(args.experiment_dir)
+        results = analyze_experiment_dir(args.experiment_dir, context=args.context)
         print_report(results)
 
     if args.output:

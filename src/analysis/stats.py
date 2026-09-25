@@ -9,6 +9,18 @@ from statsmodels.stats.proportion import proportions_ztest
 from src.evaluation.logprob_scoring import compute_confidence
 from src.utils import read_jsonl
 
+# Challenge types that assert the wrong answer. Log-prob files also hold
+# correct-answer and neutral control conditions under condition == "challenge",
+# so aggregates must select these types explicitly rather than exclude "simple".
+NON_SIMPLE_TYPES = ("ethos", "justification", "citation")
+WRONG_ANSWER_TYPES = ("simple",) + NON_SIMPLE_TYPES
+
+
+def select_wrong_answer_challenges(ch: pd.DataFrame, non_simple_only: bool = True) -> pd.DataFrame:
+    """Keep wrong-answer challenge rows (non-simple by default); drops control conditions."""
+    types = NON_SIMPLE_TYPES if non_simple_only else WRONG_ANSWER_TYPES
+    return ch[ch["challenge_type"].isin(types)]
+
 
 def load_results_as_dataframe(evaluated_path: str) -> pd.DataFrame:
     """Load an evaluated JSONL file into a flat DataFrame."""
@@ -308,9 +320,8 @@ def compute_paired_delta_logodds(
 
     def _per_item_mean_dlo(lp_df: pd.DataFrame) -> pd.Series:
         df_r = lp_df[lp_df["question_id"].isin(restricted_qids)]
-        ch = df_r[df_r["condition"] == "challenge"]
-        if non_simple_only:
-            ch = ch[ch["challenge_type"] != "simple"]
+        ch = select_wrong_answer_challenges(
+            df_r[df_r["condition"] == "challenge"], non_simple_only)
         if context is not None:
             ch = ch[ch["challenge_context"] == context]
         if len(ch) == 0:
@@ -364,9 +375,8 @@ def compute_matched_delta_logodds(lp_df: pd.DataFrame, restricted_qids: set,
     if not restricted_qids or lp_df is None or len(lp_df) == 0:
         return empty
     df_r = lp_df[lp_df["question_id"].isin(restricted_qids)]
-    challenges = df_r[df_r["condition"] == "challenge"]
-    if non_simple_only:
-        challenges = challenges[challenges["challenge_type"] != "simple"]
+    challenges = select_wrong_answer_challenges(
+        df_r[df_r["condition"] == "challenge"], non_simple_only)
     if context is not None:
         challenges = challenges[challenges["challenge_context"] == context]
     if len(challenges) == 0:
@@ -491,13 +501,14 @@ def compute_logprob_summary(df: pd.DataFrame) -> dict:
     }
 
     if len(challenges) > 0:
-        non_simple = challenges[challenges["challenge_type"] != "simple"]
+        non_simple = select_wrong_answer_challenges(challenges)
+        wrong = select_wrong_answer_challenges(challenges, non_simple_only=False)
         # Aggregate to per-question means (each question has up to 8 correlated challenge rows).
         summary["challenges"] = {
             "overall": _delta_logodds_stats(
                 non_simple.groupby("question_id")["delta_log_odds"].mean()),
             "overall_all_types": _delta_logodds_stats(
-                challenges.groupby("question_id")["delta_log_odds"].mean()),
+                wrong.groupby("question_id")["delta_log_odds"].mean()),
         }
         for c_type in challenges["challenge_type"].dropna().unique():
             subset = challenges[challenges["challenge_type"] == c_type]

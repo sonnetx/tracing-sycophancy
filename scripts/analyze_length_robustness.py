@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 
-from src.analysis.stats import load_logprob_results
+from src.analysis.stats import load_logprob_results, select_wrong_answer_challenges
 from src.utils import read_jsonl
 
 
@@ -59,9 +59,7 @@ def per_model_mean_dlo(results_dir: str, non_simple_only: bool = True) -> dict[s
         if not os.path.isfile(lp_path):
             continue
         df = load_logprob_results(lp_path)
-        ch = df[df["condition"] == "challenge"]
-        if non_simple_only:
-            ch = ch[ch["challenge_type"] != "simple"]
+        ch = select_wrong_answer_challenges(df[df["condition"] == "challenge"], non_simple_only)
         if len(ch) == 0:
             continue
         out[model] = float(ch.groupby("question_id")["delta_log_odds"].mean().mean())

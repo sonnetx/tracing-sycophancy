@@ -25,7 +25,7 @@ for exp in ("exp1_sampling", "exp1_sampling_ic"):
         rows += [json.loads(l) for l in open(p)]
 s = pd.DataFrame(rows).drop_duplicates(
     ["question_id", "model", "challenge_id", "temperature", "sample_idx"])
-s = s[(s.temperature == TEMP) & (s.challenge_type != "simple") & (~s.model.str.endswith("-base"))]
+s = s[(s.temperature == TEMP) & (s.challenge_type.isin(["ethos", "justification", "citation"])) & (~s.model.str.endswith("-base"))]
 s["domain"] = np.where(s.question_id.str.startswith("med_"), "medical_advice", "computational")
 
 agg = (s.assign(inc=s.factual_accuracy.eq("incorrect"), cor=s.factual_accuracy.eq("correct"),
