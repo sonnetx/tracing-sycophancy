@@ -347,13 +347,6 @@ def _behavioral_rate(summary: dict, metric: str) -> float:
     raise ValueError(f"Unknown metric: {metric}")
 
 
-def _matched_rate_for_stage(matched_records: list, stage_label: str) -> float:
-    for rec in matched_records:
-        if rec.get("stage") == stage_label:
-            return rec.get("stage_regressive_on_intersection", {}).get("regressive_rate")
-    return None
-
-
 def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: dict,
                                          output_dir: str, metric: str = "regressive",
                                          matched_summaries: dict = None,
@@ -375,15 +368,18 @@ def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: d
         ls = PIPELINE_LINESTYLES.get(pipe_name, "-")
 
         if metric == "matched" and matched_summaries and pipe_name in matched_summaries:
-            matched_recs = matched_summaries[pipe_name]
+            # Each stage has its own base∩stage intersection, so plot the paired
+            # change on that intersection (Base = 0) rather than mixing the base
+            # model's all-item rate with stage rates on subsets.
+            matched_recs = {r.get("stage"): r for r in matched_summaries[pipe_name]}
             beh = []
-            for label, s in gen_stages:
-                if label == "Base":
-                    beh.append(s.get("sycophancy", {}).get("regressive_rate", 0.0))
+            for label, _ in gen_stages:
+                rec = matched_recs.get(label)
+                if label == "Base" or rec is None:
+                    beh.append(0.0 if label == "Base" else np.nan)
                 else:
-                    r = _matched_rate_for_stage(matched_recs, label)
-                    beh.append(r if r is not None
-                               else s.get("sycophancy", {}).get("regressive_rate", 0.0))
+                    beh.append(rec["stage_regressive_on_intersection"]["regressive_rate"]
+                               - rec["base_regressive_on_intersection"]["regressive_rate"])
         else:
             beh = [_behavioral_rate(s, metric) for _, s in gen_stages]
         ax1.plot(x, beh, marker=marker, linestyle=ls, linewidth=2,
@@ -393,27 +389,35 @@ def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: d
 
         if (metric == "matched" and matched_lp_summaries
                 and pipe_name in matched_lp_summaries):
-            matched_lp = matched_lp_summaries[pipe_name]
-            dlo = []
-            for label, s in lp_stages:
+            # Paired preemptive ΔΔL (stage − base) on each stage's intersection.
+            matched_lp = {r.get("stage"): r for r in matched_lp_summaries[pipe_name]}
+            dlo, lo, hi = [], [], []
+            for label, _ in lp_stages:
+                paired = (matched_lp.get(label) or {}).get("paired", {})
                 if label == "Base":
-                    dlo.append(s.get("challenges", {}).get("overall", {})
-                               .get("mean_delta_log_odds", 0))
+                    dlo.append(0.0); lo.append(0.0); hi.append(0.0)
+                elif paired.get("n_items", 0) >= 2:
+                    m = paired["mean_delta_delta_L"]
+                    dlo.append(m)
+                    lo.append(m - paired["bootstrap_ci_low"])
+                    hi.append(paired["bootstrap_ci_high"] - m)
                 else:
-                    rec = next((r for r in matched_lp if r.get("stage") == label), None)
-                    if rec and rec.get("n_obs", 0) > 0:
-                        dlo.append(rec.get("stage_dlo_on_intersection",
-                                           rec.get("mean", 0)))
-                    else:
-                        dlo.append(s.get("challenges", {}).get("overall", {})
-                                   .get("mean_delta_log_odds", 0))
+                    dlo.append(np.nan); lo.append(0.0); hi.append(0.0)
+            ax2.errorbar(x, dlo, yerr=[lo, hi], marker=marker, linestyle=ls, linewidth=2,
+                         markersize=8, color=color, label=pipe_name, capsize=3)
         else:
             dlo = [s.get("challenges", {}).get("overall", {}).get("mean_delta_log_odds", 0)
                    for _, s in lp_stages]
-        ax2.plot(x, dlo, marker=marker, linestyle=ls, linewidth=2,
-                 markersize=8, color=color, label=pipe_name)
+            ax2.plot(x, dlo, marker=marker, linestyle=ls, linewidth=2,
+                     markersize=8, color=color, label=pipe_name)
         ax2.set_xticks(x)
         ax2.set_xticklabels(labels, rotation=45, ha="right")
+
+    # Pipelines name their final stage differently; label the shared axis generically.
+    for ax in (ax1, ax2):
+        ticks = [t.get_text() for t in ax.get_xticklabels()]
+        if len(ticks) > 1:
+            ax.set_xticklabels(ticks[:-1] + ["Final"], rotation=45, ha="right")
 
     if metric == "net":
         ax1.axhline(y=0, color="gray", linestyle="--", alpha=0.5)
@@ -421,8 +425,9 @@ def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: d
         ax1.set_title("Behavioral: Net (control-adjusted)",
                       fontsize=12, fontweight="bold")
     elif metric == "matched":
-        ax1.set_ylabel(r"Matched Regr.\ (stage on base$\cap$stage items)")
-        ax1.set_title("Behavioral: matched-subset regressive rate",
+        ax1.axhline(y=0, color="gray", linestyle="--", alpha=0.5)
+        ax1.set_ylabel("Change in Regr. (stage − base, items correct at both)")
+        ax1.set_title("Behavioral: matched change in regressive rate",
                       fontsize=12, fontweight="bold")
     else:
         ax1.set_ylabel("Regressive Sycophancy Rate")
@@ -432,8 +437,13 @@ def plot_behavioral_vs_representational(pipeline_data: dict, lp_pipeline_data: d
     ax1.legend()
 
     ax2.axhline(y=0, color="gray", linestyle="--", alpha=0.5)
-    ax2.set_ylabel("Mean Delta Log-Odds")
-    ax2.set_title("Representational: Delta Log-Odds", fontsize=12, fontweight="bold")
+    if metric == "matched" and matched_lp_summaries:
+        ax2.set_ylabel(r"PE $\Delta\Delta$LogOdds (stage $-$ base, 95% CI)")
+        ax2.set_title("Log-prob: matched change in preemptive $\\Delta$LogOdds",
+                      fontsize=12, fontweight="bold")
+    else:
+        ax2.set_ylabel("Mean Delta Log-Odds")
+        ax2.set_title("Representational: Delta Log-Odds", fontsize=12, fontweight="bold")
     ax2.grid(True, alpha=0.3)
     ax2.legend()
 
