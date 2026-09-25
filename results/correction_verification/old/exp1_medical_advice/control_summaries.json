@@ -1,0 +1,506 @@
+{
+  "llama31-8b-instruct": {
+    "correct": {
+      "accuracy_rate": 0.912,
+      "flip_rate": 0.0137221269296741,
+      "flip_count": 8,
+      "flip_total": 583,
+      "flip_total_raw": 602,
+      "erroneous_rate": 0.03156146179401993,
+      "erroneous_count": 19,
+      "proportion": 0.0137221269296741,
+      "ci_low": 0.00594235940420106,
+      "ci_high": 0.026858274650836556,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.013888888888888888,
+          "flip_count": 4,
+          "total": 288,
+          "total_raw": 301,
+          "flip_ci_low": 0.0037968764682303692,
+          "flip_ci_high": 0.03517731027977362,
+          "erroneous_rate": 0.04318936877076412,
+          "erroneous_count": 13
+        },
+        "preemptive": {
+          "flip_rate": 0.013559322033898305,
+          "flip_count": 4,
+          "total": 295,
+          "total_raw": 301,
+          "flip_ci_low": 0.0037064870562546134,
+          "flip_ci_high": 0.03435144895822732,
+          "erroneous_rate": 0.019933554817275746,
+          "erroneous_count": 6
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.41614000972289744,
+      "correct_control_flip_rate": 0.0137221269296741,
+      "z_stat": 18.2789946829379,
+      "p_value": 1.2164767838829903e-74
+    }
+  },
+  "olmo3-7b-think-dpo": {
+    "correct": {
+      "accuracy_rate": 0.684,
+      "flip_rate": 0.14763779527559054,
+      "flip_count": 75,
+      "flip_total": 508,
+      "flip_total_raw": 552,
+      "erroneous_rate": 0.07971014492753623,
+      "erroneous_count": 44,
+      "proportion": 0.14763779527559054,
+      "ci_low": 0.11793080297975049,
+      "ci_high": 0.18151469307749574,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.24096385542168675,
+          "flip_count": 60,
+          "total": 249,
+          "total_raw": 276,
+          "flip_ci_low": 0.18920652971565544,
+          "flip_ci_high": 0.29900134487986635,
+          "erroneous_rate": 0.09782608695652174,
+          "erroneous_count": 27
+        },
+        "preemptive": {
+          "flip_rate": 0.05791505791505792,
+          "flip_count": 15,
+          "total": 259,
+          "total_raw": 276,
+          "flip_ci_low": 0.03277341464051715,
+          "flip_ci_high": 0.09372388020043776,
+          "erroneous_rate": 0.06159420289855073,
+          "erroneous_count": 17
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.5508379888268157,
+      "correct_control_flip_rate": 0.14763779527559054,
+      "z_stat": 16.0883525281415,
+      "p_value": 3.0792254904012937e-58
+    }
+  },
+  "tulu3-llama31-8b": {
+    "correct": {
+      "accuracy_rate": 0.939,
+      "flip_rate": 0.013368983957219251,
+      "flip_count": 10,
+      "flip_total": 748,
+      "flip_total_raw": 760,
+      "erroneous_rate": 0.015789473684210527,
+      "erroneous_count": 12,
+      "proportion": 0.013368983957219251,
+      "ci_low": 0.0064290631022022844,
+      "ci_high": 0.024448236115672227,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.01358695652173913,
+          "flip_count": 5,
+          "total": 368,
+          "total_raw": 380,
+          "flip_ci_low": 0.004425973620393543,
+          "flip_ci_high": 0.031421000590301305,
+          "erroneous_rate": 0.031578947368421054,
+          "erroneous_count": 12
+        },
+        "preemptive": {
+          "flip_rate": 0.013157894736842105,
+          "flip_count": 5,
+          "total": 380,
+          "total_raw": 380,
+          "flip_ci_low": 0.0042857655147874926,
+          "flip_ci_high": 0.030437492632828567,
+          "erroneous_rate": 0.0,
+          "erroneous_count": 0
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.1834831834831835,
+      "correct_control_flip_rate": 0.013368983957219251,
+      "z_stat": 11.672551288618019,
+      "p_value": 1.7606273570743767e-31
+    }
+  },
+  "olmo3-7b-instruct-sft": {
+    "correct": {
+      "accuracy_rate": 0.789,
+      "flip_rate": 0.053268765133171914,
+      "flip_count": 22,
+      "flip_total": 413,
+      "flip_total_raw": 422,
+      "erroneous_rate": 0.02132701421800948,
+      "erroneous_count": 9,
+      "proportion": 0.053268765133171914,
+      "ci_low": 0.033680667475206094,
+      "ci_high": 0.0795414673569563,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.06862745098039216,
+          "flip_count": 14,
+          "total": 204,
+          "total_raw": 211,
+          "flip_ci_low": 0.03802448062901831,
+          "flip_ci_high": 0.11246515823301692,
+          "erroneous_rate": 0.03317535545023697,
+          "erroneous_count": 7
+        },
+        "preemptive": {
+          "flip_rate": 0.03827751196172249,
+          "flip_count": 8,
+          "total": 209,
+          "total_raw": 211,
+          "flip_ci_low": 0.016667941833984578,
+          "flip_ci_high": 0.07402618676475657,
+          "erroneous_rate": 0.009478672985781991,
+          "erroneous_count": 2
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.3276216586703221,
+      "correct_control_flip_rate": 0.053268765133171914,
+      "z_stat": 11.125078422669352,
+      "p_value": 9.472253923365721e-29
+    }
+  },
+  "olmo3-7b-instruct": {
+    "correct": {
+      "accuracy_rate": 0.6863727454909819,
+      "flip_rate": 0.08482142857142858,
+      "flip_count": 38,
+      "flip_total": 448,
+      "flip_total_raw": 470,
+      "erroneous_rate": 0.04680851063829787,
+      "erroneous_count": 22,
+      "proportion": 0.08482142857142858,
+      "ci_low": 0.06072283061403937,
+      "ci_high": 0.11456557090687758,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.12206572769953052,
+          "flip_count": 26,
+          "total": 213,
+          "total_raw": 235,
+          "flip_ci_low": 0.08130886075242018,
+          "flip_ci_high": 0.17372046692665366,
+          "erroneous_rate": 0.09361702127659574,
+          "erroneous_count": 22
+        },
+        "preemptive": {
+          "flip_rate": 0.05106382978723404,
+          "flip_count": 12,
+          "total": 235,
+          "total_raw": 235,
+          "flip_ci_low": 0.026660437043737596,
+          "flip_ci_high": 0.08749876059973287,
+          "erroneous_rate": 0.0,
+          "erroneous_count": 0
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.30851063829787234,
+      "correct_control_flip_rate": 0.08482142857142858,
+      "z_stat": 9.577861468530159,
+      "p_value": 9.907504684560563e-22
+    }
+  },
+  "tulu3-llama31-8b-sft": {
+    "correct": {
+      "accuracy_rate": 0.765,
+      "flip_rate": 0.13464696223316913,
+      "flip_count": 82,
+      "flip_total": 609,
+      "flip_total_raw": 662,
+      "erroneous_rate": 0.08006042296072508,
+      "erroneous_count": 53,
+      "proportion": 0.13464696223316913,
+      "ci_low": 0.1085409758635211,
+      "ci_high": 0.1643540857628955,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.13804713804713806,
+          "flip_count": 41,
+          "total": 297,
+          "total_raw": 331,
+          "flip_ci_low": 0.10091975109194999,
+          "flip_ci_high": 0.18258340341621385,
+          "erroneous_rate": 0.1027190332326284,
+          "erroneous_count": 34
+        },
+        "preemptive": {
+          "flip_rate": 0.13141025641025642,
+          "flip_count": 41,
+          "total": 312,
+          "total_raw": 331,
+          "flip_ci_low": 0.09597871179162744,
+          "flip_ci_high": 0.17402409614365863,
+          "erroneous_rate": 0.05740181268882175,
+          "erroneous_count": 19
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.32965686274509803,
+      "correct_control_flip_rate": 0.13464696223316913,
+      "z_stat": 9.482835431805146,
+      "p_value": 2.4746556769267984e-21
+    }
+  },
+  "tulu3-llama31-8b-dpo": {
+    "correct": {
+      "accuracy_rate": 0.907,
+      "flip_rate": 0.02981029810298103,
+      "flip_count": 22,
+      "flip_total": 738,
+      "flip_total_raw": 760,
+      "erroneous_rate": 0.02894736842105263,
+      "erroneous_count": 22,
+      "proportion": 0.02981029810298103,
+      "ci_low": 0.01877427037171725,
+      "ci_high": 0.0447866871041332,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.030726256983240222,
+          "flip_count": 11,
+          "total": 358,
+          "total_raw": 380,
+          "flip_ci_low": 0.015436226055615159,
+          "flip_ci_high": 0.05431174332883041,
+          "erroneous_rate": 0.05789473684210526,
+          "erroneous_count": 22
+        },
+        "preemptive": {
+          "flip_rate": 0.02894736842105263,
+          "flip_count": 11,
+          "total": 380,
+          "total_raw": 380,
+          "flip_ci_low": 0.014537153524309801,
+          "flip_ci_high": 0.051203675100804986,
+          "erroneous_rate": 0.0,
+          "erroneous_count": 0
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.19358074222668004,
+      "correct_control_flip_rate": 0.02981029810298103,
+      "z_stat": 10.836711154604192,
+      "p_value": 2.306130425093721e-27
+    }
+  },
+  "olmo3-7b-think": {
+    "correct": {
+      "accuracy_rate": 0.691,
+      "flip_rate": 0.12770137524557956,
+      "flip_count": 65,
+      "flip_total": 509,
+      "flip_total_raw": 552,
+      "erroneous_rate": 0.07789855072463768,
+      "erroneous_count": 43,
+      "proportion": 0.12770137524557956,
+      "ci_low": 0.09995685576832648,
+      "ci_high": 0.15985365987187128,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.18725099601593626,
+          "flip_count": 47,
+          "total": 251,
+          "total_raw": 276,
+          "flip_ci_low": 0.1409496333152387,
+          "flip_ci_high": 0.24110588793661583,
+          "erroneous_rate": 0.09057971014492754,
+          "erroneous_count": 25
+        },
+        "preemptive": {
+          "flip_rate": 0.06976744186046512,
+          "flip_count": 18,
+          "total": 258,
+          "total_raw": 276,
+          "flip_ci_low": 0.04186991413778639,
+          "flip_ci_high": 0.10802310992045698,
+          "erroneous_rate": 0.06521739130434782,
+          "erroneous_count": 18
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.5036994877632328,
+      "correct_control_flip_rate": 0.12770137524557956,
+      "z_stat": 15.138074638565081,
+      "p_value": 9.0834257365642e-52
+    }
+  },
+  "olmo3-7b-base": {
+    "correct": {
+      "accuracy_rate": 0.193,
+      "flip_rate": 0.3111111111111111,
+      "flip_count": 42,
+      "flip_total": 135,
+      "flip_total_raw": 304,
+      "erroneous_rate": 0.555921052631579,
+      "erroneous_count": 169,
+      "proportion": 0.3111111111111111,
+      "ci_low": 0.23427798249906692,
+      "ci_high": 0.39644548089378023,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.24444444444444444,
+          "flip_count": 22,
+          "total": 90,
+          "total_raw": 152,
+          "flip_ci_low": 0.1599692930430087,
+          "flip_ci_high": 0.3463767265824021,
+          "erroneous_rate": 0.40789473684210525,
+          "erroneous_count": 62
+        },
+        "preemptive": {
+          "flip_rate": 0.4444444444444444,
+          "flip_count": 20,
+          "total": 45,
+          "total_raw": 152,
+          "flip_ci_low": 0.296443923865858,
+          "flip_ci_high": 0.6000265035963233,
+          "erroneous_rate": 0.7039473684210527,
+          "erroneous_count": 107
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.4192,
+      "correct_control_flip_rate": 0.3111111111111111,
+      "z_stat": 2.3247461032216927,
+      "p_value": 0.02008554048551123
+    }
+  },
+  "olmo3-7b-instruct-dpo": {
+    "correct": {
+      "accuracy_rate": 0.6422845691382766,
+      "flip_rate": 0.13636363636363635,
+      "flip_count": 54,
+      "flip_total": 396,
+      "flip_total_raw": 408,
+      "erroneous_rate": 0.029411764705882353,
+      "erroneous_count": 12,
+      "proportion": 0.13636363636363635,
+      "ci_low": 0.1041279186840956,
+      "ci_high": 0.17415182514335836,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.15979381443298968,
+          "flip_count": 31,
+          "total": 194,
+          "total_raw": 204,
+          "flip_ci_low": 0.111228328701909,
+          "flip_ci_high": 0.21908080550862302,
+          "erroneous_rate": 0.049019607843137254,
+          "erroneous_count": 10
+        },
+        "preemptive": {
+          "flip_rate": 0.11386138613861387,
+          "flip_count": 23,
+          "total": 202,
+          "total_raw": 204,
+          "flip_ci_low": 0.0735631140258494,
+          "flip_ci_high": 0.16593764144346343,
+          "erroneous_rate": 0.00980392156862745,
+          "erroneous_count": 2
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.3146522619851452,
+      "correct_control_flip_rate": 0.13636363636363635,
+      "z_stat": 7.041891025771928,
+      "p_value": 1.896481311200626e-12
+    }
+  },
+  "olmo3-7b-think-sft": {
+    "correct": {
+      "accuracy_rate": 0.696,
+      "flip_rate": 0.08904109589041095,
+      "flip_count": 39,
+      "flip_total": 438,
+      "flip_total_raw": 492,
+      "erroneous_rate": 0.10975609756097561,
+      "erroneous_count": 54,
+      "proportion": 0.08904109589041095,
+      "ci_low": 0.06408308715929441,
+      "ci_high": 0.11971133349314474,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.11214953271028037,
+          "flip_count": 24,
+          "total": 214,
+          "total_raw": 246,
+          "flip_ci_low": 0.07319198295160181,
+          "flip_ci_high": 0.16226269826655737,
+          "erroneous_rate": 0.13008130081300814,
+          "erroneous_count": 32
+        },
+        "preemptive": {
+          "flip_rate": 0.06696428571428571,
+          "flip_count": 15,
+          "total": 224,
+          "total_raw": 246,
+          "flip_ci_low": 0.037960832096280275,
+          "flip_ci_high": 0.10804285262756001,
+          "erroneous_rate": 0.08943089430894309,
+          "erroneous_count": 22
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.4495114006514658,
+      "correct_control_flip_rate": 0.08904109589041095,
+      "z_stat": 13.786382609189152,
+      "p_value": 3.0781220359072867e-43
+    }
+  },
+  "llama31-8b-base": {
+    "correct": {
+      "accuracy_rate": 0.421,
+      "flip_rate": 0.1896551724137931,
+      "flip_count": 33,
+      "flip_total": 174,
+      "flip_total_raw": 230,
+      "erroneous_rate": 0.24347826086956523,
+      "erroneous_count": 56,
+      "proportion": 0.1896551724137931,
+      "ci_low": 0.13429246052972887,
+      "ci_high": 0.2559049080348211,
+      "by_context": {
+        "in_context": {
+          "flip_rate": 0.17582417582417584,
+          "flip_count": 16,
+          "total": 91,
+          "total_raw": 115,
+          "flip_ci_low": 0.10397179906173047,
+          "flip_ci_high": 0.269765961770825,
+          "erroneous_rate": 0.20869565217391303,
+          "erroneous_count": 24
+        },
+        "preemptive": {
+          "flip_rate": 0.20481927710843373,
+          "flip_count": 17,
+          "total": 83,
+          "total_raw": 115,
+          "flip_ci_low": 0.12408054259963501,
+          "flip_ci_high": 0.30755579206641404,
+          "erroneous_rate": 0.2782608695652174,
+          "erroneous_count": 32
+        }
+      }
+    },
+    "wrong_vs_correct_control": {
+      "wrong_flip_rate": 0.5384615384615384,
+      "correct_control_flip_rate": 0.1896551724137931,
+      "z_stat": 7.851747493264157,
+      "p_value": 4.1027990077844326e-15
+    }
+  }
+}

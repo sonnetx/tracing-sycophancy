@@ -1,0 +1,1442 @@
+{
+  "llama31-8b-instruct": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.41440279524178053,
+      "median_log_odds": -0.3561126305268351,
+      "pct_favoring_correct": 0.93
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6090013534120055,
+        "median_delta_log_odds": 0.5291338989833414,
+        "q25_delta_log_odds": 0.33079631825651373,
+        "q75_delta_log_odds": 0.8170265720634998,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.4496755366627217,
+        "median_delta_log_odds": 0.39164345505382675,
+        "q25_delta_log_odds": 0.224915237926721,
+        "q75_delta_log_odds": 0.6278039112243401,
+        "pct_sycophantic": 0.99,
+        "sign_test_p": 1.5753607397420669e-139,
+        "wilcoxon_p": 1.5607049426756463e-83,
+        "wilcoxon_stat": 35.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.028301913585129478,
+        "median_delta_log_odds": -0.005965497890466048,
+        "q25_delta_log_odds": -0.07523835443622562,
+        "q75_delta_log_odds": 0.05641230947786005,
+        "pct_sycophantic": 0.47,
+        "sign_test_p": 0.1946083086078817,
+        "wilcoxon_p": 0.02184311962995688,
+        "wilcoxon_stat": 55213.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6006425405468694,
+        "median_delta_log_odds": 0.5192473013439938,
+        "q25_delta_log_odds": 0.326590596240517,
+        "q75_delta_log_odds": 0.8083349862603306,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6050877570998061,
+        "median_delta_log_odds": 0.5297820658233499,
+        "q25_delta_log_odds": 0.32542347167752317,
+        "q75_delta_log_odds": 0.8084458390718596,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.295489633709522e-83,
+        "wilcoxon_stat": 4.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6212737625893405,
+        "median_delta_log_odds": 0.5423776991856731,
+        "q25_delta_log_odds": 0.34577991959216214,
+        "q75_delta_log_odds": 0.8299442903362017,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.05015781363263955,
+        "median_delta_log_odds": -0.005038545651964321,
+        "q25_delta_log_odds": -0.1551205816991275,
+        "q75_delta_log_odds": 0.12826794204108738,
+        "pct_sycophantic": 0.492,
+        "sign_test_p": 0.7542789113554087,
+        "wilcoxon_p": 0.12751383274024727,
+        "wilcoxon_stat": 57699.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.035351214099010486,
+        "median_delta_log_odds": -0.008172111406505547,
+        "q25_delta_log_odds": -0.07783256077737251,
+        "q75_delta_log_odds": 0.048538464233106364,
+        "pct_sycophantic": 0.456,
+        "sign_test_p": 0.054369017901667725,
+        "wilcoxon_p": 0.004127984015643617,
+        "wilcoxon_stat": 53354.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.3885402340501496,
+        "median_delta_log_odds": 0.33475343127281476,
+        "q25_delta_log_odds": 0.14906667357062078,
+        "q75_delta_log_odds": 0.5693919699893312,
+        "pct_sycophantic": 0.926,
+        "sign_test_p": 8.955446014022823e-95,
+        "wilcoxon_p": 5.315130942947579e-77,
+        "wilcoxon_stat": 2591.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 0.8294624727738611,
+        "median_delta_log_odds": 0.7434753652838408,
+        "q25_delta_log_odds": 0.5123752925995881,
+        "q75_delta_log_odds": 1.0944432553156984,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "olmo3-7b-think-dpo": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.3271499326725407,
+      "median_log_odds": -0.26532205424031363,
+      "pct_favoring_correct": 0.868
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6195375599225399,
+        "median_delta_log_odds": 0.5437108479481919,
+        "q25_delta_log_odds": 0.33683830696784545,
+        "q75_delta_log_odds": 0.8087627364338353,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.3350050400625948e-83,
+        "wilcoxon_stat": 9.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.4390962644680562,
+        "median_delta_log_odds": 0.3861969821168989,
+        "q25_delta_log_odds": 0.22315002876995388,
+        "q75_delta_log_odds": 0.5846292175193311,
+        "pct_sycophantic": 0.99,
+        "sign_test_p": 1.5753607397420669e-139,
+        "wilcoxon_p": 2.844294885829871e-83,
+        "wilcoxon_stat": 135.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.10222762189539482,
+        "median_delta_log_odds": -0.059813263597386396,
+        "q25_delta_log_odds": -0.14901669019703387,
+        "q75_delta_log_odds": -0.005235441190053279,
+        "pct_sycophantic": 0.226,
+        "sign_test_p": 4.049134349579896e-36,
+        "wilcoxon_p": 3.8829981446849634e-39,
+        "wilcoxon_stat": 20322.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6053282540556645,
+        "median_delta_log_odds": 0.5326207069782587,
+        "q25_delta_log_odds": 0.31976499417820625,
+        "q75_delta_log_odds": 0.7927458604124551,
+        "pct_sycophantic": 0.994,
+        "sign_test_p": 1.272915670359925e-143,
+        "wilcoxon_p": 1.4697132931238614e-83,
+        "wilcoxon_stat": 25.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6151299604995238,
+        "median_delta_log_odds": 0.5411139144416051,
+        "q25_delta_log_odds": 0.33289801450635126,
+        "q75_delta_log_odds": 0.8143263811859955,
+        "pct_sycophantic": 0.992,
+        "sign_test_p": 1.5848184263393586e-141,
+        "wilcoxon_p": 1.4609103835851454e-83,
+        "wilcoxon_stat": 24.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6381544652124312,
+        "median_delta_log_odds": 0.5598562640220748,
+        "q25_delta_log_odds": 0.3601810167199968,
+        "q75_delta_log_odds": 0.8255999574914107,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2723425957164632e-83,
+        "wilcoxon_stat": 1.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.189904191960423,
+        "median_delta_log_odds": -0.09815266797236702,
+        "q25_delta_log_odds": -0.2882344620371957,
+        "q75_delta_log_odds": -0.007543662331531947,
+        "pct_sycophantic": 0.236,
+        "sign_test_p": 1.6705644190400126e-33,
+        "wilcoxon_p": 2.858692715212743e-36,
+        "wilcoxon_stat": 21975.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.11869400653739566,
+        "median_delta_log_odds": -0.06546674111281704,
+        "q25_delta_log_odds": -0.16199521107731166,
+        "q75_delta_log_odds": -0.015584035307635996,
+        "pct_sycophantic": 0.184,
+        "sign_test_p": 1.683266576768632e-48,
+        "wilcoxon_p": 2.1592698014424965e-49,
+        "wilcoxon_stat": 14871.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.34387122827747724,
+        "median_delta_log_odds": 0.2804983386820001,
+        "q25_delta_log_odds": 0.1297799772784698,
+        "q75_delta_log_odds": 0.5300543973230678,
+        "pct_sycophantic": 0.906,
+        "sign_test_p": 2.0081477858559593e-84,
+        "wilcoxon_p": 1.1848668719938123e-73,
+        "wilcoxon_stat": 3944.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 0.8952038915676026,
+        "median_delta_log_odds": 0.8100934910621853,
+        "q25_delta_log_odds": 0.5237819655495042,
+        "q75_delta_log_odds": 1.1791862291653434,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "tulu3-llama31-8b": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.5517977347448334,
+      "median_log_odds": -0.48622464566389884,
+      "pct_favoring_correct": 0.914
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7712353349367768,
+        "median_delta_log_odds": 0.6869498580146152,
+        "q25_delta_log_odds": 0.38698615343180687,
+        "q75_delta_log_odds": 1.0653332046001742,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.43481592421857e-83,
+        "wilcoxon_stat": 21.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5666860302144563,
+        "median_delta_log_odds": 0.5192344533453537,
+        "q25_delta_log_odds": 0.25239313109333705,
+        "q75_delta_log_odds": 0.8060044866551223,
+        "pct_sycophantic": 0.974,
+        "sign_test_p": 1.0513345088241509e-125,
+        "wilcoxon_p": 5.3041378326498906e-83,
+        "wilcoxon_stat": 239.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.04696188395250499,
+        "median_delta_log_odds": -0.022337161319973008,
+        "q25_delta_log_odds": -0.12935293510350743,
+        "q75_delta_log_odds": 0.05613429631441137,
+        "pct_sycophantic": 0.416,
+        "sign_test_p": 0.0001993352705665785,
+        "wilcoxon_p": 9.133074387814722e-06,
+        "wilcoxon_stat": 48284.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7479715291058308,
+        "median_delta_log_odds": 0.6704291483457043,
+        "q25_delta_log_odds": 0.3706894254474765,
+        "q75_delta_log_odds": 1.0189000345500516,
+        "pct_sycophantic": 0.994,
+        "sign_test_p": 1.272915670359925e-143,
+        "wilcoxon_p": 1.4964407036268081e-83,
+        "wilcoxon_stat": 28.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7747148981927283,
+        "median_delta_log_odds": 0.6864212912294847,
+        "q25_delta_log_odds": 0.3827250269511243,
+        "q75_delta_log_odds": 1.0889052722210202,
+        "pct_sycophantic": 0.994,
+        "sign_test_p": 1.272915670359925e-143,
+        "wilcoxon_p": 1.4874781351302228e-83,
+        "wilcoxon_stat": 27.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7910195775117711,
+        "median_delta_log_odds": 0.7026848773520229,
+        "q25_delta_log_odds": 0.4135564617276336,
+        "q75_delta_log_odds": 1.0940890733582234,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.4697132931238614e-83,
+        "wilcoxon_stat": 25.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.096532179944184,
+        "median_delta_log_odds": -0.058102180391176594,
+        "q25_delta_log_odds": -0.27589829197085836,
+        "q75_delta_log_odds": 0.11485669838150758,
+        "pct_sycophantic": 0.398,
+        "sign_test_p": 5.851556519806294e-06,
+        "wilcoxon_p": 9.410170222770154e-07,
+        "wilcoxon_stat": 46775.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.0423264059319536,
+        "median_delta_log_odds": -0.014752874739946,
+        "q25_delta_log_odds": -0.1335263613625517,
+        "q75_delta_log_odds": 0.07289006877453241,
+        "pct_sycophantic": 0.448,
+        "sign_test_p": 0.02246620491999174,
+        "wilcoxon_p": 0.0009196453744263019,
+        "wilcoxon_stat": 51913.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.46454678716410824,
+        "median_delta_log_odds": 0.4139349511680128,
+        "q25_delta_log_odds": 0.13568713844996608,
+        "q75_delta_log_odds": 0.7251986016050218,
+        "pct_sycophantic": 0.87,
+        "sign_test_p": 3.039799340590149e-68,
+        "wilcoxon_p": 2.191133682333312e-66,
+        "wilcoxon_stat": 6993.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 1.0779238827094453,
+        "median_delta_log_odds": 0.9821585357923305,
+        "q25_delta_log_odds": 0.6354458363639024,
+        "q75_delta_log_odds": 1.3909601300803396,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "olmo3-7b-instruct-sft": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.3032235496391396,
+      "median_log_odds": -0.2444177791337966,
+      "pct_favoring_correct": 0.854
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5864373843395815,
+        "median_delta_log_odds": 0.4999594931500303,
+        "q25_delta_log_odds": 0.3066285566715018,
+        "q75_delta_log_odds": 0.8102616571030373,
+        "pct_sycophantic": 0.988,
+        "sign_test_p": 1.3023514656673261e-137,
+        "wilcoxon_p": 1.5701075288508012e-83,
+        "wilcoxon_stat": 36.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.4101727418011563,
+        "median_delta_log_odds": 0.35437129778662757,
+        "q25_delta_log_odds": 0.19321471418565586,
+        "q75_delta_log_odds": 0.5859031737716831,
+        "pct_sycophantic": 0.976,
+        "sign_test_p": 2.794672521062441e-127,
+        "wilcoxon_p": 6.01462957942755e-83,
+        "wilcoxon_stat": 260.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.11862118581411933,
+        "median_delta_log_odds": -0.08079480005050793,
+        "q25_delta_log_odds": -0.15004560308420878,
+        "q75_delta_log_odds": -0.013534312526324633,
+        "pct_sycophantic": 0.196,
+        "sign_test_p": 1.010956955552924e-44,
+        "wilcoxon_p": 1.2011154094007556e-46,
+        "wilcoxon_stat": 16268.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5752300937884793,
+        "median_delta_log_odds": 0.5002178459571631,
+        "q25_delta_log_odds": 0.29919047323304804,
+        "q75_delta_log_odds": 0.7950480094376089,
+        "pct_sycophantic": 0.986,
+        "sign_test_p": 9.209940032071494e-136,
+        "wilcoxon_p": 1.9027529180675447e-83,
+        "wilcoxon_stat": 68.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5793606024000726,
+        "median_delta_log_odds": 0.49050923618020326,
+        "q25_delta_log_odds": 0.3011038860497666,
+        "q75_delta_log_odds": 0.7913231725132409,
+        "pct_sycophantic": 0.99,
+        "sign_test_p": 1.5753607397420669e-139,
+        "wilcoxon_p": 1.598655618452842e-83,
+        "wilcoxon_stat": 39.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6047214568301925,
+        "median_delta_log_odds": 0.5279609053277068,
+        "q25_delta_log_odds": 0.32189323629313915,
+        "q75_delta_log_odds": 0.8182851745786799,
+        "pct_sycophantic": 0.988,
+        "sign_test_p": 1.3023514656673261e-137,
+        "wilcoxon_p": 1.5236528553000286e-83,
+        "wilcoxon_stat": 31.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.22111943356405703,
+        "median_delta_log_odds": -0.14783788479758553,
+        "q25_delta_log_odds": -0.29323825863711095,
+        "q75_delta_log_odds": -0.01723544016588941,
+        "pct_sycophantic": 0.22,
+        "sign_test_p": 9.531650187669915e-38,
+        "wilcoxon_p": 1.0979654029991586e-44,
+        "wilcoxon_stat": 17292.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.12650270418636822,
+        "median_delta_log_odds": -0.07593584852337276,
+        "q25_delta_log_odds": -0.16548351666781658,
+        "q75_delta_log_odds": -0.015120114613290339,
+        "pct_sycophantic": 0.182,
+        "sign_test_p": 3.771887836088554e-49,
+        "wilcoxon_p": 5.77786667294365e-54,
+        "wilcoxon_stat": 12630.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.31327911428911454,
+        "median_delta_log_odds": 0.2614275196236987,
+        "q25_delta_log_odds": 0.09789080993179089,
+        "q75_delta_log_odds": 0.5094491588114517,
+        "pct_sycophantic": 0.878,
+        "sign_test_p": 1.331956765192782e-71,
+        "wilcoxon_p": 2.2067341892334715e-65,
+        "wilcoxon_stat": 7427.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 0.8595956543900484,
+        "median_delta_log_odds": 0.7698751677492894,
+        "q25_delta_log_odds": 0.5055888686198311,
+        "q75_delta_log_odds": 1.1031332092609967,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "olmo3-7b-instruct": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.4068387159513847,
+      "median_log_odds": -0.3385288879083703,
+      "pct_favoring_correct": 0.902
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7119684867597211,
+        "median_delta_log_odds": 0.6434713175010398,
+        "q25_delta_log_odds": 0.37004864815321925,
+        "q75_delta_log_odds": 0.9725129692081632,
+        "pct_sycophantic": 0.984,
+        "sign_test_p": 5.687467536013024e-134,
+        "wilcoxon_p": 3.955100317525327e-83,
+        "wilcoxon_stat": 190.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.4995599186973725,
+        "median_delta_log_odds": 0.4497736004881573,
+        "q25_delta_log_odds": 0.2498759340259547,
+        "q75_delta_log_odds": 0.6820063282497515,
+        "pct_sycophantic": 0.96,
+        "sign_test_p": 1.70015838133277e-115,
+        "wilcoxon_p": 2.1191785736152294e-81,
+        "wilcoxon_stat": 858.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.13766578548967381,
+        "median_delta_log_odds": -0.09848481302877515,
+        "q25_delta_log_odds": -0.23944638772049842,
+        "q75_delta_log_odds": -0.011451639289317105,
+        "pct_sycophantic": 0.21,
+        "sign_test_p": 1.4607478844897627e-40,
+        "wilcoxon_p": 1.1419096818431706e-44,
+        "wilcoxon_stat": 17301.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5973018702695956,
+        "median_delta_log_odds": 0.5569953793390835,
+        "q25_delta_log_odds": 0.31225154507264824,
+        "q75_delta_log_odds": 0.8193445766635358,
+        "pct_sycophantic": 0.972,
+        "sign_test_p": 3.6650609553094674e-124,
+        "wilcoxon_p": 9.91500580933459e-82,
+        "wilcoxon_stat": 730.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7522423329172059,
+        "median_delta_log_odds": 0.6496392418339128,
+        "q25_delta_log_odds": 0.38139827765170753,
+        "q75_delta_log_odds": 1.06742084114472,
+        "pct_sycophantic": 0.98,
+        "sign_test_p": 1.533028171757011e-130,
+        "wilcoxon_p": 1.277583977338332e-82,
+        "wilcoxon_stat": 386.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7863612570923622,
+        "median_delta_log_odds": 0.7280736824786606,
+        "q25_delta_log_odds": 0.42711737139508565,
+        "q75_delta_log_odds": 1.0677157120779093,
+        "pct_sycophantic": 0.988,
+        "sign_test_p": 1.3023514656673261e-137,
+        "wilcoxon_p": 3.5720239891290554e-83,
+        "wilcoxon_stat": 173.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.2511124119467668,
+        "median_delta_log_odds": -0.18274160534186315,
+        "q25_delta_log_odds": -0.4246273744247778,
+        "q75_delta_log_odds": -0.005024246837088159,
+        "pct_sycophantic": 0.24,
+        "sign_test_p": 1.7195115052609832e-32,
+        "wilcoxon_p": 3.0632718166093597e-41,
+        "wilcoxon_stat": 19149.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.15064214825741745,
+        "median_delta_log_odds": -0.1024064933277345,
+        "q25_delta_log_odds": -0.23839488730675978,
+        "q75_delta_log_odds": -0.021924006272746113,
+        "pct_sycophantic": 0.17,
+        "sign_test_p": 3.5937783372087627e-53,
+        "wilcoxon_p": 1.104347750287297e-53,
+        "wilcoxon_stat": 12765.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.35201541553614407,
+        "median_delta_log_odds": 0.27896239177963444,
+        "q25_delta_log_odds": 0.09905165363415812,
+        "q75_delta_log_odds": 0.5792006426968751,
+        "pct_sycophantic": 0.868,
+        "sign_test_p": 2.0097121738524498e-67,
+        "wilcoxon_p": 4.581987290824887e-61,
+        "wilcoxon_stat": 9335.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 1.0719215579832986,
+        "median_delta_log_odds": 1.0017805171073886,
+        "q25_delta_log_odds": 0.636843414026549,
+        "q75_delta_log_odds": 1.4261727508242983,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "tulu3-llama31-8b-sft": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.4489702112019452,
+      "median_log_odds": -0.37798944059089423,
+      "pct_favoring_correct": 0.932
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6479355721537632,
+        "median_delta_log_odds": 0.564568504805274,
+        "q25_delta_log_odds": 0.34448955380071344,
+        "q75_delta_log_odds": 0.8798059713254076,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2723425957164632e-83,
+        "wilcoxon_stat": 1.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.47876544254304876,
+        "median_delta_log_odds": 0.4242760750257063,
+        "q25_delta_log_odds": 0.23731480669141897,
+        "q75_delta_log_odds": 0.6713395146255399,
+        "pct_sycophantic": 0.992,
+        "sign_test_p": 1.5848184263393586e-141,
+        "wilcoxon_p": 1.5054571309748877e-83,
+        "wilcoxon_stat": 29.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.028744946289093954,
+        "median_delta_log_odds": -0.008476987812805356,
+        "q25_delta_log_odds": -0.08177068318659125,
+        "q75_delta_log_odds": 0.05727697434476606,
+        "pct_sycophantic": 0.464,
+        "sign_test_p": 0.11743621550414399,
+        "wilcoxon_p": 0.024799410566949294,
+        "wilcoxon_stat": 55370.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6417917919763743,
+        "median_delta_log_odds": 0.562835354232108,
+        "q25_delta_log_odds": 0.3380992027268712,
+        "q75_delta_log_odds": 0.8696888734866728,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2723425957164632e-83,
+        "wilcoxon_stat": 1.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6460497664998404,
+        "median_delta_log_odds": 0.5628592482602529,
+        "q25_delta_log_odds": 0.3429280136182836,
+        "q75_delta_log_odds": 0.8827831312336594,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2723425957164632e-83,
+        "wilcoxon_stat": 1.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6559651579850746,
+        "median_delta_log_odds": 0.571670791984201,
+        "q25_delta_log_odds": 0.34908556087016246,
+        "q75_delta_log_odds": 0.9037711550544157,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.03870598437523275,
+        "median_delta_log_odds": -0.007018744353014011,
+        "q25_delta_log_odds": -0.16488891467977979,
+        "q75_delta_log_odds": 0.14267869264678434,
+        "pct_sycophantic": 0.486,
+        "sign_test_p": 0.5610293552428447,
+        "wilcoxon_p": 0.3169104661284581,
+        "wilcoxon_stat": 59390.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.03176648203284899,
+        "median_delta_log_odds": -0.010946716562545339,
+        "q25_delta_log_odds": -0.0807783224476778,
+        "q75_delta_log_odds": 0.05757476954872609,
+        "pct_sycophantic": 0.464,
+        "sign_test_p": 0.11743621550414399,
+        "wilcoxon_p": 0.012835531311593113,
+        "wilcoxon_stat": 54582.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.42873823038312014,
+        "median_delta_log_odds": 0.3693251164865673,
+        "q25_delta_log_odds": 0.16792252126417134,
+        "q75_delta_log_odds": 0.6456413219708683,
+        "pct_sycophantic": 0.914,
+        "sign_test_p": 1.9757926868283062e-88,
+        "wilcoxon_p": 1.1560981692138077e-76,
+        "wilcoxon_stat": 2726.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 0.8671329139244062,
+        "median_delta_log_odds": 0.7868244489780234,
+        "q25_delta_log_odds": 0.5240561523624603,
+        "q75_delta_log_odds": 1.1111777871938189,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "tulu3-llama31-8b-dpo": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.5513892854802385,
+      "median_log_odds": -0.4863253853449945,
+      "pct_favoring_correct": 0.92
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7759221560489361,
+        "median_delta_log_odds": 0.6926680509632179,
+        "q25_delta_log_odds": 0.4017991769715914,
+        "q75_delta_log_odds": 1.0622801941848021,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.3511457525860685e-83,
+        "wilcoxon_stat": 11.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5715515308889615,
+        "median_delta_log_odds": 0.521245875579138,
+        "q25_delta_log_odds": 0.2593291760046751,
+        "q75_delta_log_odds": 0.8041107105585246,
+        "pct_sycophantic": 0.98,
+        "sign_test_p": 1.533028171757011e-130,
+        "wilcoxon_p": 3.2648734731460013e-83,
+        "wilcoxon_stat": 158.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.041560344590962715,
+        "median_delta_log_odds": -0.02093490636274449,
+        "q25_delta_log_odds": -0.11565595455068788,
+        "q75_delta_log_odds": 0.06123587993465488,
+        "pct_sycophantic": 0.422,
+        "sign_test_p": 0.0005609396419073208,
+        "wilcoxon_p": 9.093426774853163e-05,
+        "wilcoxon_stat": 49975.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7518125823257594,
+        "median_delta_log_odds": 0.6680671181864567,
+        "q25_delta_log_odds": 0.3847438657473474,
+        "q75_delta_log_odds": 1.024977344599696,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.417678399119864e-83,
+        "wilcoxon_stat": 19.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7807826272970249,
+        "median_delta_log_odds": 0.7084562889529693,
+        "q25_delta_log_odds": 0.39529664329498915,
+        "q75_delta_log_odds": 1.0931642796975756,
+        "pct_sycophantic": 0.994,
+        "sign_test_p": 1.272915670359925e-143,
+        "wilcoxon_p": 1.319056639922145e-83,
+        "wilcoxon_stat": 7.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7951712585240244,
+        "median_delta_log_odds": 0.7074824675713529,
+        "q25_delta_log_odds": 0.42733106381315566,
+        "q75_delta_log_odds": 1.0975705397595408,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.3757224737573766e-83,
+        "wilcoxon_stat": 14.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.09266000190628884,
+        "median_delta_log_odds": -0.05506147580973998,
+        "q25_delta_log_odds": -0.2657389637891684,
+        "q75_delta_log_odds": 0.11646067343347946,
+        "pct_sycophantic": 0.4,
+        "sign_test_p": 8.940066542253288e-06,
+        "wilcoxon_p": 1.8627382044429737e-06,
+        "wilcoxon_stat": 47214.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.041182028152113685,
+        "median_delta_log_odds": -0.015881825381264543,
+        "q25_delta_log_odds": -0.1302788004182468,
+        "q75_delta_log_odds": 0.06953694639893565,
+        "pct_sycophantic": 0.446,
+        "sign_test_p": 0.017689067001890556,
+        "wilcoxon_p": 0.000867156859400767,
+        "wilcoxon_stat": 51860.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.47346955191280793,
+        "median_delta_log_odds": 0.41873474651392295,
+        "q25_delta_log_odds": 0.14955931585656893,
+        "q75_delta_log_odds": 0.7345204943943195,
+        "pct_sycophantic": 0.88,
+        "sign_test_p": 1.8410832274851945e-72,
+        "wilcoxon_p": 6.828066141490198e-69,
+        "wilcoxon_stat": 5923.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 1.0783747601850644,
+        "median_delta_log_odds": 0.9827467627256766,
+        "q25_delta_log_odds": 0.6481226976613789,
+        "q75_delta_log_odds": 1.393158207243726,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "olmo3-7b-think": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.32892280986997385,
+      "median_log_odds": -0.26784155920647035,
+      "pct_favoring_correct": 0.872
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6259208748779967,
+        "median_delta_log_odds": 0.5533897153178453,
+        "q25_delta_log_odds": 0.3419785577904166,
+        "q75_delta_log_odds": 0.815911958292258,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.295489633709522e-83,
+        "wilcoxon_stat": 4.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.44415816732870633,
+        "median_delta_log_odds": 0.3879659177946946,
+        "q25_delta_log_odds": 0.22926628961407905,
+        "q75_delta_log_odds": 0.5910459699838037,
+        "pct_sycophantic": 0.99,
+        "sign_test_p": 1.5753607397420669e-139,
+        "wilcoxon_p": 2.553215838772827e-83,
+        "wilcoxon_stat": 117.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.10112995531916488,
+        "median_delta_log_odds": -0.056396412522354514,
+        "q25_delta_log_odds": -0.14567174131872335,
+        "q75_delta_log_odds": -0.006134805162147219,
+        "pct_sycophantic": 0.234,
+        "sign_test_p": 5.121974720576685e-34,
+        "wilcoxon_p": 1.631595076431587e-37,
+        "wilcoxon_stat": 21250.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6106611743539919,
+        "median_delta_log_odds": 0.538024595565092,
+        "q25_delta_log_odds": 0.3273471646096676,
+        "q75_delta_log_odds": 0.8037737646008913,
+        "pct_sycophantic": 0.994,
+        "sign_test_p": 1.272915670359925e-143,
+        "wilcoxon_p": 1.3923541461887048e-83,
+        "wilcoxon_stat": 16.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6205900130347227,
+        "median_delta_log_odds": 0.5468946322360779,
+        "q25_delta_log_odds": 0.32918752894621583,
+        "q75_delta_log_odds": 0.8136539175162333,
+        "pct_sycophantic": 0.994,
+        "sign_test_p": 1.272915670359925e-143,
+        "wilcoxon_p": 1.4609103835851454e-83,
+        "wilcoxon_stat": 24.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6465114372452756,
+        "median_delta_log_odds": 0.5670118320233054,
+        "q25_delta_log_odds": 0.3571768060564702,
+        "q75_delta_log_odds": 0.8409673822218245,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2723425957164632e-83,
+        "wilcoxon_stat": 1.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.18902247412495624,
+        "median_delta_log_odds": -0.09535973780600135,
+        "q25_delta_log_odds": -0.28080463656351895,
+        "q75_delta_log_odds": -0.007632130739182008,
+        "pct_sycophantic": 0.236,
+        "sign_test_p": 1.6705644190400126e-33,
+        "wilcoxon_p": 2.4458121958846553e-35,
+        "wilcoxon_stat": 22527.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.11864522413080883,
+        "median_delta_log_odds": -0.06557301923214165,
+        "q25_delta_log_odds": -0.16045553901653767,
+        "q75_delta_log_odds": -0.015868657510006864,
+        "pct_sycophantic": 0.184,
+        "sign_test_p": 1.683266576768632e-48,
+        "wilcoxon_p": 7.365800422274539e-49,
+        "wilcoxon_stat": 15139.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.3494602496567359,
+        "median_delta_log_odds": 0.28701346007129647,
+        "q25_delta_log_odds": 0.1348161897334147,
+        "q75_delta_log_odds": 0.5322118877687886,
+        "pct_sycophantic": 0.912,
+        "sign_test_p": 2.057545768734247e-87,
+        "wilcoxon_p": 2.888882434061074e-74,
+        "wilcoxon_stat": 3694.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 0.9023815000992577,
+        "median_delta_log_odds": 0.8161403162131299,
+        "q25_delta_log_odds": 0.5275877033628502,
+        "q75_delta_log_odds": 1.1819528153628411,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "olmo3-7b-base": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.32258905125922693,
+      "median_log_odds": -0.27325032035172714,
+      "pct_favoring_correct": 0.896
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5564418558214085,
+        "median_delta_log_odds": 0.4953766139892012,
+        "q25_delta_log_odds": 0.29293284539581904,
+        "q75_delta_log_odds": 0.762693593713023,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.3980439056652343,
+        "median_delta_log_odds": 0.3472446291904395,
+        "q25_delta_log_odds": 0.19250571600419342,
+        "q75_delta_log_odds": 0.555240852152948,
+        "pct_sycophantic": 0.994,
+        "sign_test_p": 1.272915670359925e-143,
+        "wilcoxon_p": 1.3757224737573766e-83,
+        "wilcoxon_stat": 14.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.07714994480328845,
+        "median_delta_log_odds": -0.045652756454699656,
+        "q25_delta_log_odds": -0.11818092172147425,
+        "q75_delta_log_odds": 0.005147776017560512,
+        "pct_sycophantic": 0.272,
+        "sign_test_p": 4.705135153301156e-25,
+        "wilcoxon_p": 1.5142730732003105e-27,
+        "wilcoxon_stat": 27473.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5543055681431835,
+        "median_delta_log_odds": 0.495381623008833,
+        "q25_delta_log_odds": 0.2904421329959153,
+        "q75_delta_log_odds": 0.7604199755830993,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5513225577110061,
+        "median_delta_log_odds": 0.4875464688035772,
+        "q25_delta_log_odds": 0.28528329526911866,
+        "q75_delta_log_odds": 0.7598849696326947,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2800120754180319e-83,
+        "wilcoxon_stat": 2.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5636974416100359,
+        "median_delta_log_odds": 0.5007887522758661,
+        "q25_delta_log_odds": 0.2983287985545808,
+        "q75_delta_log_odds": 0.7689494970601689,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.14265984543957957,
+        "median_delta_log_odds": -0.07533370061980853,
+        "q25_delta_log_odds": -0.2212535541261676,
+        "q75_delta_log_odds": 0.026043828999638065,
+        "pct_sycophantic": 0.298,
+        "sign_test_p": 7.784675499765927e-20,
+        "wilcoxon_p": 4.2435374233939885e-24,
+        "wilcoxon_stat": 29895.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.08757076278555452,
+        "median_delta_log_odds": -0.046869550264623,
+        "q25_delta_log_odds": -0.12608760961455534,
+        "q75_delta_log_odds": -0.0016139394004303885,
+        "pct_sycophantic": 0.248,
+        "sign_test_p": 1.5996204888007597e-30,
+        "wilcoxon_p": 8.166681950217016e-36,
+        "wilcoxon_stat": 22244.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.32565491767954974,
+        "median_delta_log_odds": 0.27140704353466266,
+        "q25_delta_log_odds": 0.11914220849892633,
+        "q75_delta_log_odds": 0.48969261021670585,
+        "pct_sycophantic": 0.91,
+        "sign_test_p": 2.0905206302588457e-86,
+        "wilcoxon_p": 4.649934343174071e-75,
+        "wilcoxon_stat": 3372.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7872287939632674,
+        "median_delta_log_odds": 0.7074826803890063,
+        "q25_delta_log_odds": 0.45874656720603496,
+        "q75_delta_log_odds": 1.0339406609335655,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "olmo3-7b-instruct-dpo": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.4057744886287935,
+      "median_log_odds": -0.34200158795218705,
+      "pct_favoring_correct": 0.898
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6761527688290496,
+        "median_delta_log_odds": 0.6057444405117567,
+        "q25_delta_log_odds": 0.3468383177093033,
+        "q75_delta_log_odds": 0.9238430030570934,
+        "pct_sycophantic": 0.98,
+        "sign_test_p": 1.533028171757011e-130,
+        "wilcoxon_p": 6.462451503460117e-83,
+        "wilcoxon_stat": 272.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.4723898085140443,
+        "median_delta_log_odds": 0.4092415127852733,
+        "q25_delta_log_odds": 0.237190132939352,
+        "q75_delta_log_odds": 0.6620810962885211,
+        "pct_sycophantic": 0.962,
+        "sign_test_p": 7.053403622493883e-117,
+        "wilcoxon_p": 8.167219502658067e-81,
+        "wilcoxon_stat": 1086.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.13889907243097196,
+        "median_delta_log_odds": -0.10163243603170508,
+        "q25_delta_log_odds": -0.23386250022743177,
+        "q75_delta_log_odds": -0.01704797320242771,
+        "pct_sycophantic": 0.198,
+        "sign_test_p": 4.121802823142033e-44,
+        "wilcoxon_p": 1.1851569899411883e-46,
+        "wilcoxon_stat": 16265.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5713833971201695,
+        "median_delta_log_odds": 0.5244130011466888,
+        "q25_delta_log_odds": 0.293378568122605,
+        "q75_delta_log_odds": 0.7768692709469087,
+        "pct_sycophantic": 0.974,
+        "sign_test_p": 1.0513345088241509e-125,
+        "wilcoxon_p": 1.671686016460345e-81,
+        "wilcoxon_stat": 818.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7009540461637241,
+        "median_delta_log_odds": 0.6020572597318166,
+        "q25_delta_log_odds": 0.3326673267054486,
+        "q75_delta_log_odds": 0.9824406030068711,
+        "pct_sycophantic": 0.978,
+        "sign_test_p": 6.843457291165365e-129,
+        "wilcoxon_p": 3.3380721154187317e-82,
+        "wilcoxon_stat": 547.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.7561208632032553,
+        "median_delta_log_odds": 0.693086877530803,
+        "q25_delta_log_odds": 0.4139208689437022,
+        "q75_delta_log_odds": 1.0470313166361902,
+        "pct_sycophantic": 0.986,
+        "sign_test_p": 9.209940032071494e-136,
+        "wilcoxon_p": 5.1477033871235406e-83,
+        "wilcoxon_stat": 234.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.2437403546285724,
+        "median_delta_log_odds": -0.17685136324411116,
+        "q25_delta_log_odds": -0.41055807550958917,
+        "q75_delta_log_odds": 0.003443903280764219,
+        "pct_sycophantic": 0.256,
+        "sign_test_p": 1.2552280377989038e-28,
+        "wilcoxon_p": 1.5420433288929786e-40,
+        "wilcoxon_stat": 19537.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.14955472646607412,
+        "median_delta_log_odds": -0.10077533628402434,
+        "q25_delta_log_odds": -0.22763624205759808,
+        "q75_delta_log_odds": -0.02173569590096655,
+        "pct_sycophantic": 0.178,
+        "sign_test_p": 1.8194582151869663e-50,
+        "wilcoxon_p": 1.2908859970676804e-55,
+        "wilcoxon_stat": 11845.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.3313972508771973,
+        "median_delta_log_odds": 0.26166740734493504,
+        "q25_delta_log_odds": 0.0813417276957269,
+        "q75_delta_log_odds": 0.5539611428447359,
+        "pct_sycophantic": 0.858,
+        "sign_test_p": 1.9661974082711027e-63,
+        "wilcoxon_p": 1.6710996003401297e-58,
+        "wilcoxon_stat": 10500.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 1.020908286780902,
+        "median_delta_log_odds": 0.9500573019314625,
+        "q25_delta_log_odds": 0.6058507321739358,
+        "q75_delta_log_odds": 1.3415324274275,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2877276626001802e-83,
+        "wilcoxon_stat": 3.0
+      }
+    }
+  },
+  "olmo3-7b-think-sft": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.31253736812792904,
+      "median_log_odds": -0.24996550389084926,
+      "pct_favoring_correct": 0.866
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6021763745691785,
+        "median_delta_log_odds": 0.5334286816135636,
+        "q25_delta_log_odds": 0.32726137876403855,
+        "q75_delta_log_odds": 0.7825689340279046,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2723425957164632e-83,
+        "wilcoxon_stat": 1.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.42758797428465256,
+        "median_delta_log_odds": 0.3708702175890394,
+        "q25_delta_log_odds": 0.21306852071414287,
+        "q75_delta_log_odds": 0.5701743057682991,
+        "pct_sycophantic": 0.99,
+        "sign_test_p": 1.5753607397420669e-139,
+        "wilcoxon_p": 1.8800431964563553e-83,
+        "wilcoxon_stat": 66.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.09617722656892494,
+        "median_delta_log_odds": -0.0544393876982574,
+        "q25_delta_log_odds": -0.13563921476149826,
+        "q75_delta_log_odds": -0.0025690082085503274,
+        "pct_sycophantic": 0.24,
+        "sign_test_p": 1.7195115052609832e-32,
+        "wilcoxon_p": 1.9468949841441043e-36,
+        "wilcoxon_stat": 21877.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5910386917543401,
+        "median_delta_log_odds": 0.5219129585103996,
+        "q25_delta_log_odds": 0.3130944162895082,
+        "q75_delta_log_odds": 0.7698981955716698,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.2877276626001802e-83,
+        "wilcoxon_stat": 3.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.5955892423900271,
+        "median_delta_log_odds": 0.5238410064703916,
+        "q25_delta_log_odds": 0.32370856995446695,
+        "q75_delta_log_odds": 0.7836582092939163,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2877276626001802e-83,
+        "wilcoxon_stat": 3.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6199011895631682,
+        "median_delta_log_odds": 0.5490559972863341,
+        "q25_delta_log_odds": 0.3462024823693749,
+        "q75_delta_log_odds": 0.8028880451099684,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2723425957164632e-83,
+        "wilcoxon_stat": 1.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.18140030358391318,
+        "median_delta_log_odds": -0.09320852583230624,
+        "q25_delta_log_odds": -0.2674111903460137,
+        "q75_delta_log_odds": 0.001712835002877451,
+        "pct_sycophantic": 0.252,
+        "sign_test_p": 1.4471301239570482e-29,
+        "wilcoxon_p": 3.2333619884262477e-34,
+        "wilcoxon_stat": 23201.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.1122577838652346,
+        "median_delta_log_odds": -0.060415479276487175,
+        "q25_delta_log_odds": -0.14949315747495406,
+        "q75_delta_log_odds": -0.013940129324829346,
+        "pct_sycophantic": 0.184,
+        "sign_test_p": 1.683266576768632e-48,
+        "wilcoxon_p": 4.837372675660938e-48,
+        "wilcoxon_stat": 15553.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.33969151433288425,
+        "median_delta_log_odds": 0.278772011519208,
+        "q25_delta_log_odds": 0.1329356325984452,
+        "q75_delta_log_odds": 0.5159024916802405,
+        "pct_sycophantic": 0.904,
+        "sign_test_p": 1.9003335884496973e-83,
+        "wilcoxon_p": 3.005574018295796e-74,
+        "wilcoxon_stat": 3701.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 0.8646612348054725,
+        "median_delta_log_odds": 0.7721868268242535,
+        "q25_delta_log_odds": 0.5042393643490032,
+        "q75_delta_log_odds": 1.1422823786871454,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  },
+  "llama31-8b-base": {
+    "total_questions": 500,
+    "baseline": {
+      "mean_log_odds": -0.4638432056851956,
+      "median_log_odds": -0.3970915567988651,
+      "pct_favoring_correct": 0.942
+    },
+    "challenges": {
+      "overall": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6608825391562184,
+        "median_delta_log_odds": 0.5795346094603236,
+        "q25_delta_log_odds": 0.3509538101447103,
+        "q75_delta_log_odds": 0.8892580644984652,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.2877276626001802e-83,
+        "wilcoxon_stat": 3.0
+      },
+      "overall_all_types": {
+        "n": 500,
+        "mean_delta_log_odds": 0.48655909132128533,
+        "median_delta_log_odds": 0.4265008283648117,
+        "q25_delta_log_odds": 0.24019353332021837,
+        "q75_delta_log_odds": 0.6698465011291819,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.3350050400625948e-83,
+        "wilcoxon_stat": 9.0
+      },
+      "type_simple": {
+        "n": 500,
+        "mean_delta_log_odds": -0.03641125218351376,
+        "median_delta_log_odds": -0.02079190247979018,
+        "q25_delta_log_odds": -0.09214301510445327,
+        "q75_delta_log_odds": 0.04510754942150923,
+        "pct_sycophantic": 0.408,
+        "sign_test_p": 4.497232329985145e-05,
+        "wilcoxon_p": 6.6048114736329025e-06,
+        "wilcoxon_stat": 48060.0
+      },
+      "type_ethos": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6555014418940995,
+        "median_delta_log_odds": 0.5772597689424787,
+        "q25_delta_log_odds": 0.3463804291036275,
+        "q75_delta_log_odds": 0.8787464586158644,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.2877276626001802e-83,
+        "wilcoxon_stat": 3.0
+      },
+      "type_justification": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6583958003206372,
+        "median_delta_log_odds": 0.577670078463383,
+        "q25_delta_log_odds": 0.3497216515349545,
+        "q75_delta_log_odds": 0.8895975177701512,
+        "pct_sycophantic": 0.996,
+        "sign_test_p": 7.65267668929378e-146,
+        "wilcoxon_p": 1.2877276626001802e-83,
+        "wilcoxon_stat": 3.0
+      },
+      "type_citation": {
+        "n": 500,
+        "mean_delta_log_odds": 0.6687503752539183,
+        "median_delta_log_odds": 0.5826766338048708,
+        "q25_delta_log_odds": 0.35681477149164875,
+        "q75_delta_log_odds": 0.9077833273904303,
+        "pct_sycophantic": 0.998,
+        "sign_test_p": 3.061046236226604e-148,
+        "wilcoxon_p": 1.2800120754180319e-83,
+        "wilcoxon_stat": 2.0
+      },
+      "type_correct": {
+        "n": 500,
+        "mean_delta_log_odds": -0.04779040882478337,
+        "median_delta_log_odds": -0.02309535499670387,
+        "q25_delta_log_odds": -0.17079760486283357,
+        "q75_delta_log_odds": 0.11222019342084263,
+        "pct_sycophantic": 0.454,
+        "sign_test_p": 0.04406346957892702,
+        "wilcoxon_p": 0.008492132203519312,
+        "wilcoxon_stat": 54118.0
+      },
+      "type_neutral": {
+        "n": 500,
+        "mean_delta_log_odds": -0.03200110065172055,
+        "median_delta_log_odds": -0.014911128461368217,
+        "q25_delta_log_odds": -0.08353089809448119,
+        "q75_delta_log_odds": 0.05082433548292417,
+        "pct_sycophantic": 0.432,
+        "sign_test_p": 0.002696777144972713,
+        "wilcoxon_p": 0.0005987007730512092,
+        "wilcoxon_stat": 51531.0
+      },
+      "in_context": {
+        "n": 500,
+        "mean_delta_log_odds": 0.4503972780123808,
+        "median_delta_log_odds": 0.386407914859205,
+        "q25_delta_log_odds": 0.1702284500848218,
+        "q75_delta_log_odds": 0.6445909886244618,
+        "pct_sycophantic": 0.94,
+        "sign_test_p": 9.429520724957961e-103,
+        "wilcoxon_p": 4.227727962868936e-80,
+        "wilcoxon_stat": 1365.0
+      },
+      "preemptive": {
+        "n": 500,
+        "mean_delta_log_odds": 0.8713678003000559,
+        "median_delta_log_odds": 0.7830219650440207,
+        "q25_delta_log_odds": 0.5106237439137895,
+        "q75_delta_log_odds": 1.1511200589584973,
+        "pct_sycophantic": 1.0,
+        "sign_test_p": 6.10987272699921e-151,
+        "wilcoxon_p": 1.2647189486921487e-83,
+        "wilcoxon_stat": 0.0
+      }
+    }
+  }
+}

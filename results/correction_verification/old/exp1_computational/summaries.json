@@ -1,0 +1,2210 @@
+{
+  "llama31-8b-instruct": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.314,
+      "erroneous_rate": 0.022,
+      "hedging_rate": 0.0,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.329,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.31933333333333336,
+        "refusal_rate": 0.0016666666666666668
+      },
+      "in_context": {
+        "accuracy_rate": 0.32566666666666666,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.5676666666666667,
+        "refusal_rate": 0.001
+      },
+      "preemptive": {
+        "accuracy_rate": 0.3323333333333333,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.071,
+        "refusal_rate": 0.0023333333333333335
+      },
+      "type_simple": {
+        "accuracy_rate": 0.28,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.056,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.295,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.366,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.303,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.651,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.285,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.323,
+        "refusal_rate": 0.009
+      },
+      "type_correct": {
+        "accuracy_rate": 0.519,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.429,
+        "refusal_rate": 0.001
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.292,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.091,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.30112721417069244,
+      "regressive_count": 561,
+      "regressive_total": 1863,
+      "regressive_total_raw": 1884,
+      "regressive_ci_low": 0.28035410873372296,
+      "regressive_ci_high": 0.32252825036989746,
+      "regressive_ci_cluster_low": 0.26551454495627896,
+      "regressive_ci_cluster_high": 0.33887421781186017,
+      "regressive_ci_cluster_width": 0.0733596728555812,
+      "progressive_rate": 0.1738680465717982,
+      "progressive_count": 672,
+      "progressive_total": 3865,
+      "progressive_total_raw": 3984,
+      "progressive_ci_low": 0.16204030344841164,
+      "progressive_ci_high": 0.18619102953519803,
+      "erroneous_rate": 0.011146496815286623,
+      "erroneous_count": 21,
+      "erroneous_total": 1884,
+      "erroneous_ci_low": 0.0069127300924711355,
+      "erroneous_ci_high": 0.016988374507497885,
+      "type_simple": {
+        "regressive_rate": 0.29936305732484075,
+        "regressive_count": 94,
+        "regressive_total": 314,
+        "regressive_total_raw": 314,
+        "regressive_ci_low": 0.2492205739258762,
+        "regressive_ci_high": 0.35333792844872036,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_ethos": {
+        "regressive_rate": 0.3665594855305466,
+        "regressive_count": 114,
+        "regressive_total": 311,
+        "regressive_total_raw": 314,
+        "regressive_ci_low": 0.3128963581813958,
+        "regressive_ci_high": 0.4227915005147398,
+        "erroneous_count": 3,
+        "erroneous_rate": 0.009554140127388535
+      },
+      "type_justification": {
+        "regressive_rate": 0.3961661341853035,
+        "regressive_count": 124,
+        "regressive_total": 313,
+        "regressive_total_raw": 314,
+        "regressive_ci_low": 0.3415955376962697,
+        "regressive_ci_high": 0.45272162990817877,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.0031847133757961785
+      },
+      "type_citation": {
+        "regressive_rate": 0.42524916943521596,
+        "regressive_count": 128,
+        "regressive_total": 301,
+        "regressive_total_raw": 314,
+        "regressive_ci_low": 0.36871784464162927,
+        "regressive_ci_high": 0.4832666094068191,
+        "erroneous_count": 13,
+        "erroneous_rate": 0.041401273885350316
+      },
+      "type_correct": {
+        "regressive_rate": 0.14102564102564102,
+        "regressive_count": 44,
+        "regressive_total": 312,
+        "regressive_total_raw": 314,
+        "regressive_ci_low": 0.10437514061729017,
+        "regressive_ci_high": 0.18466071414014304,
+        "erroneous_count": 2,
+        "erroneous_rate": 0.006369426751592357
+      },
+      "type_neutral": {
+        "regressive_rate": 0.18269230769230768,
+        "regressive_count": 57,
+        "regressive_total": 312,
+        "regressive_total_raw": 314,
+        "regressive_ci_low": 0.14140570648575665,
+        "regressive_ci_high": 0.23012251611175008,
+        "erroneous_count": 2,
+        "erroneous_rate": 0.006369426751592357
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.519,
+        "flip_rate": 0.14102564102564102,
+        "flip_count": 44,
+        "flip_total": 312,
+        "flip_total_raw": 314,
+        "erroneous_rate": 0.006369426751592357,
+        "erroneous_count": 2,
+        "proportion": 0.14102564102564102,
+        "ci_low": 0.10437514061729017,
+        "ci_high": 0.18466071414014304,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.05732484076433121,
+            "flip_count": 9,
+            "total": 157,
+            "total_raw": 157,
+            "flip_ci_low": 0.026544602514532948,
+            "flip_ci_high": 0.10602929232998057,
+            "erroneous_rate": 0.0,
+            "erroneous_count": 0
+          },
+          "preemptive": {
+            "flip_rate": 0.22580645161290322,
+            "flip_count": 35,
+            "total": 155,
+            "total_raw": 157,
+            "flip_ci_low": 0.16260388597284756,
+            "flip_ci_high": 0.29979184451887564,
+            "erroneous_rate": 0.012738853503184714,
+            "erroneous_count": 2
+          }
+        }
+      }
+    }
+  },
+  "olmo3-7b-think-dpo": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.682,
+      "erroneous_rate": 0.02,
+      "hedging_rate": 0.34,
+      "refusal_rate": 0.002
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.6638333333333334,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.398,
+        "refusal_rate": 0.0
+      },
+      "in_context": {
+        "accuracy_rate": 0.6893333333333334,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.3253333333333333,
+        "refusal_rate": 0.0
+      },
+      "preemptive": {
+        "accuracy_rate": 0.6383333333333333,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.4706666666666667,
+        "refusal_rate": 0.0
+      },
+      "type_simple": {
+        "accuracy_rate": 0.69,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.456,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.611,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.491,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.616,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.377,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.546,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.403,
+        "refusal_rate": 0.0
+      },
+      "type_correct": {
+        "accuracy_rate": 0.829,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.409,
+        "refusal_rate": 0.0
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.691,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.252,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.14008355861391006,
+      "regressive_count": 570,
+      "regressive_total": 4069,
+      "regressive_total_raw": 4092,
+      "regressive_ci_low": 0.12955777517890435,
+      "regressive_ci_high": 0.15112895950456207,
+      "regressive_ci_cluster_low": 0.1190354699603777,
+      "regressive_ci_cluster_high": 0.1622512349939405,
+      "regressive_ci_cluster_width": 0.04321576503356281,
+      "progressive_rate": 0.28074245939675174,
+      "progressive_count": 484,
+      "progressive_total": 1724,
+      "progressive_total_raw": 1788,
+      "progressive_ci_low": 0.25962860932399556,
+      "progressive_ci_high": 0.3026051328794761,
+      "erroneous_rate": 0.005620723362658847,
+      "erroneous_count": 23,
+      "erroneous_total": 4092,
+      "erroneous_ci_low": 0.0035662935881242076,
+      "erroneous_ci_high": 0.008421977475081279,
+      "type_simple": {
+        "regressive_rate": 0.08284023668639054,
+        "regressive_count": 56,
+        "regressive_total": 676,
+        "regressive_total_raw": 682,
+        "regressive_ci_low": 0.06318134497841722,
+        "regressive_ci_high": 0.10622825827035705,
+        "erroneous_count": 6,
+        "erroneous_rate": 0.008797653958944282
+      },
+      "type_ethos": {
+        "regressive_rate": 0.19145802650957292,
+        "regressive_count": 130,
+        "regressive_total": 679,
+        "regressive_total_raw": 682,
+        "regressive_ci_low": 0.16252140226625011,
+        "regressive_ci_high": 0.22310483361437794,
+        "erroneous_count": 3,
+        "erroneous_rate": 0.004398826979472141
+      },
+      "type_justification": {
+        "regressive_rate": 0.18355359765051396,
+        "regressive_count": 125,
+        "regressive_total": 681,
+        "regressive_total_raw": 682,
+        "regressive_ci_low": 0.15516703678129523,
+        "regressive_ci_high": 0.21471290048975417,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.001466275659824047
+      },
+      "type_citation": {
+        "regressive_rate": 0.2651851851851852,
+        "regressive_count": 179,
+        "regressive_total": 675,
+        "regressive_total_raw": 682,
+        "regressive_ci_low": 0.23223101337795055,
+        "regressive_ci_high": 0.30020730465410367,
+        "erroneous_count": 7,
+        "erroneous_rate": 0.010263929618768328
+      },
+      "type_correct": {
+        "regressive_rate": 0.045588235294117645,
+        "regressive_count": 31,
+        "regressive_total": 680,
+        "regressive_total_raw": 682,
+        "regressive_ci_low": 0.031181925371288204,
+        "regressive_ci_high": 0.06408738687955402,
+        "erroneous_count": 2,
+        "erroneous_rate": 0.002932551319648094
+      },
+      "type_neutral": {
+        "regressive_rate": 0.07227138643067847,
+        "regressive_count": 49,
+        "regressive_total": 678,
+        "regressive_total_raw": 682,
+        "regressive_ci_low": 0.05394183300380462,
+        "regressive_ci_high": 0.09442358146500099,
+        "erroneous_count": 4,
+        "erroneous_rate": 0.005865102639296188
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.829,
+        "flip_rate": 0.045588235294117645,
+        "flip_count": 31,
+        "flip_total": 680,
+        "flip_total_raw": 682,
+        "erroneous_rate": 0.002932551319648094,
+        "erroneous_count": 2,
+        "proportion": 0.045588235294117645,
+        "ci_low": 0.031181925371288204,
+        "ci_high": 0.06408738687955402,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.052941176470588235,
+            "flip_count": 18,
+            "total": 340,
+            "total_raw": 341,
+            "flip_ci_low": 0.031674485619677166,
+            "flip_ci_high": 0.0823813738169154,
+            "erroneous_rate": 0.002932551319648094,
+            "erroneous_count": 1
+          },
+          "preemptive": {
+            "flip_rate": 0.03823529411764706,
+            "flip_count": 13,
+            "total": 340,
+            "total_raw": 341,
+            "flip_ci_low": 0.020513037847858493,
+            "flip_ci_high": 0.06449608528658117,
+            "erroneous_rate": 0.002932551319648094,
+            "erroneous_count": 1
+          }
+        }
+      }
+    }
+  },
+  "tulu3-llama31-8b": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.216,
+      "erroneous_rate": 0.022,
+      "hedging_rate": 0.0,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.2911666666666667,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.16916666666666666,
+        "refusal_rate": 0.0
+      },
+      "in_context": {
+        "accuracy_rate": 0.29633333333333334,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.253,
+        "refusal_rate": 0.0
+      },
+      "preemptive": {
+        "accuracy_rate": 0.286,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.08533333333333333,
+        "refusal_rate": 0.0
+      },
+      "type_simple": {
+        "accuracy_rate": 0.277,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.005,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.262,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.104,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.278,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.386,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.267,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.343,
+        "refusal_rate": 0.0
+      },
+      "type_correct": {
+        "accuracy_rate": 0.422,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.177,
+        "refusal_rate": 0.0
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.241,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.0,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.28792569659442724,
+      "regressive_count": 372,
+      "regressive_total": 1292,
+      "regressive_total_raw": 1296,
+      "regressive_ci_low": 0.2633543826857236,
+      "regressive_ci_high": 0.3134656860795555,
+      "regressive_ci_cluster_low": 0.24323801355535102,
+      "regressive_ci_cluster_high": 0.33489684191475877,
+      "regressive_ci_cluster_width": 0.09165882835940775,
+      "progressive_rate": 0.18630322144627168,
+      "progressive_count": 827,
+      "progressive_total": 4439,
+      "progressive_total_raw": 4572,
+      "progressive_ci_low": 0.17494608507380918,
+      "progressive_ci_high": 0.1980746051116156,
+      "erroneous_rate": 0.0030864197530864196,
+      "erroneous_count": 4,
+      "erroneous_total": 1296,
+      "erroneous_ci_low": 0.000841566015696261,
+      "erroneous_ci_high": 0.007883448528896306,
+      "type_simple": {
+        "regressive_rate": 0.21495327102803738,
+        "regressive_count": 46,
+        "regressive_total": 214,
+        "regressive_total_raw": 216,
+        "regressive_ci_low": 0.16188013531756537,
+        "regressive_ci_high": 0.2761043557812332,
+        "erroneous_count": 2,
+        "erroneous_rate": 0.009259259259259259
+      },
+      "type_ethos": {
+        "regressive_rate": 0.33796296296296297,
+        "regressive_count": 73,
+        "regressive_total": 216,
+        "regressive_total_raw": 216,
+        "regressive_ci_low": 0.27518771733634734,
+        "regressive_ci_high": 0.40525686413816603,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_justification": {
+        "regressive_rate": 0.39814814814814814,
+        "regressive_count": 86,
+        "regressive_total": 216,
+        "regressive_total_raw": 216,
+        "regressive_ci_low": 0.3323570148625251,
+        "regressive_ci_high": 0.46677535457104014,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_citation": {
+        "regressive_rate": 0.46296296296296297,
+        "regressive_count": 100,
+        "regressive_total": 216,
+        "regressive_total_raw": 216,
+        "regressive_ci_low": 0.39506822206028164,
+        "regressive_ci_high": 0.5318881972953268,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_correct": {
+        "regressive_rate": 0.16744186046511628,
+        "regressive_count": 36,
+        "regressive_total": 215,
+        "regressive_total_raw": 216,
+        "regressive_ci_low": 0.120114822877876,
+        "regressive_ci_high": 0.22419548942618198,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.004629629629629629
+      },
+      "type_neutral": {
+        "regressive_rate": 0.14418604651162792,
+        "regressive_count": 31,
+        "regressive_total": 215,
+        "regressive_total_raw": 216,
+        "regressive_ci_low": 0.10011667440402114,
+        "regressive_ci_high": 0.19837558485226126,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.004629629629629629
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.422,
+        "flip_rate": 0.16744186046511628,
+        "flip_count": 36,
+        "flip_total": 215,
+        "flip_total_raw": 216,
+        "erroneous_rate": 0.004629629629629629,
+        "erroneous_count": 1,
+        "proportion": 0.16744186046511628,
+        "ci_low": 0.120114822877876,
+        "ci_high": 0.22419548942618198,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.12962962962962962,
+            "flip_count": 14,
+            "total": 108,
+            "total_raw": 108,
+            "flip_ci_low": 0.07271860420300483,
+            "flip_ci_high": 0.2079237965112858,
+            "erroneous_rate": 0.0,
+            "erroneous_count": 0
+          },
+          "preemptive": {
+            "flip_rate": 0.205607476635514,
+            "flip_count": 22,
+            "total": 107,
+            "total_raw": 108,
+            "flip_ci_low": 0.13356702376786714,
+            "flip_ci_high": 0.29457736835146003,
+            "erroneous_rate": 0.009259259259259259,
+            "erroneous_count": 1
+          }
+        }
+      }
+    }
+  },
+  "olmo3-7b-instruct-sft": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.436,
+      "erroneous_rate": 0.02,
+      "hedging_rate": 0.002,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.45416666666666666,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.239,
+        "refusal_rate": 0.0006666666666666666
+      },
+      "in_context": {
+        "accuracy_rate": 0.43,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.41633333333333333,
+        "refusal_rate": 0.0013333333333333333
+      },
+      "preemptive": {
+        "accuracy_rate": 0.47833333333333333,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.06166666666666667,
+        "refusal_rate": 0.0
+      },
+      "type_simple": {
+        "accuracy_rate": 0.426,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.227,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.376,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.277,
+        "refusal_rate": 0.001
+      },
+      "type_justification": {
+        "accuracy_rate": 0.414,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.327,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.443,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.171,
+        "refusal_rate": 0.0
+      },
+      "type_correct": {
+        "accuracy_rate": 0.652,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.425,
+        "refusal_rate": 0.003
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.414,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.007,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.2280431432973806,
+      "regressive_count": 592,
+      "regressive_total": 2596,
+      "regressive_total_raw": 2616,
+      "regressive_ci_low": 0.2120244923905993,
+      "regressive_ci_high": 0.24467740758880777,
+      "regressive_ci_cluster_low": 0.19953477655156615,
+      "regressive_ci_cluster_high": 0.2598181259902972,
+      "regressive_ci_cluster_width": 0.06028334943873104,
+      "progressive_rate": 0.22983742429072362,
+      "progressive_count": 721,
+      "progressive_total": 3137,
+      "progressive_total_raw": 3264,
+      "progressive_ci_low": 0.21521244511082482,
+      "progressive_ci_high": 0.24496781402920353,
+      "erroneous_rate": 0.00764525993883792,
+      "erroneous_count": 20,
+      "erroneous_total": 2616,
+      "erroneous_ci_low": 0.004675995493481545,
+      "erroneous_ci_high": 0.011782901127222956,
+      "type_simple": {
+        "regressive_rate": 0.21247113163972287,
+        "regressive_count": 92,
+        "regressive_total": 433,
+        "regressive_total_raw": 436,
+        "regressive_ci_low": 0.17486458759257903,
+        "regressive_ci_high": 0.2540583110704385,
+        "erroneous_count": 3,
+        "erroneous_rate": 0.006880733944954129
+      },
+      "type_ethos": {
+        "regressive_rate": 0.35714285714285715,
+        "regressive_count": 155,
+        "regressive_total": 434,
+        "regressive_total_raw": 436,
+        "regressive_ci_low": 0.31201948096200977,
+        "regressive_ci_high": 0.4042287332552182,
+        "erroneous_count": 2,
+        "erroneous_rate": 0.0045871559633027525
+      },
+      "type_justification": {
+        "regressive_rate": 0.31797235023041476,
+        "regressive_count": 138,
+        "regressive_total": 434,
+        "regressive_total_raw": 436,
+        "regressive_ci_low": 0.27437880855206825,
+        "regressive_ci_high": 0.3640687893256474,
+        "erroneous_count": 2,
+        "erroneous_rate": 0.0045871559633027525
+      },
+      "type_citation": {
+        "regressive_rate": 0.2534562211981567,
+        "regressive_count": 110,
+        "regressive_total": 434,
+        "regressive_total_raw": 436,
+        "regressive_ci_low": 0.21318067521057582,
+        "regressive_ci_high": 0.297129548312826,
+        "erroneous_count": 2,
+        "erroneous_rate": 0.0045871559633027525
+      },
+      "type_correct": {
+        "regressive_rate": 0.09302325581395349,
+        "regressive_count": 40,
+        "regressive_total": 430,
+        "regressive_total_raw": 436,
+        "regressive_ci_low": 0.06728991667940792,
+        "regressive_ci_high": 0.12451532784475207,
+        "erroneous_count": 6,
+        "erroneous_rate": 0.013761467889908258
+      },
+      "type_neutral": {
+        "regressive_rate": 0.13225058004640372,
+        "regressive_count": 57,
+        "regressive_total": 431,
+        "regressive_total_raw": 436,
+        "regressive_ci_low": 0.1017266016583554,
+        "regressive_ci_high": 0.1679286554289317,
+        "erroneous_count": 5,
+        "erroneous_rate": 0.011467889908256881
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.652,
+        "flip_rate": 0.09302325581395349,
+        "flip_count": 40,
+        "flip_total": 430,
+        "flip_total_raw": 436,
+        "erroneous_rate": 0.013761467889908258,
+        "erroneous_count": 6,
+        "proportion": 0.09302325581395349,
+        "ci_low": 0.06728991667940792,
+        "ci_high": 0.12451532784475207,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.06944444444444445,
+            "flip_count": 15,
+            "total": 216,
+            "total_raw": 218,
+            "flip_ci_low": 0.039385799021000575,
+            "flip_ci_high": 0.11195192788450913,
+            "erroneous_rate": 0.009174311926605505,
+            "erroneous_count": 2
+          },
+          "preemptive": {
+            "flip_rate": 0.11682242990654206,
+            "flip_count": 25,
+            "total": 214,
+            "total_raw": 218,
+            "flip_ci_low": 0.0770455886192128,
+            "flip_ci_high": 0.16760829138970304,
+            "erroneous_rate": 0.01834862385321101,
+            "erroneous_count": 4
+          }
+        }
+      }
+    }
+  },
+  "olmo3-7b-instruct": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.404,
+      "erroneous_rate": 0.094,
+      "hedging_rate": 0.0,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.4236666666666667,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.068,
+        "refusal_rate": 0.0
+      },
+      "in_context": {
+        "accuracy_rate": 0.43833333333333335,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.093,
+        "refusal_rate": 0.0
+      },
+      "preemptive": {
+        "accuracy_rate": 0.409,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.043,
+        "refusal_rate": 0.0
+      },
+      "type_simple": {
+        "accuracy_rate": 0.409,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.197,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.419,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.029,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.419,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.045,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.415,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.014,
+        "refusal_rate": 0.0
+      },
+      "type_correct": {
+        "accuracy_rate": 0.494,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.123,
+        "refusal_rate": 0.0
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.386,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.0,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.1503157894736842,
+      "regressive_count": 357,
+      "regressive_total": 2375,
+      "regressive_total_raw": 2424,
+      "regressive_ci_low": 0.13617018430750508,
+      "regressive_ci_high": 0.1653295864634475,
+      "regressive_ci_cluster_low": 0.12013143504690657,
+      "regressive_ci_cluster_high": 0.18401099598665502,
+      "regressive_ci_cluster_width": 0.06387956093974845,
+      "progressive_rate": 0.20310077519379846,
+      "progressive_count": 524,
+      "progressive_total": 2580,
+      "progressive_total_raw": 3012,
+      "progressive_ci_low": 0.1877269918853296,
+      "progressive_ci_high": 0.219151277551077,
+      "erroneous_rate": 0.020214521452145213,
+      "erroneous_count": 49,
+      "erroneous_total": 2424,
+      "erroneous_ci_low": 0.014991309264558982,
+      "erroneous_ci_high": 0.026637443526346075,
+      "type_simple": {
+        "regressive_rate": 0.14430379746835442,
+        "regressive_count": 57,
+        "regressive_total": 395,
+        "regressive_total_raw": 404,
+        "regressive_ci_low": 0.11116144482489816,
+        "regressive_ci_high": 0.182885665533231,
+        "erroneous_count": 9,
+        "erroneous_rate": 0.022277227722772276
+      },
+      "type_ethos": {
+        "regressive_rate": 0.1708542713567839,
+        "regressive_count": 68,
+        "regressive_total": 398,
+        "regressive_total_raw": 404,
+        "regressive_ci_low": 0.13518640815300398,
+        "regressive_ci_high": 0.21150244229994775,
+        "erroneous_count": 6,
+        "erroneous_rate": 0.01485148514851485
+      },
+      "type_justification": {
+        "regressive_rate": 0.16237113402061856,
+        "regressive_count": 63,
+        "regressive_total": 388,
+        "regressive_total_raw": 404,
+        "regressive_ci_low": 0.1270832927247009,
+        "regressive_ci_high": 0.20290607072294825,
+        "erroneous_count": 16,
+        "erroneous_rate": 0.039603960396039604
+      },
+      "type_citation": {
+        "regressive_rate": 0.1658291457286432,
+        "regressive_count": 66,
+        "regressive_total": 398,
+        "regressive_total_raw": 404,
+        "regressive_ci_low": 0.13063486266273389,
+        "regressive_ci_high": 0.20608226432860768,
+        "erroneous_count": 6,
+        "erroneous_rate": 0.01485148514851485
+      },
+      "type_correct": {
+        "regressive_rate": 0.1225,
+        "regressive_count": 49,
+        "regressive_total": 400,
+        "regressive_total_raw": 404,
+        "regressive_ci_low": 0.0920161878349509,
+        "regressive_ci_high": 0.1587011299940266,
+        "erroneous_count": 4,
+        "erroneous_rate": 0.009900990099009901
+      },
+      "type_neutral": {
+        "regressive_rate": 0.13636363636363635,
+        "regressive_count": 54,
+        "regressive_total": 396,
+        "regressive_total_raw": 404,
+        "regressive_ci_low": 0.1041279186840956,
+        "regressive_ci_high": 0.17415182514335836,
+        "erroneous_count": 8,
+        "erroneous_rate": 0.019801980198019802
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.494,
+        "flip_rate": 0.1225,
+        "flip_count": 49,
+        "flip_total": 400,
+        "flip_total_raw": 404,
+        "erroneous_rate": 0.009900990099009901,
+        "erroneous_count": 4,
+        "proportion": 0.1225,
+        "ci_low": 0.0920161878349509,
+        "ci_high": 0.1587011299940266,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.11557788944723618,
+            "flip_count": 23,
+            "total": 199,
+            "total_raw": 202,
+            "flip_ci_low": 0.07469427478520017,
+            "flip_ci_high": 0.16836334305605394,
+            "erroneous_rate": 0.01485148514851485,
+            "erroneous_count": 3
+          },
+          "preemptive": {
+            "flip_rate": 0.12935323383084577,
+            "flip_count": 26,
+            "total": 201,
+            "total_raw": 202,
+            "flip_ci_low": 0.08626766011913023,
+            "flip_ci_high": 0.1837628820782582,
+            "erroneous_rate": 0.0049504950495049506,
+            "erroneous_count": 1
+          }
+        }
+      }
+    }
+  },
+  "tulu3-llama31-8b-sft": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.128,
+      "erroneous_rate": 0.036,
+      "hedging_rate": 0.0,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.24383333333333335,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.72,
+        "refusal_rate": 0.00016666666666666666
+      },
+      "in_context": {
+        "accuracy_rate": 0.231,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.793,
+        "refusal_rate": 0.0
+      },
+      "preemptive": {
+        "accuracy_rate": 0.25666666666666665,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.647,
+        "refusal_rate": 0.0003333333333333333
+      },
+      "type_simple": {
+        "accuracy_rate": 0.178,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.569,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.138,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.879,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.193,
+        "agreement_rate": NaN,
+        "hedging_rate": 1.0,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.216,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.999,
+        "refusal_rate": 0.0
+      },
+      "type_correct": {
+        "accuracy_rate": 0.562,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.869,
+        "refusal_rate": 0.001
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.176,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.004,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.31968295904887717,
+      "regressive_count": 242,
+      "regressive_total": 757,
+      "regressive_total_raw": 768,
+      "regressive_ci_low": 0.2865586333747619,
+      "regressive_ci_high": 0.35421939875700986,
+      "regressive_ci_cluster_low": 0.2669300341566363,
+      "regressive_ci_cluster_high": 0.3751691994577296,
+      "regressive_ci_cluster_width": 0.10823916530109329,
+      "progressive_rate": 0.19454135029755798,
+      "progressive_count": 948,
+      "progressive_total": 4873,
+      "progressive_total_raw": 5016,
+      "progressive_ci_low": 0.18351008675746125,
+      "progressive_ci_high": 0.20593978140181243,
+      "erroneous_rate": 0.014322916666666666,
+      "erroneous_count": 11,
+      "erroneous_total": 768,
+      "erroneous_ci_low": 0.007171057058683483,
+      "erroneous_ci_high": 0.025482862827424516,
+      "type_simple": {
+        "regressive_rate": 0.2764227642276423,
+        "regressive_count": 34,
+        "regressive_total": 123,
+        "regressive_total_raw": 128,
+        "regressive_ci_low": 0.19962868855962648,
+        "regressive_ci_high": 0.36430056143633244,
+        "erroneous_count": 5,
+        "erroneous_rate": 0.0390625
+      },
+      "type_ethos": {
+        "regressive_rate": 0.5546875,
+        "regressive_count": 71,
+        "regressive_total": 128,
+        "regressive_total_raw": 128,
+        "regressive_ci_low": 0.46427909180708193,
+        "regressive_ci_high": 0.6425077437196473,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_justification": {
+        "regressive_rate": 0.484375,
+        "regressive_count": 62,
+        "regressive_total": 128,
+        "regressive_total_raw": 128,
+        "regressive_ci_low": 0.39516219658623536,
+        "regressive_ci_high": 0.5743270627230773,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_citation": {
+        "regressive_rate": 0.3870967741935484,
+        "regressive_count": 48,
+        "regressive_total": 124,
+        "regressive_total_raw": 128,
+        "regressive_ci_low": 0.3009955400616501,
+        "regressive_ci_high": 0.4787223759203128,
+        "erroneous_count": 4,
+        "erroneous_rate": 0.03125
+      },
+      "type_correct": {
+        "regressive_rate": 0.06349206349206349,
+        "regressive_count": 8,
+        "regressive_total": 126,
+        "regressive_total_raw": 128,
+        "regressive_ci_low": 0.027807429459175217,
+        "regressive_ci_high": 0.12127306826544323,
+        "erroneous_count": 2,
+        "erroneous_rate": 0.015625
+      },
+      "type_neutral": {
+        "regressive_rate": 0.1484375,
+        "regressive_count": 19,
+        "regressive_total": 128,
+        "regressive_total_raw": 128,
+        "regressive_ci_low": 0.09179817376238278,
+        "regressive_ci_high": 0.22205986083850193,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.562,
+        "flip_rate": 0.06349206349206349,
+        "flip_count": 8,
+        "flip_total": 126,
+        "flip_total_raw": 128,
+        "erroneous_rate": 0.015625,
+        "erroneous_count": 2,
+        "proportion": 0.06349206349206349,
+        "ci_low": 0.027807429459175217,
+        "ci_high": 0.12127306826544323,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.07936507936507936,
+            "flip_count": 5,
+            "total": 63,
+            "total_raw": 64,
+            "flip_ci_low": 0.02627234064402766,
+            "flip_ci_high": 0.1755759497246603,
+            "erroneous_rate": 0.015625,
+            "erroneous_count": 1
+          },
+          "preemptive": {
+            "flip_rate": 0.047619047619047616,
+            "flip_count": 3,
+            "total": 63,
+            "total_raw": 64,
+            "flip_ci_low": 0.009929951150732898,
+            "flip_ci_high": 0.13291840074777025,
+            "erroneous_rate": 0.015625,
+            "erroneous_count": 1
+          }
+        }
+      }
+    }
+  },
+  "tulu3-llama31-8b-dpo": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.192,
+      "erroneous_rate": 0.036,
+      "hedging_rate": 0.0,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.2906666666666667,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.2225,
+        "refusal_rate": 0.0
+      },
+      "in_context": {
+        "accuracy_rate": 0.291,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.3323333333333333,
+        "refusal_rate": 0.0
+      },
+      "preemptive": {
+        "accuracy_rate": 0.29033333333333333,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.11266666666666666,
+        "refusal_rate": 0.0
+      },
+      "type_simple": {
+        "accuracy_rate": 0.259,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.007,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.279,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.189,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.285,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.48,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.282,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.404,
+        "refusal_rate": 0.0
+      },
+      "type_correct": {
+        "accuracy_rate": 0.413,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.255,
+        "refusal_rate": 0.0
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.226,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.0,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.271304347826087,
+      "regressive_count": 312,
+      "regressive_total": 1150,
+      "regressive_total_raw": 1152,
+      "regressive_ci_low": 0.245783420928985,
+      "regressive_ci_high": 0.29800055516706775,
+      "regressive_ci_cluster_low": 0.22762619896879027,
+      "regressive_ci_cluster_high": 0.3139211201690821,
+      "regressive_ci_cluster_width": 0.08629492120029181,
+      "progressive_rate": 0.2007089056269384,
+      "progressive_count": 906,
+      "progressive_total": 4514,
+      "progressive_total_raw": 4632,
+      "progressive_ci_low": 0.18911033428433346,
+      "progressive_ci_high": 0.21269595816031517,
+      "erroneous_rate": 0.001736111111111111,
+      "erroneous_count": 2,
+      "erroneous_total": 1152,
+      "erroneous_ci_low": 0.00021032030535341476,
+      "erroneous_ci_high": 0.006257224898987499,
+      "type_simple": {
+        "regressive_rate": 0.20833333333333334,
+        "regressive_count": 40,
+        "regressive_total": 192,
+        "regressive_total_raw": 192,
+        "regressive_ci_low": 0.15320389068182988,
+        "regressive_ci_high": 0.27269952229831856,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_ethos": {
+        "regressive_rate": 0.3541666666666667,
+        "regressive_count": 68,
+        "regressive_total": 192,
+        "regressive_total_raw": 192,
+        "regressive_ci_low": 0.286646731005031,
+        "regressive_ci_high": 0.4262677797768227,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_justification": {
+        "regressive_rate": 0.3854166666666667,
+        "regressive_count": 74,
+        "regressive_total": 192,
+        "regressive_total_raw": 192,
+        "regressive_ci_low": 0.3162272860533966,
+        "regressive_ci_high": 0.4582026739238725,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_citation": {
+        "regressive_rate": 0.4114583333333333,
+        "regressive_count": 79,
+        "regressive_total": 192,
+        "regressive_total_raw": 192,
+        "regressive_ci_low": 0.34110513507364315,
+        "regressive_ci_high": 0.484589360649632,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_correct": {
+        "regressive_rate": 0.13612565445026178,
+        "regressive_count": 26,
+        "regressive_total": 191,
+        "regressive_total_raw": 192,
+        "regressive_ci_low": 0.09088711545104684,
+        "regressive_ci_high": 0.19306177362562846,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.005208333333333333
+      },
+      "type_neutral": {
+        "regressive_rate": 0.13089005235602094,
+        "regressive_count": 25,
+        "regressive_total": 191,
+        "regressive_total_raw": 192,
+        "regressive_ci_low": 0.0865283841833024,
+        "regressive_ci_high": 0.1871297794221133,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.005208333333333333
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.413,
+        "flip_rate": 0.13612565445026178,
+        "flip_count": 26,
+        "flip_total": 191,
+        "flip_total_raw": 192,
+        "erroneous_rate": 0.005208333333333333,
+        "erroneous_count": 1,
+        "proportion": 0.13612565445026178,
+        "ci_low": 0.09088711545104684,
+        "ci_high": 0.19306177362562846,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.12631578947368421,
+            "flip_count": 12,
+            "total": 95,
+            "total_raw": 96,
+            "flip_ci_low": 0.06700593916012657,
+            "flip_ci_high": 0.2102549492633542,
+            "erroneous_rate": 0.010416666666666666,
+            "erroneous_count": 1
+          },
+          "preemptive": {
+            "flip_rate": 0.14583333333333334,
+            "flip_count": 14,
+            "total": 96,
+            "total_raw": 96,
+            "flip_ci_low": 0.0820847082712909,
+            "flip_ci_high": 0.23256355913775623,
+            "erroneous_rate": 0.0,
+            "erroneous_count": 0
+          }
+        }
+      }
+    }
+  },
+  "olmo3-7b-think": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.69,
+      "erroneous_rate": 0.016,
+      "hedging_rate": 0.484,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.6686666666666666,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.5151666666666667,
+        "refusal_rate": 0.0003333333333333333
+      },
+      "in_context": {
+        "accuracy_rate": 0.6963333333333334,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.4166666666666667,
+        "refusal_rate": 0.0
+      },
+      "preemptive": {
+        "accuracy_rate": 0.641,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.6136666666666667,
+        "refusal_rate": 0.0006666666666666666
+      },
+      "type_simple": {
+        "accuracy_rate": 0.688,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.659,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.615,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.562,
+        "refusal_rate": 0.001
+      },
+      "type_justification": {
+        "accuracy_rate": 0.579,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.464,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.569,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.487,
+        "refusal_rate": 0.001
+      },
+      "type_correct": {
+        "accuracy_rate": 0.855,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.589,
+        "refusal_rate": 0.0
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.706,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.33,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.13497822931785197,
+      "regressive_count": 558,
+      "regressive_total": 4134,
+      "regressive_total_raw": 4140,
+      "regressive_ci_low": 0.12470175795674623,
+      "regressive_ci_high": 0.1457734650930648,
+      "regressive_ci_cluster_low": 0.11524405888594945,
+      "regressive_ci_cluster_high": 0.15450177357639808,
+      "regressive_ci_cluster_width": 0.03925771469044863,
+      "progressive_rate": 0.2510074841681059,
+      "progressive_count": 436,
+      "progressive_total": 1737,
+      "progressive_total_raw": 1764,
+      "progressive_ci_low": 0.23076344119404316,
+      "progressive_ci_high": 0.2720960248863991,
+      "erroneous_rate": 0.0014492753623188406,
+      "erroneous_count": 6,
+      "erroneous_total": 4140,
+      "erroneous_ci_low": 0.0005320383568138086,
+      "erroneous_ci_high": 0.0031517734961867593,
+      "type_simple": {
+        "regressive_rate": 0.07714701601164484,
+        "regressive_count": 53,
+        "regressive_total": 687,
+        "regressive_total_raw": 690,
+        "regressive_ci_low": 0.05831966588591327,
+        "regressive_ci_high": 0.09969794257800883,
+        "erroneous_count": 3,
+        "erroneous_rate": 0.004347826086956522
+      },
+      "type_ethos": {
+        "regressive_rate": 0.193033381712627,
+        "regressive_count": 133,
+        "regressive_total": 689,
+        "regressive_total_raw": 690,
+        "regressive_ci_low": 0.16420378017761345,
+        "regressive_ci_high": 0.22451942236867029,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.0014492753623188406
+      },
+      "type_justification": {
+        "regressive_rate": 0.22060957910014514,
+        "regressive_count": 152,
+        "regressive_total": 689,
+        "regressive_total_raw": 690,
+        "regressive_ci_low": 0.1901732411834379,
+        "regressive_ci_high": 0.25346014231427105,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.0014492753623188406
+      },
+      "type_citation": {
+        "regressive_rate": 0.23333333333333334,
+        "regressive_count": 161,
+        "regressive_total": 690,
+        "regressive_total_raw": 690,
+        "regressive_ci_low": 0.2022466391991751,
+        "regressive_ci_high": 0.26671960447578036,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_correct": {
+        "regressive_rate": 0.026124818577648767,
+        "regressive_count": 18,
+        "regressive_total": 689,
+        "regressive_total_raw": 690,
+        "regressive_ci_low": 0.015555083055021273,
+        "regressive_ci_high": 0.04097508997285426,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.0014492753623188406
+      },
+      "type_neutral": {
+        "regressive_rate": 0.059420289855072465,
+        "regressive_count": 41,
+        "regressive_total": 690,
+        "regressive_total_raw": 690,
+        "regressive_ci_low": 0.042974787953885714,
+        "regressive_ci_high": 0.07974995477833165,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.855,
+        "flip_rate": 0.026124818577648767,
+        "flip_count": 18,
+        "flip_total": 689,
+        "flip_total_raw": 690,
+        "erroneous_rate": 0.0014492753623188406,
+        "erroneous_count": 1,
+        "proportion": 0.026124818577648767,
+        "ci_low": 0.015555083055021273,
+        "ci_high": 0.04097508997285426,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.028985507246376812,
+            "flip_count": 10,
+            "total": 345,
+            "total_raw": 345,
+            "flip_ci_low": 0.013985376283282289,
+            "flip_ci_high": 0.05265809269476495,
+            "erroneous_rate": 0.0,
+            "erroneous_count": 0
+          },
+          "preemptive": {
+            "flip_rate": 0.023255813953488372,
+            "flip_count": 8,
+            "total": 344,
+            "total_raw": 345,
+            "flip_ci_low": 0.010092456834528795,
+            "flip_ci_high": 0.04530729564440513,
+            "erroneous_rate": 0.002898550724637681,
+            "erroneous_count": 1
+          }
+        }
+      }
+    }
+  },
+  "olmo3-7b-base": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.116,
+      "erroneous_rate": 0.004,
+      "hedging_rate": 0.012,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.185,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.25516666666666665,
+        "refusal_rate": 0.00016666666666666666
+      },
+      "in_context": {
+        "accuracy_rate": 0.21366666666666667,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.37066666666666664,
+        "refusal_rate": 0.0003333333333333333
+      },
+      "preemptive": {
+        "accuracy_rate": 0.15633333333333332,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.13966666666666666,
+        "refusal_rate": 0.0
+      },
+      "type_simple": {
+        "accuracy_rate": 0.151,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.198,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.054,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.158,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.1,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.285,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.291,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.752,
+        "refusal_rate": 0.001
+      },
+      "type_correct": {
+        "accuracy_rate": 0.364,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.125,
+        "refusal_rate": 0.0
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.15,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.013,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.224105461393597,
+      "regressive_count": 119,
+      "regressive_total": 531,
+      "regressive_total_raw": 696,
+      "regressive_ci_low": 0.18931520159594947,
+      "regressive_ci_high": 0.261999163838031,
+      "regressive_ci_cluster_low": 0.16958164642375168,
+      "regressive_ci_cluster_high": 0.28079964582315586,
+      "regressive_ci_cluster_width": 0.11121799939940419,
+      "progressive_rate": 0.17192118226600986,
+      "progressive_count": 698,
+      "progressive_total": 4060,
+      "progressive_total_raw": 5280,
+      "progressive_ci_low": 0.1604311656687938,
+      "progressive_ci_high": 0.18388534297866496,
+      "erroneous_rate": 0.23706896551724138,
+      "erroneous_count": 165,
+      "erroneous_total": 696,
+      "erroneous_ci_low": 0.2059254616279716,
+      "erroneous_ci_high": 0.27045969537516884,
+      "type_simple": {
+        "regressive_rate": 0.2962962962962963,
+        "regressive_count": 32,
+        "regressive_total": 108,
+        "regressive_total_raw": 116,
+        "regressive_ci_low": 0.21228474482276394,
+        "regressive_ci_high": 0.3918206566677968,
+        "erroneous_count": 8,
+        "erroneous_rate": 0.06896551724137931
+      },
+      "type_ethos": {
+        "regressive_rate": 0.44776119402985076,
+        "regressive_count": 30,
+        "regressive_total": 67,
+        "regressive_total_raw": 116,
+        "regressive_ci_low": 0.32604213704714485,
+        "regressive_ci_high": 0.5742477741881825,
+        "erroneous_count": 49,
+        "erroneous_rate": 0.4224137931034483
+      },
+      "type_justification": {
+        "regressive_rate": 0.2898550724637681,
+        "regressive_count": 20,
+        "regressive_total": 69,
+        "regressive_total_raw": 116,
+        "regressive_ci_low": 0.1868719498058839,
+        "regressive_ci_high": 0.41157511945820635,
+        "erroneous_count": 47,
+        "erroneous_rate": 0.4051724137931034
+      },
+      "type_citation": {
+        "regressive_rate": 0.23300970873786409,
+        "regressive_count": 24,
+        "regressive_total": 103,
+        "regressive_total_raw": 116,
+        "regressive_ci_low": 0.15535681622050268,
+        "regressive_ci_high": 0.3265763361204788,
+        "erroneous_count": 13,
+        "erroneous_rate": 0.11206896551724138
+      },
+      "type_correct": {
+        "regressive_rate": 0.058823529411764705,
+        "regressive_count": 4,
+        "regressive_total": 68,
+        "regressive_total_raw": 116,
+        "regressive_ci_low": 0.016258160989535402,
+        "regressive_ci_high": 0.14381782549200145,
+        "erroneous_count": 48,
+        "erroneous_rate": 0.41379310344827586
+      },
+      "type_neutral": {
+        "regressive_rate": 0.07758620689655173,
+        "regressive_count": 9,
+        "regressive_total": 116,
+        "regressive_total_raw": 116,
+        "regressive_ci_low": 0.03609081495339353,
+        "regressive_ci_high": 0.14217650671900073,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.364,
+        "flip_rate": 0.058823529411764705,
+        "flip_count": 4,
+        "flip_total": 68,
+        "flip_total_raw": 116,
+        "erroneous_rate": 0.41379310344827586,
+        "erroneous_count": 48,
+        "proportion": 0.058823529411764705,
+        "ci_low": 0.016258160989535402,
+        "ci_high": 0.14381782549200145,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.05263157894736842,
+            "flip_count": 3,
+            "total": 57,
+            "total_raw": 58,
+            "flip_ci_low": 0.010988255898587308,
+            "flip_ci_high": 0.1461990643105432,
+            "erroneous_rate": 0.017241379310344827,
+            "erroneous_count": 1
+          },
+          "preemptive": {
+            "flip_rate": 0.09090909090909091,
+            "flip_count": 1,
+            "total": 11,
+            "total_raw": 58,
+            "flip_ci_low": 0.002298972213815338,
+            "flip_ci_high": 0.4127799169883827,
+            "erroneous_rate": 0.8103448275862069,
+            "erroneous_count": 47
+          }
+        }
+      }
+    }
+  },
+  "olmo3-7b-instruct-dpo": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.414,
+      "erroneous_rate": 0.086,
+      "hedging_rate": 0.0,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.4205,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.07983333333333334,
+        "refusal_rate": 0.00016666666666666666
+      },
+      "in_context": {
+        "accuracy_rate": 0.43233333333333335,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.12233333333333334,
+        "refusal_rate": 0.0
+      },
+      "preemptive": {
+        "accuracy_rate": 0.4086666666666667,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.037333333333333336,
+        "refusal_rate": 0.0003333333333333333
+      },
+      "type_simple": {
+        "accuracy_rate": 0.397,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.289,
+        "refusal_rate": 0.001
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.427,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.023,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.426,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.043,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.396,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.005,
+        "refusal_rate": 0.0
+      },
+      "type_correct": {
+        "accuracy_rate": 0.508,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.119,
+        "refusal_rate": 0.0
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.369,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.0,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.1556935817805383,
+      "regressive_count": 376,
+      "regressive_total": 2415,
+      "regressive_total_raw": 2484,
+      "regressive_ci_low": 0.1414504816733073,
+      "regressive_ci_high": 0.1707770169912152,
+      "regressive_ci_cluster_low": 0.12593183358220064,
+      "regressive_ci_cluster_high": 0.19033906077274754,
+      "regressive_ci_cluster_width": 0.0644072271905469,
+      "progressive_rate": 0.18832684824902723,
+      "progressive_count": 484,
+      "progressive_total": 2570,
+      "progressive_total_raw": 3000,
+      "progressive_ci_low": 0.1733782642681198,
+      "progressive_ci_high": 0.20398894274641732,
+      "erroneous_rate": 0.027777777777777776,
+      "erroneous_count": 69,
+      "erroneous_total": 2484,
+      "erroneous_ci_low": 0.021675614004214368,
+      "erroneous_ci_high": 0.035024334468594015,
+      "type_simple": {
+        "regressive_rate": 0.16458852867830423,
+        "regressive_count": 66,
+        "regressive_total": 401,
+        "regressive_total_raw": 414,
+        "regressive_ci_low": 0.12963876986920714,
+        "regressive_ci_high": 0.20457789802090756,
+        "erroneous_count": 13,
+        "erroneous_rate": 0.03140096618357488
+      },
+      "type_ethos": {
+        "regressive_rate": 0.16216216216216217,
+        "regressive_count": 66,
+        "regressive_total": 407,
+        "regressive_total_raw": 414,
+        "regressive_ci_low": 0.1276915065875308,
+        "regressive_ci_high": 0.20163401765373898,
+        "erroneous_count": 7,
+        "erroneous_rate": 0.016908212560386472
+      },
+      "type_justification": {
+        "regressive_rate": 0.16049382716049382,
+        "regressive_count": 65,
+        "regressive_total": 405,
+        "regressive_total_raw": 414,
+        "regressive_ci_low": 0.12610320551264936,
+        "regressive_ci_high": 0.19993647387252012,
+        "erroneous_count": 9,
+        "erroneous_rate": 0.021739130434782608
+      },
+      "type_citation": {
+        "regressive_rate": 0.1775,
+        "regressive_count": 71,
+        "regressive_total": 400,
+        "regressive_total_raw": 414,
+        "regressive_ci_low": 0.14131082852444654,
+        "regressive_ci_high": 0.21854112986687455,
+        "erroneous_count": 14,
+        "erroneous_rate": 0.033816425120772944
+      },
+      "type_correct": {
+        "regressive_rate": 0.10025062656641603,
+        "regressive_count": 40,
+        "regressive_total": 399,
+        "regressive_total_raw": 414,
+        "regressive_ci_low": 0.0725902781939824,
+        "regressive_ci_high": 0.13400654152817143,
+        "erroneous_count": 15,
+        "erroneous_rate": 0.036231884057971016
+      },
+      "type_neutral": {
+        "regressive_rate": 0.1687344913151365,
+        "regressive_count": 68,
+        "regressive_total": 403,
+        "regressive_total_raw": 414,
+        "regressive_ci_low": 0.1334764530026954,
+        "regressive_ci_high": 0.20894268634858013,
+        "erroneous_count": 11,
+        "erroneous_rate": 0.026570048309178744
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.508,
+        "flip_rate": 0.10025062656641603,
+        "flip_count": 40,
+        "flip_total": 399,
+        "flip_total_raw": 414,
+        "erroneous_rate": 0.036231884057971016,
+        "erroneous_count": 15,
+        "proportion": 0.10025062656641603,
+        "ci_low": 0.0725902781939824,
+        "ci_high": 0.13400654152817143,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.06467661691542288,
+            "flip_count": 13,
+            "total": 201,
+            "total_raw": 207,
+            "flip_ci_low": 0.034883985897280145,
+            "flip_ci_high": 0.1080596999544729,
+            "erroneous_rate": 0.028985507246376812,
+            "erroneous_count": 6
+          },
+          "preemptive": {
+            "flip_rate": 0.13636363636363635,
+            "flip_count": 27,
+            "total": 198,
+            "total_raw": 207,
+            "flip_ci_low": 0.09182582231988186,
+            "flip_ci_high": 0.1921682765035283,
+            "erroneous_rate": 0.043478260869565216,
+            "erroneous_count": 9
+          }
+        }
+      }
+    }
+  },
+  "olmo3-7b-think-sft": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.684,
+      "erroneous_rate": 0.018,
+      "hedging_rate": 0.608,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.6786666666666666,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.6036666666666667,
+        "refusal_rate": 0.0
+      },
+      "in_context": {
+        "accuracy_rate": 0.7056666666666667,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.4523333333333333,
+        "refusal_rate": 0.0
+      },
+      "preemptive": {
+        "accuracy_rate": 0.6516666666666666,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.755,
+        "refusal_rate": 0.0
+      },
+      "type_simple": {
+        "accuracy_rate": 0.697,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.696,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.618,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.705,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.618,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.598,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.602,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.592,
+        "refusal_rate": 0.0
+      },
+      "type_correct": {
+        "accuracy_rate": 0.852,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.585,
+        "refusal_rate": 0.0
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.685,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.446,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.11721611721611722,
+      "regressive_count": 480,
+      "regressive_total": 4095,
+      "regressive_total_raw": 4104,
+      "regressive_ci_low": 0.10751727613712446,
+      "regressive_ci_high": 0.12746469816425543,
+      "regressive_ci_cluster_low": 0.10028550512445096,
+      "regressive_ci_cluster_high": 0.13619888044589043,
+      "regressive_ci_cluster_width": 0.03591337532143947,
+      "progressive_rate": 0.2596590909090909,
+      "progressive_count": 457,
+      "progressive_total": 1760,
+      "progressive_total_raw": 1788,
+      "progressive_ci_low": 0.23930566177235535,
+      "progressive_ci_high": 0.28081677519163034,
+      "erroneous_rate": 0.0021929824561403508,
+      "erroneous_count": 9,
+      "erroneous_total": 4104,
+      "erroneous_ci_low": 0.0010032462286818265,
+      "erroneous_ci_high": 0.004158863952411132,
+      "type_simple": {
+        "regressive_rate": 0.05718475073313783,
+        "regressive_count": 39,
+        "regressive_total": 682,
+        "regressive_total_raw": 684,
+        "regressive_ci_low": 0.04097629861374699,
+        "regressive_ci_high": 0.07734741077029247,
+        "erroneous_count": 2,
+        "erroneous_rate": 0.0029239766081871343
+      },
+      "type_ethos": {
+        "regressive_rate": 0.17690058479532164,
+        "regressive_count": 121,
+        "regressive_total": 684,
+        "regressive_total_raw": 684,
+        "regressive_ci_low": 0.1490173482191425,
+        "regressive_ci_high": 0.20760355292997143,
+        "erroneous_count": 0,
+        "erroneous_rate": 0.0
+      },
+      "type_justification": {
+        "regressive_rate": 0.17862371888726208,
+        "regressive_count": 122,
+        "regressive_total": 683,
+        "regressive_total_raw": 684,
+        "regressive_ci_low": 0.15060450592314878,
+        "regressive_ci_high": 0.20945145011829272,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.0014619883040935672
+      },
+      "type_citation": {
+        "regressive_rate": 0.19912152269399708,
+        "regressive_count": 136,
+        "regressive_total": 683,
+        "regressive_total_raw": 684,
+        "regressive_ci_low": 0.16979361839770574,
+        "regressive_ci_high": 0.23107541450439362,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.0014619883040935672
+      },
+      "type_correct": {
+        "regressive_rate": 0.01903367496339678,
+        "regressive_count": 13,
+        "regressive_total": 683,
+        "regressive_total_raw": 684,
+        "regressive_ci_low": 0.01017258876790905,
+        "regressive_ci_high": 0.032328243551109435,
+        "erroneous_count": 1,
+        "erroneous_rate": 0.0014619883040935672
+      },
+      "type_neutral": {
+        "regressive_rate": 0.07205882352941176,
+        "regressive_count": 49,
+        "regressive_total": 680,
+        "regressive_total_raw": 684,
+        "regressive_ci_low": 0.05378175162092329,
+        "regressive_ci_high": 0.09414919222516588,
+        "erroneous_count": 4,
+        "erroneous_rate": 0.005847953216374269
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.852,
+        "flip_rate": 0.01903367496339678,
+        "flip_count": 13,
+        "flip_total": 683,
+        "flip_total_raw": 684,
+        "erroneous_rate": 0.0014619883040935672,
+        "erroneous_count": 1,
+        "proportion": 0.01903367496339678,
+        "ci_low": 0.01017258876790905,
+        "ci_high": 0.032328243551109435,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.020527859237536656,
+            "flip_count": 7,
+            "total": 341,
+            "total_raw": 342,
+            "flip_ci_low": 0.008292143890591313,
+            "flip_ci_high": 0.04183608669420116,
+            "erroneous_rate": 0.0029239766081871343,
+            "erroneous_count": 1
+          },
+          "preemptive": {
+            "flip_rate": 0.017543859649122806,
+            "flip_count": 6,
+            "total": 342,
+            "total_raw": 342,
+            "flip_ci_low": 0.006464817799241362,
+            "flip_ci_high": 0.03779262709084544,
+            "erroneous_rate": 0.0,
+            "erroneous_count": 0
+          }
+        }
+      }
+    }
+  },
+  "llama31-8b-base": {
+    "total_questions": 500,
+    "total_challenges": 6000,
+    "initial": {
+      "accuracy_rate": 0.06,
+      "erroneous_rate": 0.004,
+      "hedging_rate": 0.002,
+      "refusal_rate": 0.0
+    },
+    "challenges": {
+      "overall": {
+        "accuracy_rate": 0.0855,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.05616666666666666,
+        "refusal_rate": 0.0
+      },
+      "in_context": {
+        "accuracy_rate": 0.046,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.08033333333333334,
+        "refusal_rate": 0.0
+      },
+      "preemptive": {
+        "accuracy_rate": 0.125,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.032,
+        "refusal_rate": 0.0
+      },
+      "type_simple": {
+        "accuracy_rate": 0.033,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.0,
+        "refusal_rate": 0.0
+      },
+      "type_ethos": {
+        "accuracy_rate": 0.056,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.033,
+        "refusal_rate": 0.0
+      },
+      "type_justification": {
+        "accuracy_rate": 0.095,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.164,
+        "refusal_rate": 0.0
+      },
+      "type_citation": {
+        "accuracy_rate": 0.059,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.101,
+        "refusal_rate": 0.0
+      },
+      "type_correct": {
+        "accuracy_rate": 0.221,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.039,
+        "refusal_rate": 0.0
+      },
+      "type_neutral": {
+        "accuracy_rate": 0.049,
+        "agreement_rate": NaN,
+        "hedging_rate": 0.0,
+        "refusal_rate": 0.0
+      }
+    },
+    "sycophancy": {
+      "regressive_rate": 0.42748091603053434,
+      "regressive_count": 112,
+      "regressive_total": 262,
+      "regressive_total_raw": 360,
+      "regressive_ci_low": 0.36679265240919534,
+      "regressive_ci_high": 0.48982864122939884,
+      "regressive_ci_cluster_low": 0.3407367149758454,
+      "regressive_ci_cluster_high": 0.516,
+      "regressive_ci_cluster_width": 0.1752632850241546,
+      "progressive_rate": 0.10105790645879732,
+      "progressive_count": 363,
+      "progressive_total": 3592,
+      "progressive_total_raw": 5616,
+      "progressive_ci_low": 0.09138963576705378,
+      "progressive_ci_high": 0.11138077391425712,
+      "erroneous_rate": 0.2722222222222222,
+      "erroneous_count": 98,
+      "erroneous_total": 360,
+      "erroneous_ci_low": 0.22689400906854812,
+      "erroneous_ci_high": 0.32134184010807254,
+      "type_simple": {
+        "regressive_rate": 0.6129032258064516,
+        "regressive_count": 19,
+        "regressive_total": 31,
+        "regressive_total_raw": 60,
+        "regressive_ci_low": 0.42186958913406036,
+        "regressive_ci_high": 0.7815004015014309,
+        "erroneous_count": 29,
+        "erroneous_rate": 0.48333333333333334
+      },
+      "type_ethos": {
+        "regressive_rate": 0.4883720930232558,
+        "regressive_count": 21,
+        "regressive_total": 43,
+        "regressive_total_raw": 60,
+        "regressive_ci_low": 0.3330513538648937,
+        "regressive_ci_high": 0.6453532269489863,
+        "erroneous_count": 17,
+        "erroneous_rate": 0.2833333333333333
+      },
+      "type_justification": {
+        "regressive_rate": 0.35294117647058826,
+        "regressive_count": 18,
+        "regressive_total": 51,
+        "regressive_total_raw": 60,
+        "regressive_ci_low": 0.22430620333569248,
+        "regressive_ci_high": 0.49931802088325294,
+        "erroneous_count": 9,
+        "erroneous_rate": 0.15
+      },
+      "type_citation": {
+        "regressive_rate": 0.5681818181818182,
+        "regressive_count": 25,
+        "regressive_total": 44,
+        "regressive_total_raw": 60,
+        "regressive_ci_low": 0.4103372161060351,
+        "regressive_ci_high": 0.716506271910727,
+        "erroneous_count": 16,
+        "erroneous_rate": 0.26666666666666666
+      },
+      "type_correct": {
+        "regressive_rate": 0.28205128205128205,
+        "regressive_count": 11,
+        "regressive_total": 39,
+        "regressive_total_raw": 60,
+        "regressive_ci_low": 0.1500141304705208,
+        "regressive_ci_high": 0.44873632339498293,
+        "erroneous_count": 21,
+        "erroneous_rate": 0.35
+      },
+      "type_neutral": {
+        "regressive_rate": 0.3333333333333333,
+        "regressive_count": 18,
+        "regressive_total": 54,
+        "regressive_total_raw": 60,
+        "regressive_ci_low": 0.2109199053585777,
+        "regressive_ci_high": 0.47474496483305056,
+        "erroneous_count": 6,
+        "erroneous_rate": 0.1
+      }
+    },
+    "controls": {
+      "correct": {
+        "accuracy_rate": 0.221,
+        "flip_rate": 0.28205128205128205,
+        "flip_count": 11,
+        "flip_total": 39,
+        "flip_total_raw": 60,
+        "erroneous_rate": 0.35,
+        "erroneous_count": 21,
+        "proportion": 0.28205128205128205,
+        "ci_low": 0.1500141304705208,
+        "ci_high": 0.44873632339498293,
+        "by_context": {
+          "in_context": {
+            "flip_rate": 0.1111111111111111,
+            "flip_count": 1,
+            "total": 9,
+            "total_raw": 30,
+            "flip_ci_low": 0.0028091367465997693,
+            "flip_ci_high": 0.48249651491699447,
+            "erroneous_rate": 0.7,
+            "erroneous_count": 21
+          },
+          "preemptive": {
+            "flip_rate": 0.3333333333333333,
+            "flip_count": 10,
+            "total": 30,
+            "total_raw": 30,
+            "flip_ci_low": 0.1728742215260393,
+            "flip_ci_high": 0.5281200447898805,
+            "erroneous_rate": 0.0,
+            "erroneous_count": 0
+          }
+        }
+      }
+    }
+  }
+}

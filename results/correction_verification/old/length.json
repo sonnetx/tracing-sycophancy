@@ -1,0 +1,56 @@
+{
+  "dataset": "medical_advice",
+  "n_models": 12,
+  "spearman_rho": 0.9860139860139862,
+  "spearman_p": 4.1168959116543284e-09,
+  "model_means": {
+    "llama31-8b-base": {
+      "original": 0.38057122159843015,
+      "matched": 0.4750611067371425
+    },
+    "llama31-8b-instruct": {
+      "original": 0.3482990065008732,
+      "matched": 0.4352951007696731
+    },
+    "olmo3-7b-base": {
+      "original": 0.2878189918478183,
+      "matched": 0.3728203503928092
+    },
+    "olmo3-7b-instruct": {
+      "original": 0.3468301800149959,
+      "matched": 0.45714388278798573
+    },
+    "olmo3-7b-instruct-dpo": {
+      "original": 0.32703264507850055,
+      "matched": 0.43372844613309736
+    },
+    "olmo3-7b-instruct-sft": {
+      "original": 0.28233800305366386,
+      "matched": 0.3749207178706244
+    },
+    "olmo3-7b-think": {
+      "original": 0.31401898527564504,
+      "matched": 0.4131963418499985
+    },
+    "olmo3-7b-think-dpo": {
+      "original": 0.3100028962539602,
+      "matched": 0.4088244489554278
+    },
+    "olmo3-7b-think-sft": {
+      "original": 0.30257420725167755,
+      "matched": 0.3970431753712318
+    },
+    "tulu3-llama31-8b": {
+      "original": 0.43496948378683853,
+      "matched": 0.5444234134426201
+    },
+    "tulu3-llama31-8b-dpo": {
+      "original": 0.4387848876176812,
+      "matched": 0.5492526943468268
+    },
+    "tulu3-llama31-8b-sft": {
+      "original": 0.3746668500106415,
+      "matched": 0.46683495545681586
+    }
+  }
+}

@@ -1,0 +1,584 @@
+{
+  "Think": [
+    {
+      "stage": "Base",
+      "model": "olmo3-7b-base",
+      "n_intersection": 58,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.224105461393597,
+        "regressive_count": 119,
+        "regressive_total": 531,
+        "regressive_total_raw": 696,
+        "regressive_ci_low": 0.18931520159594947,
+        "regressive_ci_high": 0.261999163838031,
+        "erroneous_rate": 0.23706896551724138,
+        "erroneous_count": 165,
+        "n_items": 58
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.224105461393597,
+        "regressive_count": 119,
+        "regressive_total": 531,
+        "regressive_total_raw": 696,
+        "regressive_ci_low": 0.18931520159594947,
+        "regressive_ci_high": 0.261999163838031,
+        "erroneous_rate": 0.23706896551724138,
+        "erroneous_count": 165,
+        "n_items": 58
+      },
+      "base_vs_stage_paired": {
+        "n_items": 58,
+        "mean_base_rate": 0.21806861720654822,
+        "mean_stage_rate": 0.21806861720654822,
+        "mean_d": 0.0,
+        "bootstrap_ci_low": 0.0,
+        "bootstrap_ci_high": 0.0,
+        "bootstrap_p": 1.0,
+        "n_concordant_both": 44,
+        "n_base_only": 0,
+        "n_stage_only": 0,
+        "n_concordant_neither": 14,
+        "mcnemar_p": 1.0
+      }
+    },
+    {
+      "stage": "SFT",
+      "model": "olmo3-7b-think-sft",
+      "n_intersection": 55,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.2012072434607646,
+        "regressive_count": 100,
+        "regressive_total": 497,
+        "regressive_total_raw": 660,
+        "regressive_ci_low": 0.1668209722427984,
+        "regressive_ci_high": 0.2391926436146471,
+        "erroneous_rate": 0.24696969696969698,
+        "erroneous_count": 163,
+        "n_items": 55
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.03636363636363636,
+        "regressive_count": 24,
+        "regressive_total": 660,
+        "regressive_total_raw": 660,
+        "regressive_ci_low": 0.023435241850111477,
+        "regressive_ci_high": 0.05362489930335289,
+        "erroneous_rate": 0.0,
+        "erroneous_count": 0,
+        "n_items": 55
+      },
+      "base_vs_stage_paired": {
+        "n_items": 55,
+        "mean_base_rate": 0.19875114784205694,
+        "mean_stage_rate": 0.03636363636363636,
+        "mean_d": -0.1623875114784206,
+        "bootstrap_ci_low": -0.20558505509641867,
+        "bootstrap_ci_high": -0.11828546831955927,
+        "bootstrap_p": 0.0,
+        "n_concordant_both": 10,
+        "n_base_only": 32,
+        "n_stage_only": 3,
+        "n_concordant_neither": 10,
+        "mcnemar_p": 2.0884908735752106e-07
+      }
+    },
+    {
+      "stage": "DPO",
+      "model": "olmo3-7b-think-dpo",
+      "n_intersection": 53,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.19246861924686193,
+        "regressive_count": 92,
+        "regressive_total": 478,
+        "regressive_total_raw": 636,
+        "regressive_ci_low": 0.15807509116528748,
+        "regressive_ci_high": 0.23071833047553514,
+        "erroneous_rate": 0.24842767295597484,
+        "erroneous_count": 158,
+        "n_items": 53
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.044444444444444446,
+        "regressive_count": 28,
+        "regressive_total": 630,
+        "regressive_total_raw": 636,
+        "regressive_ci_low": 0.02973298544040699,
+        "regressive_ci_high": 0.06359641276176753,
+        "erroneous_rate": 0.009433962264150943,
+        "erroneous_count": 6,
+        "n_items": 53
+      },
+      "base_vs_stage_paired": {
+        "n_items": 53,
+        "mean_base_rate": 0.19073756432246997,
+        "mean_stage_rate": 0.04493996569468268,
+        "mean_d": -0.1457975986277873,
+        "bootstrap_ci_low": -0.19437964551172096,
+        "bootstrap_ci_high": -0.09548718315227749,
+        "bootstrap_p": 0.0,
+        "n_concordant_both": 11,
+        "n_base_only": 29,
+        "n_stage_only": 1,
+        "n_concordant_neither": 12,
+        "mcnemar_p": 2.8870999813079834e-08
+      }
+    },
+    {
+      "stage": "Think",
+      "model": "olmo3-7b-think",
+      "n_intersection": 54,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.20245398773006135,
+        "regressive_count": 99,
+        "regressive_total": 489,
+        "regressive_total_raw": 648,
+        "regressive_ci_low": 0.16770627848700387,
+        "regressive_ci_high": 0.24084501616651655,
+        "erroneous_rate": 0.24537037037037038,
+        "erroneous_count": 159,
+        "n_items": 54
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.044753086419753084,
+        "regressive_count": 29,
+        "regressive_total": 648,
+        "regressive_total_raw": 648,
+        "regressive_ci_low": 0.030173489494270036,
+        "regressive_ci_high": 0.06364294595851461,
+        "erroneous_rate": 0.0,
+        "erroneous_count": 0,
+        "n_items": 54
+      },
+      "base_vs_stage_paired": {
+        "n_items": 54,
+        "mean_base_rate": 0.20011690983913205,
+        "mean_stage_rate": 0.044753086419753084,
+        "mean_d": -0.15536382341937896,
+        "bootstrap_ci_low": -0.19927059951365506,
+        "bootstrap_ci_high": -0.11238683127572016,
+        "bootstrap_p": 0.0,
+        "n_concordant_both": 12,
+        "n_base_only": 29,
+        "n_stage_only": 1,
+        "n_concordant_neither": 12,
+        "mcnemar_p": 2.8870999813079834e-08
+      }
+    }
+  ],
+  "Instruct": [
+    {
+      "stage": "Base",
+      "model": "olmo3-7b-base",
+      "n_intersection": 58,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.224105461393597,
+        "regressive_count": 119,
+        "regressive_total": 531,
+        "regressive_total_raw": 696,
+        "regressive_ci_low": 0.18931520159594947,
+        "regressive_ci_high": 0.261999163838031,
+        "erroneous_rate": 0.23706896551724138,
+        "erroneous_count": 165,
+        "n_items": 58
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.224105461393597,
+        "regressive_count": 119,
+        "regressive_total": 531,
+        "regressive_total_raw": 696,
+        "regressive_ci_low": 0.18931520159594947,
+        "regressive_ci_high": 0.261999163838031,
+        "erroneous_rate": 0.23706896551724138,
+        "erroneous_count": 165,
+        "n_items": 58
+      },
+      "base_vs_stage_paired": {
+        "n_items": 58,
+        "mean_base_rate": 0.21806861720654822,
+        "mean_stage_rate": 0.21806861720654822,
+        "mean_d": 0.0,
+        "bootstrap_ci_low": 0.0,
+        "bootstrap_ci_high": 0.0,
+        "bootstrap_p": 1.0,
+        "n_concordant_both": 44,
+        "n_base_only": 0,
+        "n_stage_only": 0,
+        "n_concordant_neither": 14,
+        "mcnemar_p": 1.0
+      }
+    },
+    {
+      "stage": "SFT",
+      "model": "olmo3-7b-instruct-sft",
+      "n_intersection": 50,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.17982456140350878,
+        "regressive_count": 82,
+        "regressive_total": 456,
+        "regressive_total_raw": 600,
+        "regressive_ci_low": 0.14565280986474327,
+        "regressive_ci_high": 0.21821191168532808,
+        "erroneous_rate": 0.24,
+        "erroneous_count": 144,
+        "n_items": 50
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.12520868113522537,
+        "regressive_count": 75,
+        "regressive_total": 599,
+        "regressive_total_raw": 600,
+        "regressive_ci_low": 0.09977189552807883,
+        "regressive_ci_high": 0.15440672134390077,
+        "erroneous_rate": 0.0016666666666666668,
+        "erroneous_count": 1,
+        "n_items": 50
+      },
+      "base_vs_stage_paired": {
+        "n_items": 50,
+        "mean_base_rate": 0.17884848484848487,
+        "mean_stage_rate": 0.1253030303030303,
+        "mean_d": -0.05354545454545454,
+        "bootstrap_ci_low": -0.09778964646464647,
+        "bootstrap_ci_high": -0.01051805555555559,
+        "bootstrap_p": 0.0075,
+        "n_concordant_both": 27,
+        "n_base_only": 9,
+        "n_stage_only": 5,
+        "n_concordant_neither": 9,
+        "mcnemar_p": 0.21197509765625
+      }
+    },
+    {
+      "stage": "DPO",
+      "model": "olmo3-7b-instruct-dpo",
+      "n_intersection": 48,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.17011494252873563,
+        "regressive_count": 74,
+        "regressive_total": 435,
+        "regressive_total_raw": 576,
+        "regressive_ci_low": 0.13600223238981188,
+        "regressive_ci_high": 0.2087881168210525,
+        "erroneous_rate": 0.24479166666666666,
+        "erroneous_count": 141,
+        "n_items": 48
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.010416666666666666,
+        "regressive_count": 6,
+        "regressive_total": 576,
+        "regressive_total_raw": 576,
+        "regressive_ci_low": 0.003832058360615021,
+        "regressive_ci_high": 0.02253399835939983,
+        "erroneous_rate": 0.0,
+        "erroneous_count": 0,
+        "n_items": 48
+      },
+      "base_vs_stage_paired": {
+        "n_items": 48,
+        "mean_base_rate": 0.17024410774410773,
+        "mean_stage_rate": 0.010416666666666666,
+        "mean_d": -0.15982744107744107,
+        "bootstrap_ci_low": -0.19662839330808085,
+        "bootstrap_ci_high": -0.12519952125420875,
+        "bootstrap_p": 0.0,
+        "n_concordant_both": 5,
+        "n_base_only": 29,
+        "n_stage_only": 0,
+        "n_concordant_neither": 14,
+        "mcnemar_p": 1.862645149230957e-09
+      }
+    },
+    {
+      "stage": "Instruct",
+      "model": "olmo3-7b-instruct",
+      "n_intersection": 53,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.19421487603305784,
+        "regressive_count": 94,
+        "regressive_total": 484,
+        "regressive_total_raw": 636,
+        "regressive_ci_low": 0.1598973987494562,
+        "regressive_ci_high": 0.2323179248962812,
+        "erroneous_rate": 0.2389937106918239,
+        "erroneous_count": 152,
+        "n_items": 53
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.050393700787401574,
+        "regressive_count": 32,
+        "regressive_total": 635,
+        "regressive_total_raw": 636,
+        "regressive_ci_low": 0.034721106021864116,
+        "regressive_ci_high": 0.07039902600371466,
+        "erroneous_rate": 0.0015723270440251573,
+        "erroneous_count": 1,
+        "n_items": 53
+      },
+      "base_vs_stage_paired": {
+        "n_items": 53,
+        "mean_base_rate": 0.19262435677530018,
+        "mean_stage_rate": 0.051315037164093774,
+        "mean_d": -0.1413093196112064,
+        "bootstrap_ci_low": -0.18826805793786924,
+        "bootstrap_ci_high": -0.0887198637316562,
+        "bootstrap_p": 0.0,
+        "n_concordant_both": 9,
+        "n_base_only": 30,
+        "n_stage_only": 0,
+        "n_concordant_neither": 14,
+        "mcnemar_p": 9.313225746154785e-10
+      }
+    }
+  ],
+  "Llama 3.1": [
+    {
+      "stage": "Base",
+      "model": "llama31-8b-base",
+      "n_intersection": 30,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.42748091603053434,
+        "regressive_count": 112,
+        "regressive_total": 262,
+        "regressive_total_raw": 360,
+        "regressive_ci_low": 0.36679265240919534,
+        "regressive_ci_high": 0.48982864122939884,
+        "erroneous_rate": 0.2722222222222222,
+        "erroneous_count": 98,
+        "n_items": 30
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.42748091603053434,
+        "regressive_count": 112,
+        "regressive_total": 262,
+        "regressive_total_raw": 360,
+        "regressive_ci_low": 0.36679265240919534,
+        "regressive_ci_high": 0.48982864122939884,
+        "erroneous_rate": 0.2722222222222222,
+        "erroneous_count": 98,
+        "n_items": 30
+      },
+      "base_vs_stage_paired": {
+        "n_items": 30,
+        "mean_base_rate": 0.4362902837902837,
+        "mean_stage_rate": 0.4362902837902837,
+        "mean_d": 0.0,
+        "bootstrap_ci_low": 0.0,
+        "bootstrap_ci_high": 0.0,
+        "bootstrap_p": 1.0,
+        "n_concordant_both": 29,
+        "n_base_only": 0,
+        "n_stage_only": 0,
+        "n_concordant_neither": 1,
+        "mcnemar_p": 1.0
+      }
+    },
+    {
+      "stage": "Instruct",
+      "model": "llama31-8b-instruct",
+      "n_intersection": 21,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.39325842696629215,
+        "regressive_count": 70,
+        "regressive_total": 178,
+        "regressive_total_raw": 252,
+        "regressive_ci_low": 0.321017540314236,
+        "regressive_ci_high": 0.4691168632317603,
+        "erroneous_rate": 0.29365079365079366,
+        "erroneous_count": 74,
+        "n_items": 21
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.16,
+        "regressive_count": 40,
+        "regressive_total": 250,
+        "regressive_total_raw": 252,
+        "regressive_ci_low": 0.11683337575795157,
+        "regressive_ci_high": 0.21143763545518943,
+        "erroneous_rate": 0.007936507936507936,
+        "erroneous_count": 2,
+        "n_items": 21
+      },
+      "base_vs_stage_paired": {
+        "n_items": 21,
+        "mean_base_rate": 0.39397203325774754,
+        "mean_stage_rate": 0.16197691197691202,
+        "mean_d": -0.23199512128083563,
+        "bootstrap_ci_low": -0.3202981773517487,
+        "bootstrap_ci_high": -0.1459767316017316,
+        "bootstrap_p": 0.0,
+        "n_concordant_both": 15,
+        "n_base_only": 5,
+        "n_stage_only": 0,
+        "n_concordant_neither": 1,
+        "mcnemar_p": 0.03125
+      }
+    }
+  ],
+  "Tulu 3": [
+    {
+      "stage": "Base",
+      "model": "llama31-8b-base",
+      "n_intersection": 30,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.42748091603053434,
+        "regressive_count": 112,
+        "regressive_total": 262,
+        "regressive_total_raw": 360,
+        "regressive_ci_low": 0.36679265240919534,
+        "regressive_ci_high": 0.48982864122939884,
+        "erroneous_rate": 0.2722222222222222,
+        "erroneous_count": 98,
+        "n_items": 30
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.42748091603053434,
+        "regressive_count": 112,
+        "regressive_total": 262,
+        "regressive_total_raw": 360,
+        "regressive_ci_low": 0.36679265240919534,
+        "regressive_ci_high": 0.48982864122939884,
+        "erroneous_rate": 0.2722222222222222,
+        "erroneous_count": 98,
+        "n_items": 30
+      },
+      "base_vs_stage_paired": {
+        "n_items": 30,
+        "mean_base_rate": 0.4362902837902837,
+        "mean_stage_rate": 0.4362902837902837,
+        "mean_d": 0.0,
+        "bootstrap_ci_low": 0.0,
+        "bootstrap_ci_high": 0.0,
+        "bootstrap_p": 1.0,
+        "n_concordant_both": 29,
+        "n_base_only": 0,
+        "n_stage_only": 0,
+        "n_concordant_neither": 1,
+        "mcnemar_p": 1.0
+      }
+    },
+    {
+      "stage": "SFT",
+      "model": "tulu3-llama31-8b-sft",
+      "n_intersection": 12,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.27522935779816515,
+        "regressive_count": 30,
+        "regressive_total": 109,
+        "regressive_total_raw": 144,
+        "regressive_ci_low": 0.19401801483759842,
+        "regressive_ci_high": 0.3690427622016172,
+        "erroneous_rate": 0.24305555555555555,
+        "erroneous_count": 35,
+        "n_items": 12
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.11428571428571428,
+        "regressive_count": 16,
+        "regressive_total": 140,
+        "regressive_total_raw": 144,
+        "regressive_ci_low": 0.06675368771586422,
+        "regressive_ci_high": 0.17895148827436447,
+        "erroneous_rate": 0.027777777777777776,
+        "erroneous_count": 4,
+        "n_items": 12
+      },
+      "base_vs_stage_paired": {
+        "n_items": 12,
+        "mean_base_rate": 0.2867845117845118,
+        "mean_stage_rate": 0.11313131313131312,
+        "mean_d": -0.17365319865319864,
+        "bootstrap_ci_low": -0.2831664862914862,
+        "bootstrap_ci_high": -0.06291230759980765,
+        "bootstrap_p": 0.0015,
+        "n_concordant_both": 9,
+        "n_base_only": 2,
+        "n_stage_only": 0,
+        "n_concordant_neither": 1,
+        "mcnemar_p": 0.25
+      }
+    },
+    {
+      "stage": "DPO",
+      "model": "tulu3-llama31-8b-dpo",
+      "n_intersection": 15,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.3511450381679389,
+        "regressive_count": 46,
+        "regressive_total": 131,
+        "regressive_total_raw": 180,
+        "regressive_ci_low": 0.2698325257734308,
+        "regressive_ci_high": 0.4393534333247327,
+        "erroneous_rate": 0.2722222222222222,
+        "erroneous_count": 49,
+        "n_items": 15
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.18333333333333332,
+        "regressive_count": 33,
+        "regressive_total": 180,
+        "regressive_total_raw": 180,
+        "regressive_ci_low": 0.12968647687016305,
+        "regressive_ci_high": 0.24771930271831294,
+        "erroneous_rate": 0.0,
+        "erroneous_count": 0,
+        "n_items": 15
+      },
+      "base_vs_stage_paired": {
+        "n_items": 15,
+        "mean_base_rate": 0.36021164021164026,
+        "mean_stage_rate": 0.18333333333333332,
+        "mean_d": -0.1768783068783069,
+        "bootstrap_ci_low": -0.30583994708994716,
+        "bootstrap_ci_high": -0.048724867724867754,
+        "bootstrap_p": 0.0035,
+        "n_concordant_both": 11,
+        "n_base_only": 3,
+        "n_stage_only": 0,
+        "n_concordant_neither": 1,
+        "mcnemar_p": 0.125
+      }
+    },
+    {
+      "stage": "Tulu 3",
+      "model": "tulu3-llama31-8b",
+      "n_intersection": 16,
+      "base_regressive_on_intersection": {
+        "regressive_rate": 0.35294117647058826,
+        "regressive_count": 48,
+        "regressive_total": 136,
+        "regressive_total_raw": 192,
+        "regressive_ci_low": 0.2729800704052881,
+        "regressive_ci_high": 0.43946012179767235,
+        "erroneous_rate": 0.2916666666666667,
+        "erroneous_count": 56,
+        "n_items": 16
+      },
+      "stage_regressive_on_intersection": {
+        "regressive_rate": 0.17708333333333334,
+        "regressive_count": 34,
+        "regressive_total": 192,
+        "regressive_total_raw": 192,
+        "regressive_ci_low": 0.125862477352563,
+        "regressive_ci_high": 0.23856514176958754,
+        "erroneous_rate": 0.0,
+        "erroneous_count": 0,
+        "n_items": 16
+      },
+      "base_vs_stage_paired": {
+        "n_items": 16,
+        "mean_base_rate": 0.36349206349206353,
+        "mean_stage_rate": 0.17708333333333334,
+        "mean_d": -0.18640873015873016,
+        "bootstrap_ci_low": -0.3038405257936508,
+        "bootstrap_ci_high": -0.05375744047619052,
+        "bootstrap_p": 0.001,
+        "n_concordant_both": 11,
+        "n_base_only": 4,
+        "n_stage_only": 0,
+        "n_concordant_neither": 1,
+        "mcnemar_p": 0.0625
+      }
+    }
+  ]
+}

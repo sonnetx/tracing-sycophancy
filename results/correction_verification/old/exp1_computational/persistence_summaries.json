@@ -1,0 +1,806 @@
+{
+  "llama31-8b-instruct": {
+    "persistent_chains": 213,
+    "total_chains": 314,
+    "persistence_rate": 0.678343949044586,
+    "proportion": 0.678343949044586,
+    "ci_low": 0.6235814944378415,
+    "ci_high": 0.7297023930897681,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 121,
+        "total_chains": 157,
+        "persistence_rate": 0.7707006369426752,
+        "proportion": 0.7707006369426752,
+        "ci_low": 0.6969584435720269,
+        "ci_high": 0.8339387297074184,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 92,
+        "total_chains": 157,
+        "persistence_rate": 0.5859872611464968,
+        "proportion": 0.5859872611464968,
+        "ci_low": 0.504741801916527,
+        "ci_high": 0.663923742217132,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.29936305732484075,
+        "flip_count": 94,
+        "total": 314,
+        "proportion": 0.29936305732484075,
+        "ci_low": 0.2492205739258762,
+        "ci_high": 0.35333792844872036,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.3630573248407643,
+        "flip_count": 114,
+        "total": 314,
+        "proportion": 0.3630573248407643,
+        "ci_low": 0.3097918245209355,
+        "ci_high": 0.418933797120908,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.39490445859872614,
+        "flip_count": 124,
+        "total": 314,
+        "proportion": 0.39490445859872614,
+        "ci_low": 0.34046264511070984,
+        "ci_high": 0.4513488453069326,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.40764331210191085,
+        "flip_count": 128,
+        "total": 314,
+        "proportion": 0.40764331210191085,
+        "ci_low": 0.35279841956538854,
+        "ci_high": 0.46424770952486794,
+        "confidence": 0.95
+      }
+    }
+  },
+  "olmo3-7b-think-dpo": {
+    "persistent_chains": 254,
+    "total_chains": 682,
+    "persistence_rate": 0.3724340175953079,
+    "proportion": 0.3724340175953079,
+    "ci_low": 0.33603686064941785,
+    "ci_high": 0.4099402622964033,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 100,
+        "total_chains": 341,
+        "persistence_rate": 0.2932551319648094,
+        "proportion": 0.2932551319648094,
+        "ci_low": 0.24545017134696956,
+        "ci_high": 0.3446929481717257,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 154,
+        "total_chains": 341,
+        "persistence_rate": 0.45161290322580644,
+        "proportion": 0.45161290322580644,
+        "ci_low": 0.3979489849297269,
+        "ci_high": 0.5061243676403672,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.08211143695014662,
+        "flip_count": 56,
+        "total": 682,
+        "proportion": 0.08211143695014662,
+        "ci_low": 0.06262007060985086,
+        "ci_high": 0.1053055897991549,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.1906158357771261,
+        "flip_count": 130,
+        "total": 682,
+        "proportion": 0.1906158357771261,
+        "ci_low": 0.16179452871492025,
+        "ci_high": 0.22214275087485896,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.18328445747800587,
+        "flip_count": 125,
+        "total": 682,
+        "proportion": 0.18328445747800587,
+        "ci_low": 0.15493580888253583,
+        "ci_high": 0.2144041314900926,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.2624633431085044,
+        "flip_count": 179,
+        "total": 682,
+        "proportion": 0.2624633431085044,
+        "ci_low": 0.22979753492995222,
+        "ci_high": 0.29719953687974093,
+        "confidence": 0.95
+      }
+    }
+  },
+  "tulu3-llama31-8b": {
+    "persistent_chains": 141,
+    "total_chains": 216,
+    "persistence_rate": 0.6527777777777778,
+    "proportion": 0.6527777777777778,
+    "ci_low": 0.585208860194903,
+    "ci_high": 0.7160874604521404,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 67,
+        "total_chains": 108,
+        "persistence_rate": 0.6203703703703703,
+        "proportion": 0.6203703703703703,
+        "ci_low": 0.5219336226902331,
+        "ci_high": 0.7120287599739091,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 74,
+        "total_chains": 108,
+        "persistence_rate": 0.6851851851851852,
+        "proportion": 0.6851851851851852,
+        "ci_low": 0.5887501887755844,
+        "ci_high": 0.7711647798714236,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.21296296296296297,
+        "flip_count": 46,
+        "total": 216,
+        "proportion": 0.21296296296296297,
+        "ci_low": 0.16033636106379498,
+        "ci_high": 0.273648592923125,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.33796296296296297,
+        "flip_count": 73,
+        "total": 216,
+        "proportion": 0.33796296296296297,
+        "ci_low": 0.27518771733634734,
+        "ci_high": 0.40525686413816603,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.39814814814814814,
+        "flip_count": 86,
+        "total": 216,
+        "proportion": 0.39814814814814814,
+        "ci_low": 0.3323570148625251,
+        "ci_high": 0.46677535457104014,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.46296296296296297,
+        "flip_count": 100,
+        "total": 216,
+        "proportion": 0.46296296296296297,
+        "ci_low": 0.39506822206028164,
+        "ci_high": 0.5318881972953268,
+        "confidence": 0.95
+      }
+    }
+  },
+  "olmo3-7b-instruct-sft": {
+    "persistent_chains": 235,
+    "total_chains": 436,
+    "persistence_rate": 0.5389908256880734,
+    "proportion": 0.5389908256880734,
+    "ci_low": 0.4909249043076359,
+    "ci_high": 0.5865242528928643,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 151,
+        "total_chains": 218,
+        "persistence_rate": 0.6926605504587156,
+        "proportion": 0.6926605504587156,
+        "ci_low": 0.6267927481797517,
+        "ci_high": 0.753199873140304,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 84,
+        "total_chains": 218,
+        "persistence_rate": 0.3853211009174312,
+        "proportion": 0.3853211009174312,
+        "ci_low": 0.3203833478357376,
+        "ci_high": 0.45342316080534306,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.21100917431192662,
+        "flip_count": 92,
+        "total": 436,
+        "proportion": 0.21100917431192662,
+        "ci_low": 0.17363497025556032,
+        "ci_high": 0.25235668035383546,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.3555045871559633,
+        "flip_count": 155,
+        "total": 436,
+        "proportion": 0.3555045871559633,
+        "ci_low": 0.3105416564648641,
+        "ci_high": 0.402443368355131,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.3165137614678899,
+        "flip_count": 138,
+        "total": 436,
+        "proportion": 0.3165137614678899,
+        "ci_low": 0.2730829278757013,
+        "ci_high": 0.3624559259519391,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.25229357798165136,
+        "flip_count": 110,
+        "total": 436,
+        "proportion": 0.25229357798165136,
+        "ci_low": 0.21217839311584605,
+        "ci_high": 0.29580686757397784,
+        "confidence": 0.95
+      }
+    }
+  },
+  "olmo3-7b-instruct": {
+    "persistent_chains": 122,
+    "total_chains": 404,
+    "persistence_rate": 0.30198019801980197,
+    "proportion": 0.30198019801980197,
+    "ci_low": 0.257567225564898,
+    "ci_high": 0.3493223083641255,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 59,
+        "total_chains": 202,
+        "persistence_rate": 0.29207920792079206,
+        "proportion": 0.29207920792079206,
+        "ci_low": 0.2303738646269913,
+        "ci_high": 0.3600023503072083,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 63,
+        "total_chains": 202,
+        "persistence_rate": 0.3118811881188119,
+        "proportion": 0.3118811881188119,
+        "ci_low": 0.24871441162300767,
+        "ci_high": 0.38066871085835846,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.14108910891089108,
+        "flip_count": 57,
+        "total": 404,
+        "proportion": 0.14108910891089108,
+        "ci_low": 0.10864228224611111,
+        "ci_high": 0.17890233544065065,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.16831683168316833,
+        "flip_count": 68,
+        "total": 404,
+        "proportion": 0.16831683168316833,
+        "ci_low": 0.13313964423531668,
+        "ci_high": 0.2084381415175206,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.15594059405940594,
+        "flip_count": 63,
+        "total": 404,
+        "proportion": 0.15594059405940594,
+        "ci_low": 0.12195722552463524,
+        "ci_high": 0.1950591576757138,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.16336633663366337,
+        "flip_count": 66,
+        "total": 404,
+        "proportion": 0.16336633663366337,
+        "ci_low": 0.12865776467928325,
+        "ci_high": 0.20309530532554637,
+        "confidence": 0.95
+      }
+    }
+  },
+  "tulu3-llama31-8b-sft": {
+    "persistent_chains": 95,
+    "total_chains": 128,
+    "persistence_rate": 0.7421875,
+    "proportion": 0.7421875,
+    "ci_low": 0.6574135822278923,
+    "ci_high": 0.8154172646360179,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 40,
+        "total_chains": 64,
+        "persistence_rate": 0.625,
+        "proportion": 0.625,
+        "ci_low": 0.4950764600522974,
+        "ci_high": 0.7429510775519335,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 55,
+        "total_chains": 64,
+        "persistence_rate": 0.859375,
+        "proportion": 0.859375,
+        "ci_low": 0.7497631643759881,
+        "ci_high": 0.9336259283315737,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.265625,
+        "flip_count": 34,
+        "total": 128,
+        "proportion": 0.265625,
+        "ci_low": 0.19148743088694392,
+        "ci_high": 0.3509279949297895,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.5546875,
+        "flip_count": 71,
+        "total": 128,
+        "proportion": 0.5546875,
+        "ci_low": 0.46427909180708193,
+        "ci_high": 0.6425077437196473,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.484375,
+        "flip_count": 62,
+        "total": 128,
+        "proportion": 0.484375,
+        "ci_low": 0.39516219658623536,
+        "ci_high": 0.5743270627230773,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.375,
+        "flip_count": 48,
+        "total": 128,
+        "proportion": 0.375,
+        "ci_low": 0.2910349901504501,
+        "ci_high": 0.46488914897355205,
+        "confidence": 0.95
+      }
+    }
+  },
+  "tulu3-llama31-8b-dpo": {
+    "persistent_chains": 127,
+    "total_chains": 192,
+    "persistence_rate": 0.6614583333333334,
+    "proportion": 0.6614583333333334,
+    "ci_low": 0.5898148543999556,
+    "ci_high": 0.7280273080355827,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 61,
+        "total_chains": 96,
+        "persistence_rate": 0.6354166666666666,
+        "proportion": 0.6354166666666666,
+        "ci_low": 0.5309362032924015,
+        "ci_high": 0.7312982058887404,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 66,
+        "total_chains": 96,
+        "persistence_rate": 0.6875,
+        "proportion": 0.6875,
+        "ci_low": 0.5848184025328089,
+        "ci_high": 0.7782473556879203,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.20833333333333334,
+        "flip_count": 40,
+        "total": 192,
+        "proportion": 0.20833333333333334,
+        "ci_low": 0.15320389068182988,
+        "ci_high": 0.27269952229831856,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.3541666666666667,
+        "flip_count": 68,
+        "total": 192,
+        "proportion": 0.3541666666666667,
+        "ci_low": 0.286646731005031,
+        "ci_high": 0.4262677797768227,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.3854166666666667,
+        "flip_count": 74,
+        "total": 192,
+        "proportion": 0.3854166666666667,
+        "ci_low": 0.3162272860533966,
+        "ci_high": 0.4582026739238725,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.4114583333333333,
+        "flip_count": 79,
+        "total": 192,
+        "proportion": 0.4114583333333333,
+        "ci_low": 0.34110513507364315,
+        "ci_high": 0.484589360649632,
+        "confidence": 0.95
+      }
+    }
+  },
+  "olmo3-7b-think": {
+    "persistent_chains": 247,
+    "total_chains": 690,
+    "persistence_rate": 0.35797101449275365,
+    "proportion": 0.35797101449275365,
+    "ci_low": 0.32214897355653377,
+    "ci_high": 0.3950136810547085,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 93,
+        "total_chains": 345,
+        "persistence_rate": 0.26956521739130435,
+        "proportion": 0.26956521739130435,
+        "ci_low": 0.223447827644358,
+        "ci_high": 0.31968795642185377,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 154,
+        "total_chains": 345,
+        "persistence_rate": 0.4463768115942029,
+        "proportion": 0.4463768115942029,
+        "ci_low": 0.39313008894740914,
+        "ci_high": 0.5005518003279333,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.07681159420289856,
+        "flip_count": 53,
+        "total": 690,
+        "proportion": 0.07681159420289856,
+        "ci_low": 0.05806373965007984,
+        "ci_high": 0.09926978095032345,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.1927536231884058,
+        "flip_count": 133,
+        "total": 690,
+        "proportion": 0.1927536231884058,
+        "ci_low": 0.16396181105719723,
+        "ci_high": 0.22420043594770617,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.22028985507246376,
+        "flip_count": 152,
+        "total": 690,
+        "proportion": 0.22028985507246376,
+        "ci_low": 0.18989256344657302,
+        "ci_high": 0.25310062468931,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.23333333333333334,
+        "flip_count": 161,
+        "total": 690,
+        "proportion": 0.23333333333333334,
+        "ci_low": 0.2022466391991751,
+        "ci_high": 0.26671960447578036,
+        "confidence": 0.95
+      }
+    }
+  },
+  "olmo3-7b-base": {
+    "persistent_chains": 62,
+    "total_chains": 116,
+    "persistence_rate": 0.5344827586206896,
+    "proportion": 0.5344827586206896,
+    "ci_low": 0.43954294076586403,
+    "ci_high": 0.6276194745158914,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 38,
+        "total_chains": 58,
+        "persistence_rate": 0.6551724137931034,
+        "proportion": 0.6551724137931034,
+        "ci_low": 0.5188026848763977,
+        "ci_high": 0.7750990656334532,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 24,
+        "total_chains": 58,
+        "persistence_rate": 0.41379310344827586,
+        "proportion": 0.41379310344827586,
+        "ci_low": 0.2859632642549911,
+        "ci_high": 0.5507338090514403,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.27586206896551724,
+        "flip_count": 32,
+        "total": 116,
+        "proportion": 0.27586206896551724,
+        "ci_low": 0.19695141884651046,
+        "ci_high": 0.36656744114067036,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.25862068965517243,
+        "flip_count": 30,
+        "total": 116,
+        "proportion": 0.25862068965517243,
+        "ci_low": 0.18178466021392148,
+        "ci_high": 0.34817462073577893,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.1724137931034483,
+        "flip_count": 20,
+        "total": 116,
+        "proportion": 0.1724137931034483,
+        "ci_low": 0.10861266894749654,
+        "ci_high": 0.2536424208037492,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.20689655172413793,
+        "flip_count": 24,
+        "total": 116,
+        "proportion": 0.20689655172413793,
+        "ci_low": 0.13728914277134194,
+        "ci_high": 0.29202368154622055,
+        "confidence": 0.95
+      }
+    }
+  },
+  "olmo3-7b-instruct-dpo": {
+    "persistent_chains": 137,
+    "total_chains": 414,
+    "persistence_rate": 0.3309178743961353,
+    "proportion": 0.3309178743961353,
+    "ci_low": 0.2857346015246756,
+    "ci_high": 0.378539021110676,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 60,
+        "total_chains": 207,
+        "persistence_rate": 0.2898550724637681,
+        "proportion": 0.2898550724637681,
+        "ci_low": 0.2290519743246932,
+        "ci_high": 0.35678888425705463,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 77,
+        "total_chains": 207,
+        "persistence_rate": 0.3719806763285024,
+        "proportion": 0.3719806763285024,
+        "ci_low": 0.30598701819467133,
+        "ci_high": 0.44169843922964597,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.15942028985507245,
+        "flip_count": 66,
+        "total": 414,
+        "proportion": 0.15942028985507245,
+        "ci_low": 0.12549241697014726,
+        "ci_high": 0.1983046659760799,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.15942028985507245,
+        "flip_count": 66,
+        "total": 414,
+        "proportion": 0.15942028985507245,
+        "ci_low": 0.12549241697014726,
+        "ci_high": 0.1983046659760799,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.1570048309178744,
+        "flip_count": 65,
+        "total": 414,
+        "proportion": 0.1570048309178744,
+        "ci_low": 0.1233114817195428,
+        "ci_high": 0.19569112306559072,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.17149758454106281,
+        "flip_count": 71,
+        "total": 414,
+        "proportion": 0.17149758454106281,
+        "ci_low": 0.136438990181453,
+        "ci_high": 0.21133119374292883,
+        "confidence": 0.95
+      }
+    }
+  },
+  "olmo3-7b-think-sft": {
+    "persistent_chains": 214,
+    "total_chains": 684,
+    "persistence_rate": 0.3128654970760234,
+    "proportion": 0.3128654970760234,
+    "ci_low": 0.2782584300552532,
+    "ci_high": 0.34909650567057543,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 80,
+        "total_chains": 342,
+        "persistence_rate": 0.23391812865497075,
+        "proportion": 0.23391812865497075,
+        "ci_low": 0.19006614317910595,
+        "ci_high": 0.28244477693185294,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 134,
+        "total_chains": 342,
+        "persistence_rate": 0.391812865497076,
+        "proportion": 0.391812865497076,
+        "ci_low": 0.3397503900101036,
+        "ci_high": 0.44576598577234855,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.05701754385964912,
+        "flip_count": 39,
+        "total": 684,
+        "proportion": 0.05701754385964912,
+        "ci_low": 0.040855555476498905,
+        "ci_high": 0.07712367400012521,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.17690058479532164,
+        "flip_count": 121,
+        "total": 684,
+        "proportion": 0.17690058479532164,
+        "ci_low": 0.1490173482191425,
+        "ci_high": 0.20760355292997143,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.1783625730994152,
+        "flip_count": 122,
+        "total": 684,
+        "proportion": 0.1783625730994152,
+        "ci_low": 0.15038080234893178,
+        "ci_high": 0.20915102946259836,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.19883040935672514,
+        "flip_count": 136,
+        "total": 684,
+        "proportion": 0.19883040935672514,
+        "ci_low": 0.16954111232449207,
+        "ci_high": 0.23074438536119415,
+        "confidence": 0.95
+      }
+    }
+  },
+  "llama31-8b-base": {
+    "persistent_chains": 38,
+    "total_chains": 60,
+    "persistence_rate": 0.6333333333333333,
+    "proportion": 0.6333333333333333,
+    "ci_low": 0.49896928235630394,
+    "ci_high": 0.7540593895627126,
+    "confidence": 0.95,
+    "by_context": {
+      "in_context": {
+        "persistent_chains": 12,
+        "total_chains": 30,
+        "persistence_rate": 0.4,
+        "proportion": 0.4,
+        "ci_low": 0.2265576488285767,
+        "ci_high": 0.5939650699481813,
+        "confidence": 0.95
+      },
+      "preemptive": {
+        "persistent_chains": 26,
+        "total_chains": 30,
+        "persistence_rate": 0.8666666666666667,
+        "proportion": 0.8666666666666667,
+        "ci_low": 0.6927816497238732,
+        "ci_high": 0.9624465036616628,
+        "confidence": 0.95
+      }
+    },
+    "escalation_rates": {
+      "simple": {
+        "flip_rate": 0.31666666666666665,
+        "flip_count": 19,
+        "total": 60,
+        "proportion": 0.31666666666666665,
+        "ci_low": 0.20257550711868128,
+        "ci_high": 0.44955968776406097,
+        "confidence": 0.95
+      },
+      "ethos": {
+        "flip_rate": 0.35,
+        "flip_count": 21,
+        "total": 60,
+        "proportion": 0.35,
+        "ci_low": 0.23132642214868276,
+        "ci_high": 0.48402800937056695,
+        "confidence": 0.95
+      },
+      "justification": {
+        "flip_rate": 0.3,
+        "flip_count": 18,
+        "total": 60,
+        "proportion": 0.3,
+        "ci_low": 0.18845144541969042,
+        "ci_high": 0.4320831338760616,
+        "confidence": 0.95
+      },
+      "citation": {
+        "flip_rate": 0.4166666666666667,
+        "flip_count": 25,
+        "total": 60,
+        "proportion": 0.4166666666666667,
+        "ci_low": 0.2906806664704227,
+        "ci_high": 0.551162202245988,
+        "confidence": 0.95
+      }
+    }
+  }
+}

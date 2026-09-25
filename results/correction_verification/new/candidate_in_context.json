@@ -1,0 +1,262 @@
+{
+  "computational": {
+    "llama31-8b-instruct": {
+      "label": "llama31-8b-instruct",
+      "context": "in_context",
+      "n_questions": 500,
+      "n_candidates": 3,
+      "mean_per_question_variance": 0.014963179423311863,
+      "median_per_question_variance": 0.0,
+      "mean_per_question_dlo": 0.1295176677871576,
+      "candidate_checkpoint_means": [
+        0.15985769256929028,
+        0.11588459955458105,
+        0.11281071123760147
+      ],
+      "pairwise_spearman": [
+        {
+          "pair": "c0-c1",
+          "rho": 0.8578959115836463,
+          "p": 4.024591487842699e-146
+        },
+        {
+          "pair": "c0-c2",
+          "rho": 0.8447992511970048,
+          "p": 2.398251079596833e-137
+        },
+        {
+          "pair": "c1-c2",
+          "rho": 0.8038957915831664,
+          "p": 1.87639761667544e-114
+        }
+      ],
+      "min_spearman_rho": 0.8038957915831664
+    },
+    "olmo3-7b-instruct": {
+      "label": "olmo3-7b-instruct",
+      "context": "in_context",
+      "n_questions": 500,
+      "n_candidates": 3,
+      "mean_per_question_variance": 0.036001459150455856,
+      "median_per_question_variance": 0.0,
+      "mean_per_question_dlo": 0.18738018890476177,
+      "candidate_checkpoint_means": [
+        0.22094139689087225,
+        0.1584175439692508,
+        0.18278162585416236
+      ],
+      "pairwise_spearman": [
+        {
+          "pair": "c0-c1",
+          "rho": 0.8710196440785762,
+          "p": 7.597683906854066e-156
+        },
+        {
+          "pair": "c0-c2",
+          "rho": 0.9157019668078672,
+          "p": 2.626560951492472e-199
+        },
+        {
+          "pair": "c1-c2",
+          "rho": 0.8925388981555925,
+          "p": 2.3333967611736657e-174
+        }
+      ],
+      "min_spearman_rho": 0.8710196440785762
+    },
+    "olmo3-7b-think": {
+      "label": "olmo3-7b-think",
+      "context": "in_context",
+      "n_questions": 500,
+      "n_candidates": 3,
+      "mean_per_question_variance": 0.014096146239722846,
+      "median_per_question_variance": 0.0,
+      "mean_per_question_dlo": 0.1894115086700362,
+      "candidate_checkpoint_means": [
+        0.21646477513875698,
+        0.17770049485540632,
+        0.17406925601594533
+      ],
+      "pairwise_spearman": [
+        {
+          "pair": "c0-c1",
+          "rho": 0.8246487705950823,
+          "p": 2.531430670482387e-125
+        },
+        {
+          "pair": "c0-c2",
+          "rho": 0.8177802311209244,
+          "p": 1.4260068679028903e-121
+        },
+        {
+          "pair": "c1-c2",
+          "rho": 0.8459644078576314,
+          "p": 4.2920802317640314e-138
+        }
+      ],
+      "min_spearman_rho": 0.8177802311209244
+    },
+    "tulu3-llama31-8b": {
+      "label": "tulu3-llama31-8b",
+      "context": "in_context",
+      "n_questions": 500,
+      "n_candidates": 3,
+      "mean_per_question_variance": 0.04494536077321384,
+      "median_per_question_variance": 0.0,
+      "mean_per_question_dlo": -0.08705964115714399,
+      "candidate_checkpoint_means": [
+        -0.032104108214366156,
+        -0.1260956718251861,
+        -0.10297914343187975
+      ],
+      "pairwise_spearman": [
+        {
+          "pair": "c0-c1",
+          "rho": 0.8514413257653031,
+          "p": 1.0844457763813193e-141
+        },
+        {
+          "pair": "c0-c2",
+          "rho": 0.8792600290401162,
+          "p": 1.630735256641271e-162
+        },
+        {
+          "pair": "c1-c2",
+          "rho": 0.8836542546170185,
+          "p": 2.842851369940664e-166
+        }
+      ],
+      "min_spearman_rho": 0.8514413257653031
+    }
+  },
+  "medical_advice": {
+    "llama31-8b-instruct": {
+      "label": "llama31-8b-instruct",
+      "context": "in_context",
+      "n_questions": 500,
+      "n_candidates": 3,
+      "mean_per_question_variance": 0.026189527483472246,
+      "median_per_question_variance": 0.006678904422255451,
+      "mean_per_question_dlo": 0.28714718129335826,
+      "candidate_checkpoint_means": [
+        0.3760544889394151,
+        0.24901426858252948,
+        0.23637278635813003
+      ],
+      "pairwise_spearman": [
+        {
+          "pair": "c0-c1",
+          "rho": 0.8152265249060997,
+          "p": 3.224299006359203e-120
+        },
+        {
+          "pair": "c0-c2",
+          "rho": 0.7834616298465193,
+          "p": 5.907512723443208e-105
+        },
+        {
+          "pair": "c1-c2",
+          "rho": 0.8563946575786302,
+          "p": 4.513402426385399e-145
+        }
+      ],
+      "min_spearman_rho": 0.7834616298465193
+    },
+    "olmo3-7b-instruct": {
+      "label": "olmo3-7b-instruct",
+      "context": "in_context",
+      "n_questions": 500,
+      "n_candidates": 3,
+      "mean_per_question_variance": 0.06680942278872222,
+      "median_per_question_variance": 0.01719596961234645,
+      "mean_per_question_dlo": 0.21520997812185466,
+      "candidate_checkpoint_means": [
+        0.36458475003747853,
+        0.13831791322166345,
+        0.14272727110642205
+      ],
+      "pairwise_spearman": [
+        {
+          "pair": "c0-c1",
+          "rho": 0.6541501686006743,
+          "p": 2.2102390891686907e-62
+        },
+        {
+          "pair": "c0-c2",
+          "rho": 0.6769852039408157,
+          "p": 2.664818565395733e-68
+        },
+        {
+          "pair": "c1-c2",
+          "rho": 0.7425942663770655,
+          "p": 9.626355442268589e-89
+        }
+      ],
+      "min_spearman_rho": 0.6541501686006743
+    },
+    "olmo3-7b-think": {
+      "label": "olmo3-7b-think",
+      "context": "in_context",
+      "n_questions": 500,
+      "n_candidates": 3,
+      "mean_per_question_variance": 0.03816375448766987,
+      "median_per_question_variance": 0.006796403113572329,
+      "mean_per_question_dlo": 0.24608566520105732,
+      "candidate_checkpoint_means": [
+        0.3488670529345698,
+        0.19273105052918027,
+        0.19665889213942184
+      ],
+      "pairwise_spearman": [
+        {
+          "pair": "c0-c1",
+          "rho": 0.7409767559070236,
+          "p": 3.6424059378343765e-88
+        },
+        {
+          "pair": "c0-c2",
+          "rho": 0.7690289321157283,
+          "p": 7.557943510160572e-99
+        },
+        {
+          "pair": "c1-c2",
+          "rho": 0.7652650450601802,
+          "p": 2.501596932682869e-97
+        }
+      ],
+      "min_spearman_rho": 0.7409767559070236
+    },
+    "tulu3-llama31-8b": {
+      "label": "tulu3-llama31-8b",
+      "context": "in_context",
+      "n_questions": 500,
+      "n_candidates": 3,
+      "mean_per_question_variance": 0.050052238424795885,
+      "median_per_question_variance": 0.01085407562156734,
+      "mean_per_question_dlo": 0.33259086925289033,
+      "candidate_checkpoint_means": [
+        0.46236544030223775,
+        0.2766892760372258,
+        0.25871789141920754
+      ],
+      "pairwise_spearman": [
+        {
+          "pair": "c0-c1",
+          "rho": 0.8255289021156085,
+          "p": 8.145348269605648e-126
+        },
+        {
+          "pair": "c0-c2",
+          "rho": 0.7889745478981915,
+          "p": 2.057455626988019e-107
+        },
+        {
+          "pair": "c1-c2",
+          "rho": 0.8642053448213792,
+          "p": 1.140056660483214e-150
+        }
+      ],
+      "min_spearman_rho": 0.7889745478981915
+    }
+  }
+}

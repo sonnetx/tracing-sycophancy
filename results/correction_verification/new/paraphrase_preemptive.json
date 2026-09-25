@@ -1,0 +1,404 @@
+{
+  "context": "preemptive",
+  "models": {
+    "llama31-8b-base": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 0.857082578435749,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.3394647136602474,
+          "spearman_vs_c0_w0": 0.7888652216305408
+        },
+        "c0_w2": {
+          "mean_dlo": 0.34126088454609255,
+          "spearman_vs_c0_w0": 0.7785179629490738
+        },
+        "c1_w0": {
+          "mean_dlo": 1.147794489930667,
+          "spearman_vs_c0_w0": 0.800774019350484
+        },
+        "c2_w0": {
+          "mean_dlo": 1.1475870455395398,
+          "spearman_vs_c0_w0": 0.8103367584189606
+        }
+      },
+      "mean_per_question_variance": 0.2441671962144515,
+      "n_questions": 200
+    },
+    "llama31-8b-instruct": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 0.8136391319398024,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.2609227551474603,
+          "spearman_vs_c0_w0": 0.7499872496812421
+        },
+        "c0_w2": {
+          "mean_dlo": 0.2603424747627859,
+          "spearman_vs_c0_w0": 0.7421315532888323
+        },
+        "c1_w0": {
+          "mean_dlo": 1.1705442438962357,
+          "spearman_vs_c0_w0": 0.7915457886447163
+        },
+        "c2_w0": {
+          "mean_dlo": 1.1648185161184241,
+          "spearman_vs_c0_w0": 0.7993669841746045
+        }
+      },
+      "mean_per_question_variance": 0.2845114275804624,
+      "n_questions": 200
+    },
+    "olmo3-7b-base": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 0.7675921344225776,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.26434696498990023,
+          "spearman_vs_c0_w0": 0.8043081077026927
+        },
+        "c0_w2": {
+          "mean_dlo": 0.27152513466571226,
+          "spearman_vs_c0_w0": 0.7823250581264533
+        },
+        "c1_w0": {
+          "mean_dlo": 1.1211732794287985,
+          "spearman_vs_c0_w0": 0.8134178354458863
+        },
+        "c2_w0": {
+          "mean_dlo": 1.1188202353354688,
+          "spearman_vs_c0_w0": 0.820556513912848
+        }
+      },
+      "mean_per_question_variance": 0.24796562938042965,
+      "n_questions": 200
+    },
+    "olmo3-7b-instruct": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 1.0583241268795713,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.3791389736249326,
+          "spearman_vs_c0_w0": 0.750878271956799
+        },
+        "c0_w2": {
+          "mean_dlo": 0.3779604830364944,
+          "spearman_vs_c0_w0": 0.7262596564914124
+        },
+        "c1_w0": {
+          "mean_dlo": 1.4327541038567808,
+          "spearman_vs_c0_w0": 0.792153303832596
+        },
+        "c2_w0": {
+          "mean_dlo": 1.4342354261340362,
+          "spearman_vs_c0_w0": 0.7896092402310059
+        }
+      },
+      "mean_per_question_variance": 0.4194790782178086,
+      "n_questions": 200
+    },
+    "olmo3-7b-instruct-dpo": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 1.008448231398272,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.35205187718848074,
+          "spearman_vs_c0_w0": 0.7475826895672393
+        },
+        "c0_w2": {
+          "mean_dlo": 0.35190507585125735,
+          "spearman_vs_c0_w0": 0.7262056551413786
+        },
+        "c1_w0": {
+          "mean_dlo": 1.3889637363352672,
+          "spearman_vs_c0_w0": 0.7987744693617341
+        },
+        "c2_w0": {
+          "mean_dlo": 1.3894025014399467,
+          "spearman_vs_c0_w0": 0.7956063901597541
+        }
+      },
+      "mean_per_question_variance": 0.3959713513583046,
+      "n_questions": 200
+    },
+    "olmo3-7b-instruct-sft": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 0.8363250173952079,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.2337346001670571,
+          "spearman_vs_c0_w0": 0.7642676066901674
+        },
+        "c0_w2": {
+          "mean_dlo": 0.23625929982419563,
+          "spearman_vs_c0_w0": 0.7411805295132379
+        },
+        "c1_w0": {
+          "mean_dlo": 1.2475157911692214,
+          "spearman_vs_c0_w0": 0.8150228755718895
+        },
+        "c2_w0": {
+          "mean_dlo": 1.245358682832092,
+          "spearman_vs_c0_w0": 0.8186034650866273
+        }
+      },
+      "mean_per_question_variance": 0.3457502428221278,
+      "n_questions": 200
+    },
+    "olmo3-7b-think": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 0.8833379170000625,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.2693225763546583,
+          "spearman_vs_c0_w0": 0.7785794644866123
+        },
+        "c0_w2": {
+          "mean_dlo": 0.2755637691937588,
+          "spearman_vs_c0_w0": 0.7686087152178805
+        },
+        "c1_w0": {
+          "mean_dlo": 1.320416692393312,
+          "spearman_vs_c0_w0": 0.8593924848121205
+        },
+        "c2_w0": {
+          "mean_dlo": 1.3216783014686515,
+          "spearman_vs_c0_w0": 0.8642016050401261
+        }
+      },
+      "mean_per_question_variance": 0.36145740329210146,
+      "n_questions": 200
+    },
+    "olmo3-7b-think-dpo": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 0.8765823834416047,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.26002720866920453,
+          "spearman_vs_c0_w0": 0.7821585539638491
+        },
+        "c0_w2": {
+          "mean_dlo": 0.2669214257951961,
+          "spearman_vs_c0_w0": 0.773209330233256
+        },
+        "c1_w0": {
+          "mean_dlo": 1.3124259430653047,
+          "spearman_vs_c0_w0": 0.858156453911348
+        },
+        "c2_w0": {
+          "mean_dlo": 1.3142037700867684,
+          "spearman_vs_c0_w0": 0.8631395784894623
+        }
+      },
+      "mean_per_question_variance": 0.3600204595618961,
+      "n_questions": 200
+    },
+    "olmo3-7b-think-sft": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 0.8412034821422257,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.2529626187182937,
+          "spearman_vs_c0_w0": 0.778609465236631
+        },
+        "c0_w2": {
+          "mean_dlo": 0.2595115948347884,
+          "spearman_vs_c0_w0": 0.7685217130428261
+        },
+        "c1_w0": {
+          "mean_dlo": 1.263288052023424,
+          "spearman_vs_c0_w0": 0.8587939698492464
+        },
+        "c2_w0": {
+          "mean_dlo": 1.2648786528359353,
+          "spearman_vs_c0_w0": 0.8633300832520815
+        }
+      },
+      "mean_per_question_variance": 0.3322740364166144,
+      "n_questions": 200
+    },
+    "tulu3-llama31-8b": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 1.068379840277949,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.45645584364491937,
+          "spearman_vs_c0_w0": 0.7742848571214282
+        },
+        "c0_w2": {
+          "mean_dlo": 0.46388467385605253,
+          "spearman_vs_c0_w0": 0.7649051226280658
+        },
+        "c1_w0": {
+          "mean_dlo": 1.3933762864131671,
+          "spearman_vs_c0_w0": 0.8139353483837097
+        },
+        "c2_w0": {
+          "mean_dlo": 1.3920644913100284,
+          "spearman_vs_c0_w0": 0.8213215330383261
+        }
+      },
+      "mean_per_question_variance": 0.335259714131894,
+      "n_questions": 200
+    },
+    "tulu3-llama31-8b-dpo": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 1.0655814855768313,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.4518649192989061,
+          "spearman_vs_c0_w0": 0.7710417760444012
+        },
+        "c0_w2": {
+          "mean_dlo": 0.45880179969688945,
+          "spearman_vs_c0_w0": 0.7615435385884648
+        },
+        "c1_w0": {
+          "mean_dlo": 1.390213749214862,
+          "spearman_vs_c0_w0": 0.8189199729993251
+        },
+        "c2_w0": {
+          "mean_dlo": 1.3893309984511422,
+          "spearman_vs_c0_w0": 0.8239900997524939
+        }
+      },
+      "mean_per_question_variance": 0.3350598093084679,
+      "n_questions": 200
+    },
+    "tulu3-llama31-8b-sft": {
+      "variants": {
+        "c0_w0": {
+          "mean_dlo": 0.8546407531223967,
+          "spearman_vs_c0_w0": 1.0
+        },
+        "c0_w1": {
+          "mean_dlo": 0.34376060227180544,
+          "spearman_vs_c0_w0": 0.7738873471836797
+        },
+        "c0_w2": {
+          "mean_dlo": 0.3470979665335321,
+          "spearman_vs_c0_w0": 0.7623865596639918
+        },
+        "c1_w0": {
+          "mean_dlo": 1.1601274318854564,
+          "spearman_vs_c0_w0": 0.8083462086552164
+        },
+        "c2_w0": {
+          "mean_dlo": 1.1588706656114238,
+          "spearman_vs_c0_w0": 0.8177994449861247
+        }
+      },
+      "mean_per_question_variance": 0.24940350208759401,
+      "n_questions": 200
+    }
+  },
+  "cross_model": {
+    "c0_w0": {
+      "per_model_mean_dlo": {
+        "llama31-8b-base": 0.857082578435749,
+        "llama31-8b-instruct": 0.8136391319398024,
+        "olmo3-7b-base": 0.7675921344225776,
+        "olmo3-7b-instruct": 1.0583241268795713,
+        "olmo3-7b-instruct-dpo": 1.008448231398272,
+        "olmo3-7b-instruct-sft": 0.8363250173952079,
+        "olmo3-7b-think": 0.8833379170000625,
+        "olmo3-7b-think-dpo": 0.8765823834416047,
+        "olmo3-7b-think-sft": 0.8412034821422257,
+        "tulu3-llama31-8b": 1.068379840277949,
+        "tulu3-llama31-8b-dpo": 1.0655814855768313,
+        "tulu3-llama31-8b-sft": 0.8546407531223967
+      },
+      "spearman_vs_c0_w0": 1.0
+    },
+    "c0_w1": {
+      "per_model_mean_dlo": {
+        "llama31-8b-base": 0.3394647136602474,
+        "llama31-8b-instruct": 0.2609227551474603,
+        "olmo3-7b-base": 0.26434696498990023,
+        "olmo3-7b-instruct": 0.3791389736249326,
+        "olmo3-7b-instruct-dpo": 0.35205187718848074,
+        "olmo3-7b-instruct-sft": 0.2337346001670571,
+        "olmo3-7b-think": 0.2693225763546583,
+        "olmo3-7b-think-dpo": 0.26002720866920453,
+        "olmo3-7b-think-sft": 0.2529626187182937,
+        "tulu3-llama31-8b": 0.45645584364491937,
+        "tulu3-llama31-8b-dpo": 0.4518649192989061,
+        "tulu3-llama31-8b-sft": 0.34376060227180544
+      },
+      "spearman_vs_c0_w0": 0.7972027972027973
+    },
+    "c0_w2": {
+      "per_model_mean_dlo": {
+        "llama31-8b-base": 0.34126088454609255,
+        "llama31-8b-instruct": 0.2603424747627859,
+        "olmo3-7b-base": 0.27152513466571226,
+        "olmo3-7b-instruct": 0.3779604830364944,
+        "olmo3-7b-instruct-dpo": 0.35190507585125735,
+        "olmo3-7b-instruct-sft": 0.23625929982419563,
+        "olmo3-7b-think": 0.2755637691937588,
+        "olmo3-7b-think-dpo": 0.2669214257951961,
+        "olmo3-7b-think-sft": 0.2595115948347884,
+        "tulu3-llama31-8b": 0.46388467385605253,
+        "tulu3-llama31-8b-dpo": 0.45880179969688945,
+        "tulu3-llama31-8b-sft": 0.3470979665335321
+      },
+      "spearman_vs_c0_w0": 0.8321678321678322
+    },
+    "c1_w0": {
+      "per_model_mean_dlo": {
+        "llama31-8b-base": 1.147794489930667,
+        "llama31-8b-instruct": 1.1705442438962357,
+        "olmo3-7b-base": 1.1211732794287985,
+        "olmo3-7b-instruct": 1.4327541038567808,
+        "olmo3-7b-instruct-dpo": 1.3889637363352672,
+        "olmo3-7b-instruct-sft": 1.2475157911692214,
+        "olmo3-7b-think": 1.320416692393312,
+        "olmo3-7b-think-dpo": 1.3124259430653047,
+        "olmo3-7b-think-sft": 1.263288052023424,
+        "tulu3-llama31-8b": 1.3933762864131671,
+        "tulu3-llama31-8b-dpo": 1.390213749214862,
+        "tulu3-llama31-8b-sft": 1.1601274318854564
+      },
+      "spearman_vs_c0_w0": 0.8671328671328673
+    },
+    "c2_w0": {
+      "per_model_mean_dlo": {
+        "llama31-8b-base": 1.1475870455395398,
+        "llama31-8b-instruct": 1.1648185161184241,
+        "olmo3-7b-base": 1.1188202353354688,
+        "olmo3-7b-instruct": 1.4342354261340362,
+        "olmo3-7b-instruct-dpo": 1.3894025014399467,
+        "olmo3-7b-instruct-sft": 1.245358682832092,
+        "olmo3-7b-think": 1.3216783014686515,
+        "olmo3-7b-think-dpo": 1.3142037700867684,
+        "olmo3-7b-think-sft": 1.2648786528359353,
+        "tulu3-llama31-8b": 1.3920644913100284,
+        "tulu3-llama31-8b-dpo": 1.3893309984511422,
+        "tulu3-llama31-8b-sft": 1.1588706656114238
+      },
+      "spearman_vs_c0_w0": 0.8531468531468532
+    }
+  }
+}
