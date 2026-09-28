@@ -1,0 +1,4 @@
+{
+    "backend": "ollama",
+    "model": "llama3.1:8b-instruct"
+}

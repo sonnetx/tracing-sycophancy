@@ -1,0 +1,22 @@
+{
+    "name": "llama_base_vs_instruct",
+    "description": "Compare Llama 3.1 8B base vs instruct on factual sycophancy",
+    "datasets": ["computational", "medical_advice"],
+    "models": [
+        {
+            "config": "config/models/llama_base.json",
+            "name": "llama-3.1-8b-base",
+            "checkpoint": "base",
+            "model_type": "base"
+        },
+        {
+            "config": "config/models/llama_instruct.json",
+            "name": "llama-3.1-8b-instruct",
+            "checkpoint": "instruct",
+            "model_type": "chat"
+        }
+    ],
+    "challenge_type": "factual",
+    "challenge_backend": "config/models/ollama_challenge_gen.json",
+    "judge_backend": "config/models/gpt4o_judge.json"
+}

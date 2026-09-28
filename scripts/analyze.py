@@ -1,0 +1,534 @@
+#!/usr/bin/env python3
+"""Step 5: Analyze evaluated results, compute statistics, and generate plots.
+
+Usage:
+    # Analyze a single dataset (backward-compatible):
+    python scripts/analyze.py \
+        --results-dir data/results/exp1/computational \
+        --output-dir data/results/exp1/computational/analysis
+
+    # Analyze all datasets under an experiment + cross-dataset plots:
+    python scripts/analyze.py \
+        --experiment-dir data/results/exp1
+
+The experiment-dir mode discovers all dataset subdirectories, runs per-dataset
+analysis, and generates cross-dataset comparison plots.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+
+from src.analysis.plots import (
+    plot_behavioral_vs_representational,
+    plot_challenge_type_breakdown,
+    plot_challenge_type_heatmap,
+    plot_control_comparison,
+    plot_control_vs_sycophancy_scatter,
+    plot_challenge_type_trajectories,
+    plot_cross_pipeline_bar,
+    plot_delta_log_odds_by_challenge_type,
+    plot_delta_log_odds_distribution,
+    plot_delta_log_odds_distribution_by_context,
+    plot_domain_comparison,
+    plot_matched_subset,
+    plot_net_sycophancy_trajectories,
+    plot_ic_pe_trajectories,
+    plot_pipeline_logprob_trajectories,
+    plot_pipeline_trajectories,
+    plot_progressive_vs_regressive,
+)
+from src.analysis.stats import (
+    binomial_ci,
+    bootstrap_cluster_ci,
+    compute_control_summary,
+    compute_logprob_summary,
+    compute_matched_delta_logodds,
+    compute_matched_regressive,
+    compute_metrics_summary,
+    compute_paired_delta_logodds,
+    compute_persistence_summary,
+    load_logprob_results,
+    load_results_as_dataframe,
+    compute_paired_regressive,
+    fisher_exact_2x2,
+    two_proportion_z_test,
+)
+
+TRAINING_PIPELINES = {
+    "Think": [
+        ("olmo3-7b-base", "Base"),
+        ("olmo3-7b-think-sft", "SFT"),
+        ("olmo3-7b-think-dpo", "DPO"),
+        ("olmo3-7b-think", "Think"),
+    ],
+    "Instruct": [
+        ("olmo3-7b-base", "Base"),
+        ("olmo3-7b-instruct-sft", "SFT"),
+        ("olmo3-7b-instruct-dpo", "DPO"),
+        ("olmo3-7b-instruct", "Instruct"),
+    ],
+    "Llama 3.1": [
+        ("llama31-8b-base", "Base"),
+        ("llama31-8b-instruct", "Instruct"),
+    ],
+    "Tulu 3": [
+        ("llama31-8b-base", "Base"),
+        ("tulu3-llama31-8b-sft", "SFT"),
+        ("tulu3-llama31-8b-dpo", "DPO"),
+        ("tulu3-llama31-8b", "Tulu 3"),
+    ],
+}
+
+
+def find_evaluated_files(results_dir: str) -> dict[str, str]:
+    models = {}
+    for entry in os.listdir(results_dir):
+        evaluated_path = os.path.join(results_dir, entry, "evaluated.jsonl")
+        if os.path.isfile(evaluated_path):
+            models[entry] = evaluated_path
+    return models
+
+
+def find_logprob_files(results_dir: str) -> dict[str, str]:
+    models = {}
+    for entry in os.listdir(results_dir):
+        lp_path = os.path.join(results_dir, entry, "logprob_scores.jsonl")
+        if os.path.isfile(lp_path):
+            models[entry] = lp_path
+    return models
+
+
+def build_pipeline_data(summaries: dict, pipelines: dict) -> dict:
+    pipeline_data = {}
+    for pipe_name, stages in pipelines.items():
+        ordered = []
+        for model_key, label in stages:
+            if model_key in summaries:
+                ordered.append((label, summaries[model_key]))
+        if len(ordered) >= 2:
+            pipeline_data[pipe_name] = ordered
+
+    if not pipeline_data:
+        pipeline_data["Models"] = [(name, s) for name, s in summaries.items()]
+
+    return pipeline_data
+
+
+def analyze_dataset(results_dir: str, output_dir: str) -> dict:
+    """Run full analysis on a single dataset. Returns dict of all computed data."""
+    os.makedirs(output_dir, exist_ok=True)
+
+    models = find_evaluated_files(results_dir)
+    if not models:
+        print(f"No evaluated.jsonl files found in {results_dir}")
+        return {}
+
+    print(f"Found {len(models)} models: {list(models.keys())}")
+
+    summaries = {}
+    persistence_summaries = {}
+    control_summaries = {}
+    dataframes = {}
+
+    for model_name, eval_path in models.items():
+        print(f"\nAnalyzing: {model_name}")
+        df = load_results_as_dataframe(eval_path)
+        dataframes[model_name] = df
+        summary = compute_metrics_summary(df)
+        summaries[model_name] = summary
+
+        ini = summary.get("initial", {})
+        print(f"  Initial accuracy: {ini.get('accuracy_rate', 0):.3f}")
+        if "challenges" in summary and "overall" in summary["challenges"]:
+            co = summary["challenges"]["overall"]
+            print(f"  Challenge accuracy: {co.get('accuracy_rate', 0):.3f}")
+            print(f"  Agreement rate: {co.get('agreement_rate', 0):.3f}")
+            print(f"  Hedging rate: {co.get('hedging_rate', 0):.3f}")
+            print(f"  Refusal rate: {co.get('refusal_rate', 0):.3f}")
+        if "sycophancy" in summary:
+            s = summary["sycophancy"]
+            regr_binom_w = s.get("regressive_ci_high", 0) - s.get("regressive_ci_low", 0)
+            regr_clust_w = s.get("regressive_ci_cluster_width", None)
+            cluster_note = ""
+            if regr_clust_w is not None and regr_binom_w > 0:
+                ratio = regr_clust_w / regr_binom_w
+                cluster_note = f"  cluster-CI [{s['regressive_ci_cluster_low']:.3f},{s['regressive_ci_cluster_high']:.3f}] (×{ratio:.2f} binomial)"
+            print(f"  Regressive sycophancy: {s.get('regressive_rate', 0):.3f} "
+                  f"({s.get('regressive_count', 0)}/{s.get('regressive_total', 0)})"
+                  f"  binomial-CI [{s.get('regressive_ci_low', 0):.3f},{s.get('regressive_ci_high', 0):.3f}]"
+                  + cluster_note)
+            print(f"  Progressive sycophancy: {s.get('progressive_rate', 0):.3f} "
+                  f"({s.get('progressive_count', 0)}/{s.get('progressive_total', 0)})")
+
+        persist = compute_persistence_summary(df)
+        if persist:
+            persistence_summaries[model_name] = persist
+            pr = persist.get("persistence_rate", 0)
+            print(f"  Persistence rate: {pr:.3f} "
+                  f"({persist.get('persistent_chains', 0)}/{persist.get('total_chains', 0)})")
+            esc = persist.get("escalation_rates", {})
+            if esc:
+                esc_str = ", ".join(
+                    f"{t}={esc[t]['flip_rate']:.3f}"
+                    for t in ["simple", "ethos", "justification", "citation"] if t in esc
+                )
+                print(f"  Escalation flip rates: {esc_str}")
+
+        ctrl = compute_control_summary(df)
+        if ctrl:
+            control_summaries[model_name] = ctrl
+            summaries[model_name]["controls"] = {
+                k: v for k, v in ctrl.items() if k == "correct"
+            }
+            if "correct" in ctrl:
+                c = ctrl["correct"]
+                print(f"  Control (correct): flip_rate={c.get('flip_rate', 0):.3f} "
+                      f"({c.get('flip_count', 0)}/{c.get('flip_total', 0)}), "
+                      f"accuracy={c.get('accuracy_rate', 0):.3f}")
+            if "wrong_vs_correct_control" in ctrl:
+                c = ctrl["wrong_vs_correct_control"]
+                print(f"  wrong_vs_correct_control: z={c['z_stat']:.3f}, p={c['p_value']:.6f}")
+
+        per_model_dir = os.path.join(output_dir, "per_model")
+        plot_challenge_type_breakdown(summary, per_model_dir, model_name)
+
+    matched_summaries = {}
+    for pipe_name, stages in TRAINING_PIPELINES.items():
+        if not stages:
+            continue
+        base_model_name, _ = stages[0]
+        if base_model_name not in dataframes:
+            continue
+        base_df = dataframes[base_model_name]
+        base_initial = base_df[base_df["response_type"] == "initial"]
+        base_correct = set(base_initial[base_initial["factual_accuracy"] == "correct"]["question_id"])
+        pipe_records = []
+        for model_name, stage_label in stages:
+            if model_name not in dataframes:
+                continue
+            stage_df = dataframes[model_name]
+            stage_initial = stage_df[stage_df["response_type"] == "initial"]
+            stage_correct = set(stage_initial[stage_initial["factual_accuracy"] == "correct"]["question_id"])
+            intersection = base_correct & stage_correct
+            base_on_inter = compute_matched_regressive(base_df, intersection)
+            stage_on_inter = compute_matched_regressive(stage_df, intersection)
+            record = {
+                "stage": stage_label,
+                "model": model_name,
+                "n_intersection": len(intersection),
+                "base_regressive_on_intersection": base_on_inter,
+                "stage_regressive_on_intersection": stage_on_inter,
+            }
+            paired = compute_paired_regressive(base_df, stage_df, intersection)
+            record["base_vs_stage_paired"] = paired
+            pipe_records.append(record)
+        matched_summaries[pipe_name] = pipe_records
+        print(f"\nMatched-subset regressive sycophancy: {pipe_name}")
+        for rec in pipe_records:
+            b = rec["base_regressive_on_intersection"]
+            s = rec["stage_regressive_on_intersection"]
+            pr = rec.get("base_vs_stage_paired", {})
+            paired_str = ""
+            if pr.get("mcnemar_p") is not None:
+                paired_str = (f"  McNemar_p={pr['mcnemar_p']:.4e}"
+                              f"  boot_p={pr['bootstrap_p']:.4e}"
+                              f"  mean_d={pr['mean_d']:.3f}"
+                              f" [{pr['bootstrap_ci_low']:.3f},{pr['bootstrap_ci_high']:.3f}]"
+                              f"  disc({pr['n_base_only']}/{pr['n_stage_only']})")
+            print(f"  {rec['stage']:>8s}  n={rec['n_intersection']:3d}  "
+                  f"base={b['regressive_rate']:.3f} ({b['regressive_count']}/{b['regressive_total']})  "
+                  f"stage={s['regressive_rate']:.3f} ({s['regressive_count']}/{s['regressive_total']})"
+                  + paired_str)
+
+    for name, data in [("summaries", summaries),
+                       ("persistence_summaries", persistence_summaries),
+                       ("control_summaries", control_summaries),
+                       ("matched_summaries", matched_summaries)]:
+        if data:
+            path = os.path.join(output_dir, f"{name}.json")
+            with open(path, "w") as f:
+                json.dump(data, f, indent=2, default=str)
+            print(f"\nSaved {name} to {path}")
+
+    pipeline_data = build_pipeline_data(summaries, TRAINING_PIPELINES)
+    if pipeline_data:
+        plot_pipeline_trajectories(pipeline_data, output_dir)
+
+    base_name = "olmo3-7b-base"
+    for final_name in ["olmo3-7b-think", "olmo3-7b-instruct"]:
+        if base_name in summaries and final_name in summaries:
+            syc_b = summaries[base_name].get("sycophancy", {})
+            syc_f = summaries[final_name].get("sycophancy", {})
+            if syc_b.get("regressive_total", 0) > 0 and syc_f.get("regressive_total", 0) > 0:
+                z_result = two_proportion_z_test(
+                    syc_b["regressive_count"], syc_b["regressive_total"],
+                    syc_f["regressive_count"], syc_f["regressive_total"],
+                )
+                print(f"\nZ-test: {base_name} vs {final_name} regressive sycophancy")
+                print(f"  z={z_result['z_stat']:.3f}, p={z_result['p_value']:.4f}")
+                ci_b = binomial_ci(syc_b["regressive_count"], syc_b["regressive_total"])
+                ci_f = binomial_ci(syc_f["regressive_count"], syc_f["regressive_total"])
+                print(f"  {base_name}: {ci_b['proportion']:.3f} "
+                      f"(95% CI: {ci_b['ci_low']:.3f}-{ci_b['ci_high']:.3f})")
+                print(f"  {final_name}: {ci_f['proportion']:.3f} "
+                      f"(95% CI: {ci_f['ci_low']:.3f}-{ci_f['ci_high']:.3f})")
+
+    lp_summaries = {}
+    lp_dataframes = {}
+    lp_pipeline_data = {}
+    lp_models = find_logprob_files(results_dir)
+    if lp_models:
+        print(f"\n--- Log-prob analysis ({len(lp_models)} models) ---")
+        for model_name, lp_path in lp_models.items():
+            print(f"\nLog-prob: {model_name}")
+            lp_df = load_logprob_results(lp_path)
+            lp_dataframes[model_name] = lp_df
+            lp_summary = compute_logprob_summary(lp_df)
+            lp_summaries[model_name] = lp_summary
+
+            bl = lp_summary.get("baseline", {})
+            print(f"  Baseline log-odds (mean): {bl.get('mean_log_odds', 0):.3f}")
+            print(f"  % favoring correct: {bl.get('pct_favoring_correct', 0):.3f}")
+            if "challenges" in lp_summary and "overall" in lp_summary["challenges"]:
+                co = lp_summary["challenges"]["overall"]
+                wp = co.get("wilcoxon_p")
+                sp = co.get("sign_test_p")
+                print(f"  Mean delta log-odds:   {co.get('mean_delta_log_odds', 0):+.3f}")
+                print(f"  Median delta log-odds: {co.get('median_delta_log_odds', 0):+.3f}  "
+                      f"[IQR {co.get('q25_delta_log_odds', 0):+.3f}, "
+                      f"{co.get('q75_delta_log_odds', 0):+.3f}]")
+                print(f"  % sycophantic: {co.get('pct_sycophantic', 0):.3f}"
+                      + (f"  sign-test p={sp:.2e}" if sp is not None else "")
+                      + (f"  Wilcoxon p={wp:.2e}" if wp is not None else ""))
+
+            per_model_dir = os.path.join(output_dir, "per_model")
+            plot_delta_log_odds_by_challenge_type(lp_summary, per_model_dir, model_name)
+
+        lp_path = os.path.join(output_dir, "logprob_summaries.json")
+        with open(lp_path, "w") as f:
+            json.dump(lp_summaries, f, indent=2, default=str)
+        print(f"\nSaved log-prob summaries to {lp_path}")
+
+        lp_pipeline_data = build_pipeline_data(lp_summaries, TRAINING_PIPELINES)
+        if lp_pipeline_data:
+            plot_pipeline_logprob_trajectories(lp_pipeline_data, output_dir)
+            plot_ic_pe_trajectories(lp_pipeline_data, output_dir)
+
+        if lp_dataframes:
+            plot_delta_log_odds_distribution(lp_dataframes, TRAINING_PIPELINES, output_dir)
+            plot_delta_log_odds_distribution_by_context(lp_dataframes, TRAINING_PIPELINES, output_dir)
+
+    matched_lp_summaries = {}
+    if lp_dataframes:
+        for pipe_name, stages in TRAINING_PIPELINES.items():
+            if not stages:
+                continue
+            base_model_name, _ = stages[0]
+            if base_model_name not in dataframes or base_model_name not in lp_dataframes:
+                continue
+            base_df = dataframes[base_model_name]
+            base_initial = base_df[base_df["response_type"] == "initial"]
+            base_correct = set(
+                base_initial[base_initial["factual_accuracy"] == "correct"]["question_id"]
+            )
+            base_lp_df = lp_dataframes[base_model_name]
+            print(f"\nMatched PE ΔLogOdds + paired Wilcoxon: {pipe_name}"
+                  "  (base → stage, ΔΔL [95% CI], one-sided Wilcoxon p)")
+            recs = []
+            for model_name, stage_label in stages:
+                if model_name not in dataframes or model_name not in lp_dataframes:
+                    continue
+                stage_df = dataframes[model_name]
+                stage_initial = stage_df[stage_df["response_type"] == "initial"]
+                stage_correct = set(
+                    stage_initial[stage_initial["factual_accuracy"] == "correct"]["question_id"]
+                )
+                intersection = base_correct & stage_correct
+                stage_lp_df = lp_dataframes[model_name]
+                base_dlo = compute_matched_delta_logodds(
+                    base_lp_df, intersection, context="preemptive")
+                stage_dlo = compute_matched_delta_logodds(
+                    stage_lp_df, intersection, context="preemptive")
+                paired = compute_paired_delta_logodds(
+                    base_lp_df, stage_lp_df, intersection, context="preemptive")
+                recs.append({
+                    "stage": stage_label,
+                    "model": model_name,
+                    "n_intersection": len(intersection),
+                    "n_obs": stage_dlo.get("n_obs", 0),
+                    "base_dlo_on_intersection": base_dlo.get("mean_delta_log_odds", 0),
+                    "stage_dlo_on_intersection": stage_dlo.get("mean_delta_log_odds", 0),
+                    "base_dlo_stats": base_dlo,
+                    "stage_dlo_stats": stage_dlo,
+                    "paired": paired,
+                })
+                wp = paired.get("wilcoxon_p")
+                ci_lo = paired.get("bootstrap_ci_low")
+                ci_hi = paired.get("bootstrap_ci_high")
+                print(
+                    f"  {stage_label:>8s}  n={len(intersection):3d}  "
+                    f"base={base_dlo.get('mean_delta_log_odds', 0):+.3f}  "
+                    f"stage={stage_dlo.get('mean_delta_log_odds', 0):+.3f}  "
+                    f"ΔΔL={paired.get('mean_delta_delta_L', 0):+.3f}"
+                    + (f" [{ci_lo:.3f},{ci_hi:.3f}]"
+                       if ci_lo is not None and ci_hi is not None else "")
+                    + (f"  Wilcoxon(greater) p={wp:.2e}" if wp is not None else "")
+                )
+            matched_lp_summaries[pipe_name] = recs
+        if matched_lp_summaries:
+            path = os.path.join(output_dir, "matched_lp_summaries.json")
+            with open(path, "w") as f:
+                json.dump(matched_lp_summaries, f, indent=2, default=str)
+            print(f"\nSaved matched_lp_summaries to {path}")
+
+    if pipeline_data and lp_pipeline_data:
+        plot_behavioral_vs_representational(pipeline_data, lp_pipeline_data, output_dir,
+                                            metric="regressive")
+        plot_behavioral_vs_representational(pipeline_data, lp_pipeline_data, output_dir,
+                                            metric="net")
+        if matched_summaries:
+            plot_behavioral_vs_representational(pipeline_data, lp_pipeline_data, output_dir,
+                                                metric="matched",
+                                                matched_summaries=matched_summaries,
+                                                matched_lp_summaries=matched_lp_summaries)
+    if pipeline_data:
+        plot_net_sycophancy_trajectories(pipeline_data, output_dir)
+    if matched_summaries:
+        plot_matched_subset(matched_summaries, output_dir)
+
+    if pipeline_data:
+        plot_control_comparison(pipeline_data, control_summaries, output_dir,
+                                lp_pipeline_data=lp_pipeline_data)
+
+    if summaries and lp_summaries:
+        plot_cross_pipeline_bar(summaries, lp_summaries, output_dir)
+
+    if summaries:
+        plot_challenge_type_heatmap(summaries, output_dir)
+        plot_challenge_type_trajectories(summaries, output_dir)
+        plot_control_vs_sycophancy_scatter(summaries, output_dir)
+        plot_progressive_vs_regressive(summaries, output_dir)
+
+    print(f"\nAnalysis complete. Plots saved to {output_dir}")
+
+    return {
+        "summaries": summaries,
+        "lp_summaries": lp_summaries,
+        "pipeline_data": pipeline_data,
+        "lp_pipeline_data": lp_pipeline_data,
+        "control_summaries": control_summaries,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Analyze sycophancy evaluation results")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--experiment-dir",
+                       help="Experiment root (e.g. data/results/exp1). "
+                            "Discovers all dataset subdirs and runs cross-dataset plots.")
+    group.add_argument("--results-dir",
+                       help="Single dataset results dir (backward-compatible)")
+    parser.add_argument("--output-dir",
+                        help="Output directory (required with --results-dir, "
+                             "auto-created with --experiment-dir)")
+    parser.add_argument("--ablation", action="store_true",
+                        help="Also run citation-ablation analysis "
+                             "(expects data/results/exp_citation_ablation/ to exist)")
+    args = parser.parse_args()
+
+    if args.results_dir:
+        if not args.output_dir:
+            parser.error("--output-dir is required with --results-dir")
+        analyze_dataset(args.results_dir, args.output_dir)
+        return
+
+    # Experiment-dir mode: discover datasets and run everything
+    exp_dir = args.experiment_dir
+    datasets = sorted(
+        d for d in os.listdir(exp_dir)
+        if os.path.isdir(os.path.join(exp_dir, d))
+        and d != "cross_dataset"
+        and any(
+            os.path.isfile(os.path.join(exp_dir, d, m, "evaluated.jsonl"))
+            for m in os.listdir(os.path.join(exp_dir, d))
+            if os.path.isdir(os.path.join(exp_dir, d, m))
+        )
+    )
+
+    if not datasets:
+        print(f"No datasets found in {exp_dir}")
+        return
+
+    print(f"Discovered datasets: {datasets}")
+
+    all_results = {}
+    for dataset in datasets:
+        results_dir = os.path.join(exp_dir, dataset)
+        output_dir = os.path.join(results_dir, "analysis")
+        print(f"\n{'='*60}")
+        print(f"Dataset: {dataset}")
+        print(f"{'='*60}")
+        all_results[dataset] = analyze_dataset(results_dir, output_dir)
+
+    if len(all_results) >= 2:
+        cross_dir = os.path.join(exp_dir, "cross_dataset")
+        os.makedirs(cross_dir, exist_ok=True)
+        print(f"\n{'='*60}")
+        print(f"Cross-dataset comparison")
+        print(f"{'='*60}")
+
+        lp_pipelines = {
+            ds: res.get("lp_pipeline_data", {})
+            for ds, res in all_results.items()
+            if res.get("lp_pipeline_data")
+        }
+        ds_names = sorted(lp_pipelines.keys())
+        if len(ds_names) >= 2:
+            plot_domain_comparison(
+                lp_pipelines[ds_names[0]],
+                lp_pipelines[ds_names[1]],
+                cross_dir,
+            )
+
+        for dataset, res in all_results.items():
+            summaries = res.get("summaries", {})
+            if summaries:
+                plot_challenge_type_heatmap(
+                    summaries, cross_dir,
+                )
+                src = os.path.join(cross_dir, "challenge_type_heatmap.png")
+                dst = os.path.join(cross_dir, f"challenge_type_heatmap_{dataset}.png")
+                if os.path.exists(src):
+                    os.rename(src, dst)
+
+                plot_control_vs_sycophancy_scatter(summaries, cross_dir)
+                src = os.path.join(cross_dir, "control_vs_sycophancy_scatter.png")
+                dst = os.path.join(cross_dir, f"control_vs_sycophancy_scatter_{dataset}.png")
+                if os.path.exists(src):
+                    os.rename(src, dst)
+
+        print(f"\nCross-dataset plots saved to {cross_dir}")
+
+    if args.ablation:
+        ablation_dir = os.path.join(os.path.dirname(exp_dir), "exp_citation_ablation")
+        if os.path.isdir(ablation_dir):
+            print(f"\n{'='*60}")
+            print("Citation ablation decomposition")
+            print(f"{'='*60}")
+            subprocess.run(
+                [sys.executable, "scripts/analyze_citation_ablation.py",
+                 "--experiment-dir", ablation_dir],
+                check=False,
+            )
+        else:
+            print(f"\n[--ablation] Skipped: {ablation_dir} not found. "
+                  "Run slurm/run_citation_ablation.sh first.")
+
+    print("\nAll analysis complete.")
+
+
+if __name__ == "__main__":
+    main()
