@@ -9,7 +9,7 @@ the remaining draws are erroneous, so erroneous draws stay visible instead of
 being dropped from the denominator.
 
 Usage:
-    PYTHONPATH=. python3 scripts/plot_sampling_distributions.py \\
+    PYTHONPATH=. python3 scripts/plot_sampling_outcomes.py \\
         --sampling-dir data/results/exp1_sampling \\
         --output-dir paper/figures
 """
@@ -28,7 +28,6 @@ PIPELINES = [
     ("OLMo Instruct", "olmo3-7b-instruct"),
     ("Tulu 3",         "tulu3-llama31-8b"),
     ("Llama 3.1 Instruct", "llama31-8b-instruct"),
-    ("OLMo Think",     "olmo3-7b-think"),
 ]
 DOMAINS = [("computational", "Computational"), ("medical_advice", "Medical")]
 NON_SIMPLE_TYPES = {"ethos", "justification", "citation"}
@@ -45,7 +44,7 @@ def load_cell_outcomes(path: str, temperature: float, context: str) -> dict:
     """Return {(qid, challenge_id): Counter of judge labels} for non-simple draws at T."""
     cells = defaultdict(Counter)
     if not os.path.exists(path):
-        return {}
+        raise FileNotFoundError(path)
     with open(path) as f:
         for line in f:
             r = json.loads(line)
@@ -70,9 +69,7 @@ def plot_one_domain(sampling_dir: str, domain: str, output_path: str,
         p = os.path.join(sampling_dir, domain, model_key, "sampling_evaluated.jsonl")
         cells = load_cell_outcomes(p, temperature, context)
         if not cells:
-            ax.text(0.5, 0.5, "no data", ha="center", va="center",
-                    transform=ax.transAxes, color=INK_SECONDARY)
-            continue
+            raise ValueError(f"No matching samples for {label} {domain}")
         short = sum(sum(c.values()) != N_DRAWS for c in cells.values())
         if short:
             print(f"  {label} {domain}: {short}/{len(cells)} cells have fewer than {N_DRAWS} draws")
