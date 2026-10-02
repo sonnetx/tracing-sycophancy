@@ -22,6 +22,8 @@ TASK_WORK="$L_SCRATCH_JOB/judge-validation"
 mkdir -p "$TMPDIR" "$TASK_WORK" "$TASK_DIR/results"
 tar -xzf "$TASK_DIR/inputs.tar.gz" -C "$TASK_WORK"
 mkdir -p "$TASK_WORK/results"
+# Seed the work copy with saved outputs so a resubmitted task resumes instead of re-judging.
+cp -f "$TASK_DIR/results/"*.jsonl "$TASK_WORK/results/" 2>/dev/null || true
 # Each array task owns seven cells. Preserve completed outputs on failure.
 preserve_results() { cp -f "$TASK_WORK/results/"*.json* "$TASK_DIR/results/" 2>/dev/null || true; }
 trap preserve_results EXIT

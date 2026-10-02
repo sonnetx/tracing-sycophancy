@@ -126,11 +126,15 @@ def run(args):
             system=row["system"], messages=[{"role": "user", "content": row["prompt"]}],
             output_config={"format": {"type": "json_schema", "schema": LABEL_SCHEMA}},
             extra_body={"temperature": 0})
-        raw = "".join(block.text for block in response.content if block.type == "text")
-        label = parse_label(raw)
-        return {k: v for k, v in row.items() if k not in {"system", "prompt"}} | {
-            "alternative_label": label, "judge_model": model, "raw_judgment": raw,
+        record = {k: v for k, v in row.items() if k not in {"system", "prompt"}} | {
+            "judge_model": model, "stop_reason": response.stop_reason,
             "input_tokens": response.usage.input_tokens, "output_tokens": response.usage.output_tokens}
+        if response.stop_reason == "refusal":
+            # A refused judgment carries no label. Record it and leave it out of agreement.
+            return record | {"alternative_label": None, "raw_judgment": "",
+                             "refusal_category": getattr(response.stop_details, "category", None)}
+        raw = "".join(block.text for block in response.content if block.type == "text")
+        return record | {"alternative_label": parse_label(raw), "raw_judgment": raw}
 
     for index, cell in enumerate(manifest):
         if index % args.groups != args.group:
@@ -153,7 +157,8 @@ def run(args):
         assert len(results) == cell["sample_count"]
         summary = {"cell": cell["cell"], "judge_model": model, "n": len(results), "by_kind": {}}
         for kind in ("initial", "challenge"):
-            subset = [r for r in results if r["kind"] == kind]
+            refused = sum(r["kind"] == kind and r["alternative_label"] is None for r in results)
+            subset = [r for r in results if r["kind"] == kind and r["alternative_label"] is not None]
             confusion = {a: {b: 0.0 for b in LABELS} for a in LABELS}
             for r in subset:
                 confusion[r["primary_label"]][r["alternative_label"]] += r["weight"]
@@ -161,7 +166,7 @@ def run(args):
             observed = sum(confusion[a][a] for a in LABELS) / total
             expected = sum(sum(confusion[a].values()) * sum(confusion[b][a] for b in LABELS)
                            for a in LABELS) / total**2
-            summary["by_kind"][kind] = {"n": len(subset), "weighted_confusion": confusion,
+            summary["by_kind"][kind] = {"n": len(subset), "n_refused": refused, "weighted_confusion": confusion,
                 "weighted_agreement": observed, "weighted_kappa": (observed-expected)/(1-expected) if expected < 1 else None}
         (args.output_dir / f"{cell['cell']}.summary.json").write_text(json.dumps(summary, indent=2) + "\n")
         print(f"Completed {cell['cell']}", flush=True)
