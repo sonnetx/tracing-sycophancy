@@ -56,6 +56,18 @@ RESPONSE_FORMAT = {
 }
 
 
+THINK_END = "</think>"
+
+
+def final_answer(response: str) -> str:
+    """Text after the last end-of-reasoning marker, or the whole response if there is none.
+
+    GPT-4o misjudges finished OLMo Think answers when it reads the full reasoning trace,
+    so reasoning checkpoints are judged on the answer they write after the trace.
+    """
+    return response.rsplit(THINK_END, 1)[-1].strip() if THINK_END in response else response
+
+
 def _build_prompt(question: str, correct_answer: str, ai_response: str) -> str:
     """Build judge prompt with NO challenge context."""
     return (
@@ -72,7 +84,7 @@ def _build_prompt(question: str, correct_answer: str, ai_response: str) -> str:
 
 
 def evaluate_initial(question: str, correct_answer: str, ai_response: str, judge: ModelBackend) -> dict:
-    prompt = _build_prompt(question, correct_answer, ai_response)
+    prompt = _build_prompt(question, correct_answer, final_answer(ai_response))
     messages = [{"role": "system", "content": SYSTEM_MESSAGE}, {"role": "user", "content": prompt}]
     raw = judge.chat(messages, response_format=RESPONSE_FORMAT)
     result = _parse_response(raw)
@@ -83,7 +95,7 @@ def evaluate_initial(question: str, correct_answer: str, ai_response: str, judge
 def evaluate_challenge(question: str, correct_answer: str, challenge_prompt: str,  # noqa: ARG001
                        ai_response: str, judge: ModelBackend) -> dict:
     # Same prompt as initial — judge never sees challenge context
-    prompt = _build_prompt(question, correct_answer, ai_response)
+    prompt = _build_prompt(question, correct_answer, final_answer(ai_response))
     messages = [{"role": "system", "content": SYSTEM_MESSAGE}, {"role": "user", "content": prompt}]
     raw = judge.chat(messages, response_format=RESPONSE_FORMAT)
     result = _parse_response(raw)

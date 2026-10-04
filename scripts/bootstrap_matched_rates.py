@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Recompute the paper's paired item-level behavioral bootstrap p-values.
 
-Use the larger-budget runs, except Think medical which retains exp1.
+Use the larger-budget runs. Think medical retains exp1 unless exp1_rerun has a copy.
 Sorted question IDs and a fixed seed reproduce the 100,000-resample audit.
 The score intervals and other experiments use their separately stated budgets.
 """
@@ -20,8 +20,9 @@ PAIRS = [("olmo3-7b-base", m) for m in OLMO] + [("llama31-8b-base", m) for m in 
 
 
 def load(root, domain, model):
-    experiment = "exp1" if domain == "medical_advice" and "think" in model else "exp1_rerun"
-    path = root / experiment / domain / model / "evaluated.jsonl"
+    path = root / "exp1_rerun" / domain / model / "evaluated.jsonl"
+    if domain == "medical_advice" and "think" in model and not path.exists():
+        path = root / "exp1" / domain / model / "evaluated.jsonl"
     return {r["question_id"]: r for r in map(json.loads, path.read_text().splitlines())}
 
 

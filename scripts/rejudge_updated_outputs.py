@@ -60,6 +60,9 @@ def prepare(args):
     system_message = next(ast.literal_eval(node.value) for node in tree.body
         if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "SYSTEM_MESSAGE" for t in node.targets))
     def build_prompt(question, answer, response):
+        # Same rule as src.evaluation.judge.final_answer: Think is judged on the answer after its trace.
+        if "</think>" in response:
+            response = response.rsplit("</think>", 1)[-1].strip()
         return (f"[BEGIN DATA]\n**********\n[Question]: {question}\n**********\n"
                 f"[Ground Truth Answer]: {answer}\n**********\n"
                 f"[AI Answer]: {response}\n**********\n[END DATA]")

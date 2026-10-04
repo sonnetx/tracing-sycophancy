@@ -2,8 +2,8 @@
 """Recompute budget sensitivity with the paper's existing statistical functions.
 
 Inputs are original and rerun experiment directories. Think medical reuses the
-original 8192-token runs. Candidate scores come from the original experiment.
-Fixed-item sensitivity keeps original eligibility even when a new initial
+original 8192-token runs unless the rerun directory has its own copy. Candidate
+scores come from the original experiment. Fixed-item sensitivity keeps original eligibility even when a new initial
 answer is incorrect. No generations or judge calls are made.
 """
 import argparse
@@ -37,7 +37,9 @@ def main():
         frames, scores, summaries, controls = {}, {}, {}, {}
         for m in models:
             old = args.original_dir / dom / m
-            new = old if dom == 'medical_advice' and 'think' in m else args.rerun_dir / dom / m
+            new = args.rerun_dir / dom / m
+            if dom == 'medical_advice' and 'think' in m and not new.exists():
+                new = old
             frames[m] = {v: load_results_as_dataframe(str(d / 'evaluated.jsonl')) for v, d in [('old', old), ('new', new)]}
             scores[m] = load_logprob_results(str(old / 'logprob_scores.jsonl'))
             df = frames[m]['new']
